@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Management - TrackForce CRM</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* General Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #764ba2 0%, #4a0361 100%);
+      color: #f1f5f9;
+      transition: all 0.3s ease;
+      min-height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Live Background Container */
+    #particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: linear-gradient(135deg, rgba(74, 3, 97, 0.9) 0%, rgba(12, 13, 163, 0.62) 100%);
+    }
+
+    /* Define CSS Variables for theming */
+    :root {
+      --primary: #8a2be2;
+      --primary-light: #9932cc;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --border: rgba(99, 102, 241, 0.3);
+      --shadow: rgba(0, 0, 0, 0.4);
+      --sidebar-bg: rgba(28, 36, 55, 0.95);
+      --card-bg: rgba(28, 36, 55, 0.9);
+      --sidebar-text: #e2e8f0;
+      --sidebar-text-secondary: #a0aec0;
+      --hover-bg: rgba(138, 43, 226, 0.15);
+      --button-hover-shadow: rgba(138, 43, 226, 0.5);
+      --header-bg-start: rgba(28, 36, 55, 0.95);
+      --header-bg-end: rgba(15, 20, 30, 0.95);
+      --spacing-large: 30px;
+      --spacing-medium: 20px;
+      --spacing-small: 10px;
+      --sidebar-width-expanded: 280px;
+      --sidebar-width-collapsed: 80px;
+      --sidebar-padding-expanded: 30px;
+    }
+
+    body[data-theme="light"] {
+      --primary: #6a0dad;
+      --primary-light: #8a2be2;
+      --text-primary: #2d3748;
+      --text-secondary: #4a5568;
+      --border: rgba(160, 174, 192, 0.5);
+      --shadow: rgba(0, 0, 0, 0.15);
+      --sidebar-bg: rgba(255, 255, 255, 0.98);
+      --card-bg: rgba(247, 250, 252, 0.95);
+      --sidebar-text: #2d3748;
+      --sidebar-text-secondary: #718096;
+      --hover-bg: rgba(106, 13, 173, 0.1);
+      --button-hover-shadow: rgba(106, 13, 173, 0.3);
+      --header-bg-start: rgba(255, 255, 255, 0.95);
+      --header-bg-end: rgba(240, 244, 247, 0.95);
+    }
+
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--sidebar-bg);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary-light);
+      border-radius: 4px;
+      border: 2px solid var(--sidebar-bg);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary);
+    }
+
+    /* Header Styles */
+    .header {
+      background: linear-gradient(90deg, var(--header-bg-start), var(--header-bg-end));
+      backdrop-filter: blur(8px);
+      padding: var(--spacing-small) var(--spacing-large);
+      min-height: 70px;
+      box-shadow: 0 4px 25px var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-medium);
+    }
+
+    .back-button, .theme-toggle, .sidebar-toggle {
+      background: rgba(138, 43, 226, 0.2);
+      color: var(--primary);
+      border: none;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Shining effect for buttons */
+    .back-button::before, .theme-toggle::before, .sidebar-toggle::before, .logout-btn::before, .action-btn::before, .add-user-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: none;
+    }
+
+    .back-button:hover::before, .theme-toggle:hover::before, .sidebar-toggle:hover::before, .logout-btn:hover::before, .action-btn:hover::before, .add-user-btn:hover::before {
+      animation: shine 0.8s forwards;
+    }
+
+    @keyframes shine {
+      to {
+        left: 100%;
+      }
+    }
+
+    .back-button:hover, .theme-toggle:hover, .sidebar-toggle:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px var(--button-hover-shadow);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-medium);
+    }
+
+    .logout-btn {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      width: var(--sidebar-width-expanded);
+      background: var(--sidebar-bg);
+      backdrop-filter: blur(8px);
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      box-shadow: 3px 0 25px var(--shadow);
+      z-index: 900;
+      transition: all 0.3s ease;
+      overflow-y: auto;
+      border-right: 1px solid var(--border);
+    }
+
+    .sidebar.collapsed {
+      width: var(--sidebar-width-collapsed);
+    }
+
+    .sidebar.collapsed .sidebar-title,
+    .sidebar.collapsed .sidebar-subtitle,
+    .sidebar.collapsed .nav-section-title {
+      display: none;
+    }
+
+    .sidebar.collapsed .nav-item {
+      justify-content: center;
+      padding: 15px 0;
+    }
+    .sidebar.collapsed .nav-item span {
+      display: none;
+    }
+    .sidebar.collapsed .nav-item i {
+      margin: 0;
+    }
+
+    /* UPDATED: This element now acts as the top spacer and divider line */
+    .sidebar-header {
+      height: 80px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: var(--spacing-medium);
+    }
+
+    .sidebar-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--sidebar-text);
+      margin-bottom: 8px;
+    }
+
+    .sidebar-subtitle {
+      font-size: 15px;
+      color: var(--sidebar-text-secondary);
+    }
+
+    .nav-section {
+      margin-bottom: var(--spacing-medium);
+    }
+
+    .nav-section + .nav-section {
+      border-top: 1px solid var(--border);
+      padding-top: var(--spacing-medium);
+    }
+
+    .nav-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--sidebar-text-secondary);
+      padding: 0 var(--spacing-large);
+      margin-bottom: var(--spacing-small);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px var(--spacing-large);
+      color: var(--sidebar-text);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      background: var(--hover-bg);
+      color: var(--primary);
+      transform: translateX(8px);
+    }
+
+    .nav-item i {
+      font-size: 20px;
+      width: 28px;
+    }
+
+    /* Main Container Styles */
+    .main-container {
+      margin-left: var(--sidebar-width-expanded);
+      padding: calc(70px + var(--spacing-large)) var(--spacing-large) var(--spacing-large);
+      transition: margin-left 0.3s ease;
+      overflow-y: auto;
+      height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Main container when sidebar is collapsed */
+    .main-container.shifted {
+      margin-left: var(--sidebar-width-collapsed);
+    }
+
+    /* Page-specific styling */
+    .page-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: white; /* Always white */
+      margin-bottom: var(--spacing-large);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .page-title i {
+      color: var(--primary);
+      font-size: 28px;
+    }
+
+    /* User Management Styles */
+    .controls-section {
+      background: var(--card-bg);
+      border-radius: 18px;
+      padding: var(--spacing-large);
+      margin-bottom: var(--spacing-large);
+      box-shadow: 0 6px 25px var(--shadow);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(5px);
+    }
+
+    .controls-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--spacing-medium);
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex-grow: 1;
+      position: relative;
+      max-width: 400px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 45px 12px 15px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: transparent;
+      color: var(--text-primary);
+      font-size: 14px;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.1);
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+    }
+
+    .add-user-btn {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .add-user-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px var(--button-hover-shadow);
+      background: var(--primary-light);
+    }
+
+    .users-table {
+      background: var(--card-bg);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 6px 25px var(--shadow);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(5px);
+      overflow-x: auto;
+    }
+
+    .table-header {
+      padding: var(--spacing-medium) var(--spacing-large);
+      display: grid;
+      grid-template-columns: 0.5fr 2fr 2fr 1fr 1.5fr;
+      gap: var(--spacing-medium);
+      align-items: center;
+      background: rgba(138, 43, 226, 0.1);
+      font-weight: 600;
+      color: var(--text-primary);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .table-header div:nth-child(5) {
+      text-align: right;
+    }
+
+    .user-row {
+      padding: var(--spacing-medium) var(--spacing-large);
+      display: grid;
+      grid-template-columns: 0.5fr 2fr 2fr 1fr 1.5fr;
+      gap: var(--spacing-medium);
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      transition: background-color 0.3s ease;
+      color: var(--text-primary);
+    }
+    body[data-theme="light"] .user-row {
+      color: var(--text-primary);
+    }
+
+    .user-row:last-child {
+      border-bottom: none;
+    }
+
+    .user-row:hover {
+      background: rgba(138, 43, 226, 0.05);
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .user-status {
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 13px;
+      font-weight: 500;
+      text-transform: capitalize;
+      text-align: center;
+    }
+
+    .status-active {
+      background: #27ae60;
+      color: white;
+    }
+
+    .status-inactive {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .user-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end; /* Aligns buttons to the right */
+    }
+
+    .action-btn {
+      width: 38px;
+      height: 38px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      font-size: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .edit-btn {
+      background: rgba(59, 130, 246, 0.2);
+      color: #3b82f6;
+    }
+
+    .edit-btn:hover {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .delete-btn {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+    }
+
+    .delete-btn:hover {
+      background: #ef4444;
+      color: white;
+    }
+
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--card-bg);
+      border-radius: 15px;
+      padding: 30px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 20px 60px var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .modal-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .close-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--card-bg);
+      color: var(--text-primary);
+      font-size: 14px;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.1);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 15px;
+      justify-content: flex-end;
+      margin-top: 30px;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      padding: 12px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background: var(--border);
+      color: var(--text-primary);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--button-hover-shadow);
+    }
+
+    .error-message {
+      color: #ef4444;
+      font-size: 12px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .success-message {
+      background: rgba(34, 197, 94, 0.2);
+      color: #22c55e;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    /* Responsive Design for Tablets */
+    @media (max-width: 992px) {
+      .table-header {
+        display: none; /* Hide header on tablets and below */
+      }
+      .user-row {
+        grid-template-columns: 40px 1fr; /* Avatar and main content */
+        grid-template-rows: auto auto auto;
+        gap: 5px 15px;
+        padding: 15px;
+        position: relative; /* For action buttons positioning */
+      }
+      .user-avatar {
+        grid-row: 1 / span 3;
+      }
+      .user-name, .user-email, .user-status, .user-actions {
+        grid-column: 2; /* All content in the second column */
+        text-align: left;
+        justify-content: flex-start;
+      }
+      .user-actions {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+      }
+      .user-name {
+        font-size: 16px;
+        font-weight: 600;
+      }
+      .user-status {
+        width: fit-content;
+      }
+
+      .user-row > div:nth-of-type(3)::before {
+        content: "Email: ";
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin-right: 5px;
+      }
+      .user-row > div:nth-of-type(4)::before {
+        content: "Status: ";
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin-right: 5px;
+      }
+      body[data-theme="light"] .user-row > div::before {
+        color: var(--text-secondary);
+      }
+    }
+
+    /* Responsive Design for Mobile */
+    @media (max-width: 768px) {
+      .main-container {
+        padding: calc(70px + var(--spacing-medium)) var(--spacing-medium) var(--spacing-medium);
+      }
+      .page-title {
+        font-size: 28px;
+      }
+      .controls-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+      }
+      .search-box {
+        max-width: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header {
+        padding: var(--spacing-small) var(--spacing-medium);
+      }
+      .logout-btn span {
+        display: none;
+      }
+      .logout-btn {
+        padding: 0;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+      }
+      .add-user-btn span {
+        display: none;
+      }
+      .add-user-btn {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        font-size: 18px;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body data-theme="dark">
+
+<div id="particles-js"></div>
+
+<div class="header">
+  <div class="header-left">
+    <button class="sidebar-toggle" onclick="toggleSidebar()">
+      <i class="fas fa-bars"></i>
+    </button>
+    <button class="back-button" onclick="navigateToPage('dashboard.html')">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <div class="sidebar-title">TrackForce CRM <br>
+      <span class="sidebar-subtitle">Admin Panel</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <i class="fas fa-adjust"></i>
+    </button>
+    <button class="logout-btn" onclick="logout()">
+      <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+    </button>
+  </div>
+</div>
+
+<div class="sidebar collapsed">
+  <div class="sidebar-header"></div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-section-title">Main</div>
+      <button class="nav-item" onclick="navigateToPage('dashboard.html')">
+        <i class="fas fa-tachometer-alt"></i>
+        <span>Dashboard</span>
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Management</div>
+      <button class="nav-item active" onclick="navigateToPage('user-management.html')">
+        <i class="fas fa-users"></i>
+        <span>User Management</span>
+      </button>
+
+      <button class="nav-item" onclick="navigateToPage('contact-management.html')">
+        <i class="fas fa-address-book"></i>
+        <span>Contact Management</span>
+      </button>
+
+      <button class="nav-item" onclick="navigateToPage('broadcast-messaging.html')">
+        <i class="fas fa-broadcast-tower"></i>
+        <span>Broadcast Messaging</span>
+      </button>
+      <button class="nav-item" onclick="navigateToPage('Task-Assign.html')">
+        <i class="fas fa-tasks"></i>
+        <span>Task Assignment</span>
+      </button>
+      <button class="nav-item" onclick="navigateToPage('View-Reports.html')">
+        <i class="fas fa-file-alt"></i>
+        <span>View Reports</span>
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Support</div>
+      <button class="nav-item" onclick="navigateToPage('Leads.html')">
+        <i class="fas fa-envelope"></i>
+        <span>Leads</span>
+      </button>
+    </div>
+  </nav>
+</div>
+
+<div class="main-container shifted">
+  <h1 class="page-title">
+    <i class="fas fa-users"></i>
+    User Management
+  </h1>
+
+  <div class="controls-section">
+    <div class="controls-header">
+      <div class="search-box">
+        <input type="text" class="search-input" placeholder="Search users..." id="searchInput">
+        <i class="fas fa-search search-icon"></i>
+      </div>
+      <button class="add-user-btn" onclick="openAddUserModal()">
+        <i class="fas fa-plus"></i> <span>Add User</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="users-table">
+    <div class="table-header">
+      <div>User</div>
+      <div>Name</div>
+      <div>Email</div>
+      <div>Status</div>
+      <div class="header-actions">Actions</div>
+    </div>
+
+    <div id="usersContainer">
+    </div>
+  </div>
+</div>
+
+<div id="userModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalTitle">Add New User</h2>
+      <button class="close-btn" onclick="closeModal()">&times;</button>
+    </div>
+
+    <div class="success-message" id="successMessage"></div>
+
+    <form id="userForm">
+      <div class="form-group">
+        <label class="form-label" for="userName">Full Name</label>
+        <input type="text" id="userName" class="form-input" required>
+        <div class="error-message" id="nameError">Name is required</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="userEmail">Email</label>
+        <input type="email" id="userEmail" class="form-input" required>
+        <div class="error-message" id="emailError">Valid email is required</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="userPassword">Password</label>
+        <input type="password" id="userPassword" class="form-input" required>
+        <div class="error-message" id="passwordError">Password is required</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="userPhone">Phone Number</label>
+        <input type="text" id="userPhone" class="form-input">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="userLocation">Location</label>
+        <input type="text" id="userLocation" class="form-input">
+      </div>
+
+      <input type="hidden" id="userId" name="userId">
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+        <button type="submit" class="btn-primary">Save User</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="js/particles.min.js"></script>
+<script src="../config.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      document.body.setAttribute('data-theme', savedTheme);
+      initParticles(savedTheme);
+    } else {
+      initParticles('dark');
+    }
+
+    const savedSidebarState = localStorage.getItem('sidebarCollapsed');
+    const sidebar = document.querySelector('.sidebar');
+    const mainContainer = document.querySelector('.main-container');
+    if (savedSidebarState === 'true') {
+      sidebar.classList.add('collapsed');
+      mainContainer.classList.add('shifted');
+    } else {
+      sidebar.classList.add('collapsed');
+      mainContainer.classList.add('shifted');
+      localStorage.setItem('sidebarCollapsed', 'true');
+    }
+
+    loadUsers();
+  });
+
+  function initParticles(theme) {
+    if (window.pJSDom && window.pJSDom[0]) {
+      window.pJSDom[0].pJS.fn.vendors.destroypJS();
+      window.pJSDom = [];
+    }
+    const particleColor = "#ffffff";
+    particlesJS('particles-js', {
+      "particles": {
+        "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+        "color": { "value": particleColor },
+        "shape": { "type": "circle" },
+        "opacity": { "value": 0.3, "random": true },
+        "size": { "value": 3, "random": true },
+        "line_linked": { "enable": true, "distance": 150, "color": particleColor, "opacity": 0.2, "width": 1 },
+        "move": { "enable": true, "speed": 3, "direction": "none", "out_mode": "out" }
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" } }
+      },
+      "retina_detect": true
+    });
+  }
+
+  function toggleTheme() {
+    const body = document.body;
+    const currentTheme = body.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    body.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    initParticles(newTheme);
+  }
+
+  function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const mainContainer = document.querySelector('.main-container');
+    sidebar.classList.toggle('collapsed');
+    mainContainer.classList.toggle('shifted');
+    localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+  }
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = '../index.html';
+  }
+
+  function navigateToPage(pageName) {
+    window.location.href = pageName;
+  }
+
+  function openAddUserModal() {
+    document.getElementById('modalTitle').textContent = 'Add New User';
+    document.getElementById('userForm').reset();
+    document.getElementById('userForm').removeAttribute('data-user-id');
+    document.getElementById('userPassword').parentElement.style.display = 'block';
+    document.getElementById('userPassword').required = true;
+    hideAllErrors();
+    hideSuccessMessage();
+    document.getElementById('userModal').style.display = 'block';
+  }
+
+  function closeModal() {
+    document.getElementById('userModal').style.display = 'none';
+  }
+
+  function hideAllErrors() {
+    document.querySelectorAll('.error-message').forEach(error => error.style.display = 'none');
+  }
+
+  function hideSuccessMessage() {
+    document.getElementById('successMessage').style.display = 'none';
+  }
+
+  function showError(fieldId, message) {
+    const errorElement = document.getElementById(fieldId + 'Error');
+    if (errorElement) {
+      errorElement.textContent = message;
+      errorElement.style.display = 'block';
+    }
+  }
+
+  function showSuccess(message) {
+    const successElement = document.getElementById('successMessage');
+    successElement.textContent = message;
+    successElement.style.display = 'block';
+  }
+
+  function validateForm() {
+    hideAllErrors();
+    let isValid = true;
+
+    const name = document.getElementById('userName').value.trim();
+    const email = document.getElementById('userEmail').value.trim();
+    const password = document.getElementById('userPassword').value.trim();
+    const isEditing = !!document.getElementById('userForm').getAttribute('data-user-id');
+
+    if (!name) {
+      showError('name', 'Name is required');
+      isValid = false;
+    }
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showError('email', 'Please enter a valid email address');
+      isValid = false;
+    }
+
+    if (!isEditing && !password) {
+      showError('password', 'Password is required for new users');
+      isValid = false;
+    } else if (password && password.length < 6) {
+      showError('password', 'Password must be at least 6 characters long');
+      isValid = false;
+    }
+
+    return isValid;
+  }
+
+  async function loadUsers() {
+    try {
+      const response = await fetch(`${USER_API}`);
+      if (!response.ok) throw new Error('Failed to fetch users');
+      const users = await response.json();
+      displayUsers(users);
+    } catch (error) {
+      console.error('Error loading users:', error);
+      document.getElementById('usersContainer').innerHTML = '<p style="padding: 20px; text-align: center;">Error loading users.</p>';
+    }
+  }
+
+  function displayUsers(users) {
+    const container = document.getElementById('usersContainer');
+    container.innerHTML = "";
+
+    if (!users || users.length === 0) {
+      container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-secondary);">No users found.</div>';
+      return;
+    }
+
+    users.forEach(user => {
+      const initials = (user.username || 'U').slice(0, 2).toUpperCase();
+      const statusValue = user.status && user.status.toLowerCase() === 'active' ? 'active' : 'inactive';
+      const statusClass = statusValue === 'active' ? 'status-active' : 'status-inactive';
+      const capitalStatus = statusValue.charAt(0).toUpperCase() + statusValue.slice(1);
+
+      const userRow = `
+            <div class="user-row">
+                <div class="user-avatar">${initials}</div>
+                <div class="user-name">${user.username || 'N/A'}</div>
+                <div class="user-email">${user.email || 'N/A'}</div>
+                <div><span class="user-status ${statusClass}">${capitalStatus}</span></div>
+                <div class="user-actions">
+                    <button class="action-btn edit-btn" onclick="editUser('${user.id}')"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn delete-btn" onclick="deleteUser('${user.id}')"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>`;
+      container.innerHTML += userRow;
+    });
+  }
+
+  document.getElementById('searchInput').addEventListener('input', async function (e) {
+    const keyword = e.target.value.trim();
+    if (keyword === "") {
+      loadUsers();
+    } else {
+      try {
+        const response = await fetch(`${USER_API}/search?keyword=${encodeURIComponent(keyword)}`);
+        if (!response.ok) throw new Error('Search failed');
+        const users = await response.json();
+        displayUsers(users);
+      } catch (error) {
+        console.error('Search error:', error);
+        displayUsers([]);
+      }
+    }
+  });
+
+  async function editUser(userId) {
+    try {
+      const response = await fetch(`${USER_API}`);
+      const users = await response.json();
+      const user = users.find(u => u.id == userId);
+
+      if (user) {
+        document.getElementById('modalTitle').textContent = 'Edit User';
+        document.getElementById('userName').value = user.username || '';
+        document.getElementById('userEmail').value = user.email || '';
+        document.getElementById('userPassword').value = '';
+        document.getElementById('userPassword').placeholder = "Leave blank to keep current password";
+        document.getElementById('userPassword').required = false;
+        document.getElementById('userPhone').value = user.phonenumber || '';
+        document.getElementById('userLocation').value = user.location || '';
+
+        hideAllErrors();
+        hideSuccessMessage();
+        document.getElementById('userModal').style.display = 'block';
+        document.getElementById('userForm').setAttribute('data-user-id', userId);
+      }
+    } catch (error) {
+      console.error('Error loading user for edit:', error);
+      alert('Error loading user data. Please try again.');
+    }
+  }
+
+  async function deleteUser(userId) {
+    if (confirm('Are you sure you want to delete this user?')) {
+      try {
+        const response = await fetch(`${USER_API}/${userId}`, { method: 'DELETE' });
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText || 'Failed to delete user');
+        }
+        await response.text();
+        loadUsers();
+      } catch (err) {
+        alert("Error deleting user: " + err.message);
+      }
+    }
+  }
+
+  document.getElementById('userForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    const userId = e.target.getAttribute('data-user-id');
+    const formData = {
+      username: document.getElementById('userName').value.trim(),
+      email: document.getElementById('userEmail').value.trim(),
+      phonenumber: document.getElementById('userPhone').value.trim() || "",
+      location: document.getElementById('userLocation').value.trim() || ""
+    };
+
+    const password = document.getElementById('userPassword').value.trim();
+    if (password) {
+      formData.password = password;
+    }
+
+    const isEditing = !!userId;
+    const method = isEditing ? 'PUT' : 'POST';
+    const url = isEditing ? `${USER_API}/${userId}` : `${USER_API}/register`;
+
+    try {
+      const res = await fetch(url, {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || 'Failed to save user');
+      }
+
+      showSuccess(isEditing ? 'User updated successfully!' : 'User created successfully!');
+      setTimeout(() => {
+        closeModal();
+        loadUsers();
+      }, 1500);
+
+    } catch (error) {
+      console.error('Error saving user:', error);
+      alert('Error saving user: ' + error.message);
+    }
+  });
+
+  window.addEventListener('click', function (e) {
+    if (e.target === document.getElementById('userModal')) closeModal();
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+  });
+</script>
+
+</body>
+</html>

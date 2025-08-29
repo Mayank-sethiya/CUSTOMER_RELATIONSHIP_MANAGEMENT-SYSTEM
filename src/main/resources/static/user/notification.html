@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - TrackForce CRM</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8a2be2; --primary-light: #9932cc; --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1; --border: rgba(99, 102, 241, 0.3); --shadow: rgba(0, 0, 0, 0.4);
+            --card-bg: rgba(28, 36, 55, 0.9); --card-hover: rgba(40, 50, 70, 0.9);
+            --success: #10b981; --danger: #ef4444; --info: #3b82f6;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .page-wrapper { display: flex; justify-content: center; padding: 30px; height: 100vh; }
+        .notification-container {
+            width: 100%; max-width: 900px; background: var(--card-bg); border-radius: 18px;
+            box-shadow: 0 6px 25px var(--shadow); border: 1px solid var(--border);
+            overflow: hidden; backdrop-filter: blur(5px); animation: slideUp 0.4s ease-out;
+            display: flex; flex-direction: column; height: calc(100vh - 60px);
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .notification-header {
+            background: var(--primary); color: white; padding: 20px 25px;
+            display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
+        }
+        .notification-title { font-size: 24px; font-weight: 600; display: flex; align-items: center; gap: 12px; }
+        .header-actions { display: flex; gap: 12px; }
+        .btn {
+            border: none; border-radius: 10px; padding: 10px 18px; cursor: pointer;
+            transition: all 0.3s ease; display: flex; align-items: center; gap: 8px;
+            font-weight: 500; font-size: 14px;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .clear-all-btn { background: var(--danger); color: white; }
+        .back-btn { background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2); }
+        .notification-stats {
+            padding: 15px 25px; background: var(--card-hover); border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
+            font-size: 14px; color: var(--text-secondary);
+        }
+        #unreadCountBadge {
+            background: var(--primary); color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 600;
+        }
+        .notification-list { flex-grow: 1; overflow-y: auto; }
+        .notification-item {
+            display: flex; align-items: flex-start; gap: 16px; padding: 15px 25px;
+            border-bottom: 1px solid var(--border); transition: all 0.3s ease; position: relative;
+        }
+        .notification-item.unread { background: rgba(138, 43, 226, 0.1); }
+        .notification-item.read { opacity: 0.7; }
+        .notification-item:hover { background: var(--card-hover); }
+        .notification-icon-wrapper { position: relative; flex-shrink: 0; }
+        .notification-icon {
+            width: 40px; height: 40px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 16px; color: white;
+        }
+        .notification-icon.task { background: var(--success); }
+        .notification-icon.message, .notification-icon.email { background: var(--info); }
+        .notification-icon.meeting { background: #f59e0b; }
+        .notification-icon.system { background: var(--primary); }
+        .notification-icon.alert { background: var(--danger); }
+        .notification-icon.sms { background: #14b8a6; }
+        .notification-badge {
+            position: absolute; top: -2px; right: -2px;
+            width: 12px; height: 12px; background-color: var(--danger);
+            border-radius: 50%; border: 2px solid var(--card-bg);
+        }
+        .notification-content { flex: 1; cursor: pointer; }
+        .notification-subject { font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+        .notification-body { color: var(--text-secondary); font-size: 14px; line-height: 1.5; }
+        .notification-time { font-size: 13px; color: var(--text-secondary); margin-top: 8px; }
+        .notification-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .action-btn {
+            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-secondary); padding: 6px 12px; border-radius: 8px;
+            cursor: pointer; font-size: 13px; font-weight: 500;
+            display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;
+        }
+        .action-btn:hover { background: rgba(255, 255, 255, 0.2); color: var(--text-primary); }
+        .view-btn { border-color: var(--info); color: var(--info); }
+        .view-btn:hover { background: rgba(59, 130, 246, 0.2); }
+        .delete-btn { border-color: var(--danger); color: var(--danger); }
+        .delete-btn:hover { background: rgba(239, 68, 68, 0.2); }
+        .loading-spinner, .empty-state { text-align: center; padding: 80px 32px; }
+        .empty-state { display: none; } .empty-state.visible { display: block; }
+        .spinner {
+            width: 24px; height: 24px; border: 3px solid var(--border);
+            border-radius: 50%; border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite; display: inline-block;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
+            display: none; align-items: center; justify-content: center; z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .modal-content {
+            background: var(--card-bg); border-radius: 12px; padding: 30px;
+            width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto;
+            border: 1px solid var(--border); box-shadow: 0 10px 30px var(--shadow);
+            animation: slideUpModal 0.3s ease;
+        }
+        @keyframes slideUpModal { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-title { font-size: 22px; font-weight: 600; color: var(--text-primary); }
+        .modal-close-btn {
+            background: none; border: none; font-size: 24px; color: var(--text-secondary);
+            cursor: pointer; padding: 5px; border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+        .modal-close-btn:hover { background: rgba(255, 255, 255, 0.1); color: var(--text-primary); }
+        .modal-body {
+            font-size: 16px; line-height: 1.6; color: var(--text-secondary);
+            white-space: pre-wrap; word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+<div id="particles-js"></div>
+<div class="page-wrapper">
+    <div class="notification-container">
+        <div class="notification-header">
+            <div class="notification-title"><i class="fas fa-bell"></i> Notifications</div>
+            <div class="header-actions">
+                <button class="btn clear-all-btn" onclick="clearAllNotifications()"><i class="fas fa-trash-alt"></i> Clear All</button>
+                <button class="btn back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</button>
+            </div>
+        </div>
+        <div class="notification-stats">
+            <div>Total: <span id="totalCount">0</span></div>
+            <div>Unread: <span id="unreadCountBadge">0</span></div>
+        </div>
+        <div class="notification-list" id="notificationList">
+            <div class="loading-spinner" id="loadingState"><div class="spinner"></div></div>
+            <div class="empty-state" id="emptyState">
+                <i class="fas fa-bell-slash"></i>
+                <h3 id="emptyStateTitle"></h3>
+                <p id="emptyStateMessage"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="notificationModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title" id="modalTitle"></h2>
+            <button class="modal-close-btn" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+<script src="../config.js"></script>
+<script>
+    // Global state management
+    const notificationStore = new Map();
+
+    let totalNotifications = 0;
+    let unreadNotifications = 0;
+    let isLoading = false;
+
+    // Debug mode - set to true for debugging
+    const DEBUG = false;
+    const debugLog = (...args) => DEBUG && console.log('[NotificationPanel]', ...args);
+
+    // ✨ FIX: Creates user-specific keys for localStorage to persist state across logins.
+    function getUserSpecificStorageKeys() {
+        const currentUserEmail = localStorage.getItem('userEmail');
+        if (!currentUserEmail) {
+            console.error("User email not found in localStorage. Notification state will not be persisted.");
+            return null;
+        }
+        return {
+            CLEARED: `clearedNotifications_v2_${currentUserEmail}`,
+            READ: `readNotifications_v2_${currentUserEmail}`
+        };
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        debugLog('Initializing notification panel');
+        initParticles(localStorage.getItem('theme') || 'dark');
+        loadNotifications();
+
+        setInterval(loadNotifications, 30000);
+
+        const modal = document.getElementById('notificationModal');
+        modal.addEventListener('click', (e) => {
+            if (e.target.id === 'notificationModal') closeModal();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+    });
+
+    // Enhanced storage helpers
+    const getStoredIds = (key) => {
+        try {
+            // Check if key is valid before proceeding
+            if (!key) return new Set();
+            const stored = localStorage.getItem(key);
+            return new Set(JSON.parse(stored || '[]'));
+        } catch (e) {
+            debugLog('Error reading from localStorage:', e);
+            return new Set();
+        }
+    };
+
+    const saveStoredIds = (key, idsSet) => {
+        try {
+            // Check if key is valid before proceeding
+            if (!key) return;
+            localStorage.setItem(key, JSON.stringify([...idsSet]));
+            debugLog(`Saved ${idsSet.size} IDs to ${key}`);
+        } catch (e) {
+            debugLog('Error saving to localStorage:', e);
+        }
+    };
+
+    const getNotificationId = (msg) => {
+        if (msg.id) return String(msg.id);
+        if (msg._id) return String(msg._id);
+        const content = `${msg.subject || 'no-subject'}-${msg.content || 'no-content'}-${msg.createdAt || Date.now()}`;
+        let hash = 0;
+        for (let i = 0; i < content.length; i++) {
+            const char = content.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash;
+        }
+        return `generated_${Math.abs(hash)}`;
+    };
+
+    function showState(state, title, message) {
+        const loadingEl = document.getElementById('loadingState');
+        const emptyEl = document.getElementById('emptyState');
+
+        if (loadingEl) loadingEl.style.display = state === 'loading' ? 'flex' : 'none';
+
+        if (emptyEl) {
+            if (state === 'empty') {
+                emptyEl.querySelector('#emptyStateTitle').textContent = title || '';
+                emptyEl.querySelector('#emptyStateMessage').textContent = message || '';
+                emptyEl.classList.add('visible');
+            } else {
+                emptyEl.classList.remove('visible');
+            }
+        }
+    }
+
+    function updateCounts() {
+        const visibleItems = document.querySelectorAll('.notification-item:not([style*="display: none"])');
+        const visibleUnreadItems = document.querySelectorAll('.notification-item.unread:not([style*="display: none"])');
+
+        totalNotifications = visibleItems.length;
+        unreadNotifications = visibleUnreadItems.length;
+
+        document.getElementById('totalCount').textContent = totalNotifications;
+        document.getElementById('unreadCountBadge').textContent = unreadNotifications;
+
+        // This count is generic, but still useful for other parts of the app.
+        localStorage.setItem('notificationCount', unreadNotifications);
+
+        window.dispatchEvent(new CustomEvent('notificationCountUpdated', {
+            detail: { total: totalNotifications, unread: unreadNotifications }
+        }));
+    }
+
+    function goBack() {
+        window.history.back();
+    }
+
+    function clearAllNotifications() {
+        const items = document.querySelectorAll('.notification-item');
+        if (items.length === 0) {
+            alert('No notifications to clear.');
+            return;
+        }
+
+        if (!confirm('Are you sure you want to permanently clear all notifications?')) return;
+
+        // ✨ FIX: Use user-specific storage keys
+        const storageKeys = getUserSpecificStorageKeys();
+        if (!storageKeys) {
+            alert("Could not clear notifications: user not logged in.");
+            return;
+        }
+        const clearedIds = getStoredIds(storageKeys.CLEARED);
+        debugLog('Clearing all notifications, current cleared count:', clearedIds.size);
+
+        items.forEach(item => {
+            const id = item.dataset.id;
+            if (id) {
+                clearedIds.add(id);
+            }
+            item.style.animation = 'fadeOut 0.3s ease';
+            setTimeout(() => item.remove(), 300);
+        });
+
+        saveStoredIds(storageKeys.CLEARED, clearedIds);
+
+        setTimeout(() => {
+            showState('empty', 'All Cleared!', 'Your notification list is empty.');
+            updateCounts();
+        }, 350);
+    }
+
+    function markAsRead(notificationId) {
+        debugLog('Marking as read:', notificationId);
+        const element = document.querySelector(`[data-id='${notificationId}']`);
+        if (!element || element.classList.contains('read')) {
+            return;
+        }
+
+        element.classList.remove('unread');
+        element.classList.add('read');
+
+        const badge = element.querySelector('.notification-badge');
+        if (badge) badge.remove();
+
+        // ✨ FIX: Use user-specific storage keys
+        const storageKeys = getUserSpecificStorageKeys();
+        if (!storageKeys) return; // Cannot save state if user is not identified
+
+        const readIds = getStoredIds(storageKeys.READ);
+        readIds.add(notificationId);
+        saveStoredIds(storageKeys.READ, readIds);
+
+        updateCounts();
+        debugLog('Successfully marked as read:', notificationId);
+    }
+
+    function softDeleteNotification(notificationId) {
+        debugLog('Soft deleting notification:', notificationId);
+        const element = document.querySelector(`[data-id='${notificationId}']`);
+        if (!element) return;
+
+        if (!confirm('Are you sure you want to permanently clear this notification?')) return;
+
+        element.style.animation = 'fadeOut 0.3s ease';
+
+        // ✨ FIX: Use user-specific storage keys
+        const storageKeys = getUserSpecificStorageKeys();
+        if (!storageKeys) return;
+
+        const clearedIds = getStoredIds(storageKeys.CLEARED);
+        clearedIds.add(notificationId);
+        saveStoredIds(storageKeys.CLEARED, clearedIds);
+        debugLog('Added to cleared list:', notificationId);
+
+        setTimeout(() => {
+            element.remove();
+            updateCounts();
+            if (document.querySelectorAll('.notification-item').length === 0) {
+                showState('empty', 'All Caught Up!', 'You have no new notifications.');
+            }
+        }, 300);
+    }
+
+    function viewNotification(notificationId) {
+        const msg = notificationStore.get(notificationId);
+        if (!msg) {
+            alert('Error: Notification content not found.');
+            return;
+        }
+
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modal = document.getElementById('notificationModal');
+
+        modalTitle.textContent = msg.subject || 'No Subject';
+        modalBody.textContent = msg.content || msg.message || msg.body || 'No content available';
+        modal.classList.add('active');
+
+        markAsRead(notificationId);
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('notificationModal');
+        modal.classList.remove('active');
+    }
+
+    function createNotificationElement(msg) {
+        const id = getNotificationId(msg);
+
+        // ✨ FIX: Use user-specific storage keys
+        const storageKeys = getUserSpecificStorageKeys();
+        const readIds = storageKeys ? getStoredIds(storageKeys.READ) : new Set();
+        const isRead = readIds.has(id);
+
+        notificationStore.set(id, msg);
+
+        const iconMap = {
+            task: 'fa-tasks', meeting: 'fa-calendar-alt', system: 'fa-cog',
+            alert: 'fa-exclamation-triangle', info: 'fa-info-circle',
+            message: 'fa-envelope', email: 'fa-envelope', sms: 'fa-comment-dots'
+        };
+        const type = msg.type?.toLowerCase() || 'message';
+        const iconClass = iconMap[type] || iconMap.message;
+
+        const item = document.createElement("div");
+        item.className = `notification-item ${isRead ? 'read' : 'unread'}`;
+        item.dataset.id = id;
+
+        const timeAgo = (dateStr) => {
+            const date = new Date(dateStr);
+            const diff = (new Date() - date) / 1000;
+            if (diff < 60) return 'Just now';
+            if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+            if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+            return `${Math.floor(diff / 86400)}d ago`;
+        };
+
+        const contentStr = String(msg.content || msg.message || msg.body || 'No content available');
+        const truncatedContent = contentStr.length > 120 ? contentStr.substring(0, 120) + '...' : contentStr;
+
+        item.innerHTML = `
+            <div class="notification-icon-wrapper">
+                <div class="notification-icon ${type}"><i class="fas ${iconClass}"></i></div>
+                ${!isRead ? '<div class="notification-badge"></div>' : ''}
+            </div>
+            <div class="notification-content" onclick="viewNotification('${id}')">
+                <div class="notification-subject">${String(msg.subject || msg.title || 'No Subject')}</div>
+                <div class="notification-body">${truncatedContent}</div>
+                <div class="notification-time">${timeAgo(msg.createdAt)}</div>
+                <div class="notification-actions">
+                    <button class="action-btn view-btn" onclick="event.stopPropagation(); viewNotification('${id}')">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                    <button class="action-btn delete-btn" onclick="event.stopPropagation(); softDeleteNotification('${id}')">
+                        <i class="fas fa-times"></i> Clear
+                    </button>
+                </div>
+            </div>
+        `;
+        return item;
+    }
+
+    async function loadNotifications() {
+        if (isLoading) return;
+        isLoading = true;
+
+        const listEl = document.getElementById("notificationList");
+        const currentUserEmail = localStorage.getItem('userEmail');
+        debugLog('Loading notifications for user:', currentUserEmail);
+
+        if (!currentUserEmail) {
+            showState('empty','Not Logged In','Please log in to see notifications.');
+            isLoading = false;
+            return;
+        }
+
+        try {
+            showState('loading');
+
+            if (typeof BROADCAST_API === 'undefined') {
+                throw new Error('BROADCAST_API is not defined. Please check config.js');
+            }
+
+            const response = await fetch(`${BROADCAST_API}/for-user?email=${encodeURIComponent(currentUserEmail)}`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+            const messages = await response.json();
+            if (!Array.isArray(messages)) throw new Error("Invalid API response format");
+
+            debugLog('Fetched', messages.length, 'messages from API');
+
+            // ✨ FIX: Use user-specific storage keys
+            const storageKeys = getUserSpecificStorageKeys();
+            const clearedIds = storageKeys ? getStoredIds(storageKeys.CLEARED) : new Set();
+            debugLog('Found', clearedIds.size, 'cleared notification IDs for user');
+
+            const visibleMessages = messages.filter(msg => !clearedIds.has(getNotificationId(msg)));
+
+            listEl.innerHTML = `
+                <div class="loading-spinner" id="loadingState" style="display: none;"><div class="spinner"></div></div>
+                <div class="empty-state" id="emptyState"><i class="fas fa-bell-slash"></i><h3 id="emptyStateTitle"></h3><p id="emptyStateMessage"></p></div>
+            `;
+
+            if (visibleMessages.length > 0) {
+                visibleMessages.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                visibleMessages.forEach(msg => {
+                    const element = createNotificationElement(msg);
+                    listEl.appendChild(element);
+                });
+                showState('content');
+            } else {
+                showState('empty','All Caught Up!','You have no new notifications.');
+            }
+        } catch(err) {
+            console.error("Failed to fetch broadcast messages:", err);
+            showState('empty','Connection Error','Could not load notifications.');
+        } finally {
+            isLoading = false;
+            updateCounts();
+        }
+    }
+
+    function initParticles(theme) {
+        if (typeof particlesJS !== 'undefined') {
+            const particleColor = "#ffffff";
+            // ✨ MODIFIED: Particle settings updated for bold, white, and opaque appearance
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": { "value": 50 },
+                    "color": { "value": particleColor },
+                    "shape": { "type": "circle" },
+                    "opacity": {
+                        "value": 0.9, // Increased opacity
+                        "random": true
+                    },
+                    "size": {
+                        "value": 5, // Increased size for boldness
+                        "random": true
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": particleColor,
+                        "opacity": 0.7, // Increased line opacity
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 2,
+                        "direction": "none",
+                        "random": true,
+                        "straight": false,
+                        "out_mode": "out"
+                    }
+                },
+                "interactivity": {
+                    "events": {
+                        "onhover": { "enable": true, "mode": "repulse" },
+                        "onclick": { "enable": true, "mode": "push" }
+                    }
+                },
+                "retina_detect": true
+            });
+        }
+    }
+
+    const style = document.createElement('style');
+    style.textContent = `@keyframes fadeOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-20px); } }`;
+    document.head.appendChild(style);
+</script>
+</body>
+</html>
