@@ -1411,6 +1411,8 @@
      * Gathers a wide range of data from all relevant APIs to provide context for the AI.
      * This function is resilient, meaning if one API fails, the others can still succeed.
      */
+    // In dashboard.html, replace the old gatherAppContext function with this one
+
     async function gatherAppContext() {
         console.log("Gathering comprehensive app context for AI...");
 
@@ -1421,20 +1423,18 @@
             fetch(`${CONTACT_API}`),
             fetch(`${BROADCAST_API}/all`),
             fetch(`${REPORT_API}`),
-            // Your own controller names show these stats endpoints already exist!
             fetch(`${TASK_API}/statistics`),
-            fetch(`${BROADCAST_API}/pending/count`),
-            fetch(`${USER_API}/signups/monthly`)
+            fetch(`${USER_API}/count/recent`),
+            fetch(`${CONTACT_API}/count`)
         ]);
 
         // Helper function to safely parse JSON from settled promises
         const getJson = async (result) => {
             if (result.status === 'fulfilled' && result.value.ok) {
-                const text = await result.value.text();
                 try {
-                    return JSON.parse(text);
+                    return await result.value.json();
                 } catch (e) {
-                    return text; // Return as text if not valid JSON (for simple counts)
+                    return null; // Return null if JSON parsing fails
                 }
             }
             return null;
@@ -1447,27 +1447,37 @@
             broadcasts,
             taskReports,
             taskStats,
-            pendingBroadcasts,
-            userGrowth
+            recentSignups,
+            totalLeads
         ] = await Promise.all(results.map(getJson));
 
         // Sanitize and structure the data for the AI prompt
         const contextData = {
             summaryMetrics: {
-                totalUsers: users?.length ?? document.getElementById('userCount').textContent,
-                totalContacts: contacts?.length ?? document.getElementById('leadCount').textContent,
+                totalUsers: users?.length ?? 0,
+                activeUsers: users?.filter(u => u.status === 'active').length ?? 0,
+                inactiveUsers: users?.filter(u => u.status === 'inactive').length ?? 0,
+                totalContactsOrLeads: totalLeads?.count ?? contacts?.length ?? 0,
                 totalTasks: tasks?.length ?? 0,
                 totalBroadcasts: broadcasts?.length ?? 0,
-                pendingBroadcasts: pendingBroadcasts ?? 0,
                 totalTaskReports: taskReports?.length ?? 0,
-                taskStatusCounts: taskStats, // Your API provides e.g., { "To Do": 10, "In Progress": 5, "Completed": 25 }
-                monthlyUserGrowth: userGrowth // Your API provides { months: [...], counts: [...] }
+                newSignupsLast24h: recentSignups?.count ?? 0,
+                taskStatusCounts: taskStats, // e.g., { "pending": 10, "completed": 25 }
             },
-            users: users?.map(u => ({ username: u.username, email: u.email, status: u.status, createdAt: u.createdAt })) || [],
-            tasks: tasks?.map(t => ({ title: t.title, status: t.status, assignedTo: t.assignedTo, priority: t.priority, dueDate: t.dueDate })) || [],
-            contacts: contacts?.map(c => ({ name: c.name, email: c.email, status: c.status, createdAt: c.createdAt })) || [],
-            broadcasts: broadcasts?.map(b => ({ subject: b.subject, status: b.status, createdAt: b.createdAt })) || [],
-            taskReports: taskReports?.map(r => ({ title: r.title, userName: r.userName, createdAt: r.createdAt })) || [],
+            // Provide detailed data for specific queries
+            allUsers: users?.map(u => ({
+                username: u.username,
+                email: u.email,
+                status: u.status,
+                memberSince: u.createdAt
+            })) || [],
+            allTasks: tasks?.map(t => ({
+                title: t.title,
+                status: t.status,
+                assignedTo: t.assignedTo,
+                priority: t.priority,
+                dueDate: t.dueDate
+            })) || [],
             currentDate: new Date().toISOString()
         };
 

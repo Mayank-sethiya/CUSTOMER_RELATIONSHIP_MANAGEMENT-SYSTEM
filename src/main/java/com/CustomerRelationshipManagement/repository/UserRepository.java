@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
@@ -40,4 +41,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
             month_series.month ASC
     """, nativeQuery = true)
     List<MonthlySignup> findMonthlySignups();
+
+
+
 }

@@ -10,8 +10,8 @@ const BROADCAST_API   = `${BASE_BACKEND_URL}/api/broadcast`;  // BroadcastContro
 const CONTACT_API     = `${BASE_BACKEND_URL}/api/support`;    // ContactController
 const TASK_API        = `${BASE_BACKEND_URL}/api/tasks`;      // TaskController
 const REPORT_API      = `${BASE_BACKEND_URL}/api/reports`;    // TaskReportController
-const AI_REPORT_API  = `${BASE_BACKEND_URL}/api/generate-report`;
-
+const AI_REPORT_API   = `${BASE_BACKEND_URL}/api/reports/generate`;
+ // 🚨 Fix: Point to the base URL of your AiReportController
 
 // 🔁 File Upload API (used in tasks)
 const FILE_UPLOAD_API = `${TASK_API}/upload`;  // ✅ YES, add this line
@@ -19,5 +19,5 @@ const FILE_UPLOAD_API = `${TASK_API}/upload`;  // ✅ YES, add this line
 // (Optional) Export for JS modules if needed
 // export {
 //   USER_API, ADMIN_API, BROADCAST_API, CONTACT_API,
-//   TASK_API, REPORT_API, FILE_UPLOAD_API
+//   TASK_API, REPORT_API, FILE_UPLOAD_API, AI_REPORT_API
 // };
