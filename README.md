@@ -1,20 +1,20 @@
-Customer Relationship Management (CRM) System
+🚀 Customer Relationship Management (CRM) System
 A comprehensive, full-stack CRM web application built with Java and Spring Boot. This system is designed to help businesses manage customer interactions, track leads, assign tasks, and streamline communication, all from a centralized dashboard.
 
 ✨ Key Features
-Admin & User Roles: Secure login and distinct dashboards for administrators and standard users.
+👤 Admin & User Roles: Secure login and distinct dashboards for administrators and standard users.
 
-Contact Management: Create, view, update, and delete customer contacts and leads.
+📇 Contact Management: Create, view, update, and delete customer contacts and leads.
 
-Task Management: Admins can create and assign tasks to users, who can then view and report on them.
+📋 Task Management: Admins can create and assign tasks to users, who can then view and report on them.
 
-Reporting System: View task completion reports and user activity metrics.
+📊 Reporting System: View task completion reports and user activity metrics.
 
-AI-Powered Insights: An integrated module for generating AI-based reports (as suggested by AiReportController).
+🤖 AI-Powered Insights: An integrated module for generating AI-based reports.
 
-Broadcast Messaging: Send notifications and messages to all users or specific groups.
+📢 Broadcast Messaging: Send notifications and messages to all users or specific groups.
 
-User Management: Administrators can manage all user accounts within the system.
+👥 User Management: Administrators can manage all user accounts within the system.
 
 🛠️ Tech Stack
 Backend: Java, Spring Boot
@@ -37,14 +37,14 @@ Java Development Kit (JDK) 17 or later
 Apache Maven (or you can use the included Maven Wrapper)
 
 🚀 Getting Started
-Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
+Follow these instructions to get the project up and running on your local machine.
 
 1. Clone the Repository
 git clone [https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git](https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git)
 cd YOUR_REPOSITORY
 
 2. Configure the Application
-Open the src/main/resources/application.properties file. You will need to configure your database connection details here. For example, to use a PostgreSQL database, you would add:
+Open the src/main/resources/application.properties file to configure your database connection. For example:
 
 # Database Configuration
 spring.datasource.url=jdbc:postgresql://localhost:5432/your_crm_db
@@ -58,8 +58,6 @@ server.port=8080
 3. Build the Project
 This project includes the Maven Wrapper, so you don't need a system-wide Maven installation.
 
-To build the project and package it into an executable .jar file, run:
-
 On macOS/Linux:
 
 ./mvnw clean package
@@ -68,48 +66,46 @@ On Windows:
 
 ./mvnw.cmd clean package
 
-This command will compile the code, run tests, and create a .jar file in the target/ directory.
-
 4. Run the Application
-Once the build is complete, you can run the application with the following command:
+Once the build is complete, run the application with:
 
 java -jar target/CustomerRelationshipManagement-0.0.1-SNAPSHOT.jar
 
-(Note: The version number in the .jar file might be different based on your pom.xml.)
+(Note: The version number in the .jar file might differ based on your pom.xml.)
 
-The application should now be running on http://localhost:8080.
+The application should now be running at http://localhost:8080.
 
 📂 Project Structure
-The project follows a standard layered architecture:
+Here is a detailed look at the project's file structure:
 
-.github/workflows: Contains the CI/CD pipeline configuration for GitHub Actions.
+├── .github/workflows/       # GitHub Actions CI/CD pipeline
+│   └── static.yml
+├── .mvn/wrapper/            # Maven Wrapper configuration
+├── src/
+│   ├── main/
+│   │   ├── java/com/CustomerRelationshipManagement/
+│   │   │   ├── CustomerRelationshipManagementApplication.java  # Main application entry point
+│   │   │   ├── config/          # Spring Security configurations
+│   │   │   ├── controller/      # Handles API endpoints and web requests
+│   │   │   ├── entity/          # JPA entities (database models)
+│   │   │   ├── repository/      # Data access layer (JPA repositories)
+│   │   │   └── service/         # Business logic layer
+│   │   └── resources/
+│   │       ├── application.properties  # Main application configuration
+│   │       └── static/                 # All frontend assets (HTML, JS, CSS)
+│   └── test/                    # Unit and integration tests
+├── .gitignore               # Specifies files for Git to ignore
+├── mvnw & mvnw.cmd          # Maven Wrapper executables
+└── pom.xml                  # Maven project configuration (dependencies, build)
 
-src/main/java: Main Java source code.
+🤖 Automation (CI/CD)
+This project uses GitHub Actions for continuous integration. The workflow, defined in .github/workflows/static.yml, automatically triggers on every push to the main branch to:
 
-.../controller: Handles incoming HTTP requests.
+Set up the Java environment.
 
-.../service: Contains the core business logic.
+Build the application using Maven.
 
-.../entity: Defines the database models (JPA entities).
-
-.../repository: Data access layer for database operations.
-
-.../config: Security and application-level configurations.
-
-src/main/resources:
-
-application.properties: Configuration file for Spring Boot.
-
-static/: All frontend assets (HTML, JS, CSS, images).
-
-自动化 (Automation) - CI/CD
-This project uses GitHub Actions for continuous integration. The workflow is defined in .github/workflows/static.yml. On every push to the main branch, it automatically:
-
-Sets up the Java environment.
-
-Builds the application using Maven.
-
-Runs all tests to ensure code integrity.
+Run all tests to ensure code integrity.
 
 🤝 Contributing
 Contributions are welcome! If you'd like to contribute, please fork the repository and create a pull request.
