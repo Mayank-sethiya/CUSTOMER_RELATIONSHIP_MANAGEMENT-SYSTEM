@@ -1,179 +1,128 @@
-##WORKFLOW UNDERSTANDING##
+Customer Relationship Management (CRM) System
+A comprehensive, full-stack CRM web application built with Java and Spring Boot. This system is designed to help businesses manage customer interactions, track leads, assign tasks, and streamline communication, all from a centralized dashboard.
 
+✨ Key Features
+Admin & User Roles: Secure login and distinct dashboards for administrators and standard users.
 
-├── .gitattributes
-├── .github
-    └── workflows
-    │   └── static.yml
-├── .gitignore
-├── .mvn
-    └── wrapper
-    │   └── maven-wrapper.properties
-├── mvnw
-├── mvnw.cmd
-├── pom.xml
-└── src
-    ├── main
-        ├── java
-        │   └── com
-        │   │   └── CustomerRelationshipManagement
-        │   │       ├── CustomerRelationshipManagementApplication.java
-        │   │       ├── config
-        │   │           └── SecurityConfig.java
-        │   │       ├── controller
-        │   │           ├── AdminController.java
-        │   │           ├── AiReportController.java
-        │   │           ├── BroadcastController.java
-        │   │           ├── ContactController.java
-        │   │           ├── TaskController.java
-        │   │           ├── TaskReportController.java
-        │   │           └── UserController.java
-        │   │       ├── entity
-        │   │           ├── AdminEntity.java
-        │   │           ├── BroadcastEntity.java
-        │   │           ├── ContactEntity.java
-        │   │           ├── TaskEntity.java
-        │   │           ├── TaskReportEntity.java
-        │   │           └── UserEntity.java
-        │   │       ├── repository
-        │   │           ├── AdminRepository.java
-        │   │           ├── BroadcastRepository.java
-        │   │           ├── ContactRepository.java
-        │   │           ├── FileStorageService.java
-        │   │           ├── MonthlySignup.java
-        │   │           ├── TaskReportRepository.java
-        │   │           ├── TaskRepository.java
-        │   │           └── UserRepository.java
-        │   │       └── service
-        │   │           ├── AdminService.java
-        │   │           ├── BroadcastService.java
-        │   │           ├── ContactService.java
-        │   │           ├── TaskService.java
-        │   │           └── UserService.java
-        └── resources
-        │   ├── application.properties
-        │   └── static
-        │       ├── admin
-        │           ├── Leads.html
-        │           ├── Task-Assign.html
-        │           ├── View-Reports.html
-        │           ├── admin_login.html
-        │           ├── animations
-        │           │   ├── user-welcome-animation.json
-        │           │   └── welcome-animation.json
-        │           ├── broadcast-messaging.html
-        │           ├── contact-management.html
-        │           ├── dashboard.html
-        │           ├── js
-        │           │   ├── lottie-player.js
-        │           │   └── particles.min.js
-        │           └── user-management.html
-        │       ├── config.js
-        │       ├── index.html
-        │       └── user
-        │           ├── notification.html
-        │           ├── register.html
-        │           ├── user-controlpanel.html
-        │           ├── user-login.html
-        │           └── view-tasks.html
-    └── test
-        └── java
-            └── com
-                └── CustomerRelationshipManagement
-                    └── CustomerRelationshipManagementApplicationTests.java
+Contact Management: Create, view, update, and delete customer contacts and leads.
 
+Task Management: Admins can create and assign tasks to users, who can then view and report on them.
 
-/.gitattributes:
---------------------------------------------------------------------------------
-1 | /mvnw text eol=lf
-2 | *.cmd text eol=crlf
-3 | 
+Reporting System: View task completion reports and user activity metrics.
 
+AI-Powered Insights: An integrated module for generating AI-based reports (as suggested by AiReportController).
 
---------------------------------------------------------------------------------
-/.github/workflows/static.yml:
---------------------------------------------------------------------------------
- 1 | # Simple workflow for deploying static content to GitHub Pages
- 2 | name: Deploy static content to Pages
- 3 | 
- 4 | on:
- 5 |   # Runs on pushes targeting the default branch
- 6 |   push:
- 7 |     branches: ["master"]
- 8 | 
- 9 |   # Allows you to run this workflow manually from the Actions tab
-10 |   workflow_dispatch:
-11 | 
-12 | # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-13 | permissions:
-14 |   contents: read
-15 |   pages: write
-16 |   id-token: write
-17 | 
-18 | # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-19 | # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-20 | concurrency:
-21 |   group: "pages"
-22 |   cancel-in-progress: false
-23 | 
-24 | jobs:
-25 |   # Single deploy job since we're just deploying
-26 |   deploy:
-27 |     environment:
-28 |       name: github-pages
-29 |       url: ${{ steps.deployment.outputs.page_url }}
-30 |     runs-on: ubuntu-latest
-31 |     steps:
-32 |       - name: Checkout
-33 |         uses: actions/checkout@v4
-34 |       - name: Setup Pages
-35 |         uses: actions/configure-pages@v5
-36 |       - name: Upload artifact
-37 |         uses: actions/upload-pages-artifact@v3
-38 |         with:
-39 |           # Upload entire repository
-40 |           path: '.'
-41 |       - name: Deploy to GitHub Pages
-42 |         id: deployment
-43 |         uses: actions/deploy-pages@v4
-44 | 
+Broadcast Messaging: Send notifications and messages to all users or specific groups.
 
+User Management: Administrators can manage all user accounts within the system.
 
---------------------------------------------------------------------------------
-/.gitignore:
---------------------------------------------------------------------------------
- 1 | HELP.md
- 2 | target/
- 3 | .mvn/wrapper/maven-wrapper.jar
- 4 | !**/src/main/**/target/
- 5 | !**/src/test/**/target/
- 6 | 
- 7 | ### STS ###
- 8 | .apt_generated
- 9 | .classpath
-10 | .factorypath
-11 | .project
-12 | .settings
-13 | .springBeans
-14 | .sts4-cache
-15 | 
-16 | ### IntelliJ IDEA ###
-17 | .idea
-18 | *.iws
-19 | *.iml
-20 | *.ipr
-21 | 
-22 | ### NetBeans ###
-23 | /nbproject/private/
-24 | /nbbuild/
-25 | /dist/
-26 | /nbdist/
-27 | /.nb-gradle/
-28 | build/
-29 | !**/src/main/**/build/
-30 | !**/src/test/**/build/
-31 | 
-32 | ### VS Code ###
-33 | .vscode/
-34 | 
+🛠️ Tech Stack
+Backend: Java, Spring Boot
 
+Data: Spring Data JPA (Hibernate)
+
+Security: Spring Security
+
+Frontend: HTML, JavaScript
+
+Build Tool: Apache Maven
+
+CI/CD: GitHub Actions
+
+📋 Prerequisites
+Before you begin, ensure you have the following installed on your local machine:
+
+Java Development Kit (JDK) 17 or later
+
+Apache Maven (or you can use the included Maven Wrapper)
+
+🚀 Getting Started
+Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
+
+1. Clone the Repository
+git clone [https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git](https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git)
+cd YOUR_REPOSITORY
+
+2. Configure the Application
+Open the src/main/resources/application.properties file. You will need to configure your database connection details here. For example, to use a PostgreSQL database, you would add:
+
+# Database Configuration
+spring.datasource.url=jdbc:postgresql://localhost:5432/your_crm_db
+spring.datasource.username=your_db_user
+spring.datasource.password=your_db_password
+spring.jpa.hibernate.ddl-auto=update
+
+# Server Port
+server.port=8080
+
+3. Build the Project
+This project includes the Maven Wrapper, so you don't need a system-wide Maven installation.
+
+To build the project and package it into an executable .jar file, run:
+
+On macOS/Linux:
+
+./mvnw clean package
+
+On Windows:
+
+./mvnw.cmd clean package
+
+This command will compile the code, run tests, and create a .jar file in the target/ directory.
+
+4. Run the Application
+Once the build is complete, you can run the application with the following command:
+
+java -jar target/CustomerRelationshipManagement-0.0.1-SNAPSHOT.jar
+
+(Note: The version number in the .jar file might be different based on your pom.xml.)
+
+The application should now be running on http://localhost:8080.
+
+📂 Project Structure
+The project follows a standard layered architecture:
+
+.github/workflows: Contains the CI/CD pipeline configuration for GitHub Actions.
+
+src/main/java: Main Java source code.
+
+.../controller: Handles incoming HTTP requests.
+
+.../service: Contains the core business logic.
+
+.../entity: Defines the database models (JPA entities).
+
+.../repository: Data access layer for database operations.
+
+.../config: Security and application-level configurations.
+
+src/main/resources:
+
+application.properties: Configuration file for Spring Boot.
+
+static/: All frontend assets (HTML, JS, CSS, images).
+
+自动化 (Automation) - CI/CD
+This project uses GitHub Actions for continuous integration. The workflow is defined in .github/workflows/static.yml. On every push to the main branch, it automatically:
+
+Sets up the Java environment.
+
+Builds the application using Maven.
+
+Runs all tests to ensure code integrity.
+
+🤝 Contributing
+Contributions are welcome! If you'd like to contribute, please fork the repository and create a pull request.
+
+Fork the project.
+
+Create your Feature Branch (git checkout -b feature/AmazingFeature).
+
+Commit your changes (git commit -m 'Add some AmazingFeature').
+
+Push to the branch (git push origin feature/AmazingFeature).
+
+Open a Pull Request.
+
+📄 License
+This project is licensed under the MIT License. See the LICENSE file for details.
