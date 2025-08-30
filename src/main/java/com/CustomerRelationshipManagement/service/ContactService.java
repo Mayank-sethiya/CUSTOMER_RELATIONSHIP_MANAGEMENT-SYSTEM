@@ -4,6 +4,8 @@ import com.CustomerRelationshipManagement.entity.ContactEntity;
 import com.CustomerRelationshipManagement.repository.ContactRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime; // 1. Make sure this import is present
 import java.util.List;
 
 @Service
@@ -11,8 +13,6 @@ public class ContactService {
 
     @Autowired
     private ContactRepository repository;
-
-
 
     public List<ContactEntity> getAllContacts() {
         return repository.findAll();
@@ -28,8 +28,13 @@ public class ContactService {
     }
 
     public ContactEntity saveLead(ContactEntity lead) {
+        // 2. Add this line to set the current timestamp on the new lead
+        lead.setCreatedAt(LocalDateTime.now());
+
+        // 3. Now save the lead
         return repository.save(lead);
     }
+
     public ContactEntity qualifyLeadByEmail(String email) {
         ContactEntity lead = repository.findByEmail(email);
         if (lead != null) {
@@ -38,9 +43,8 @@ public class ContactService {
         }
         return null;
     }
+
     public long getTotalLeadsCount() {
         return repository.count();
     }
-
-
 }

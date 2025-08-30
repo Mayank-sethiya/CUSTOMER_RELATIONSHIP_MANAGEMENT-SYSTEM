@@ -1,16 +1,16 @@
 package com.CustomerRelationshipManagement.service;
 
 import com.CustomerRelationshipManagement.entity.UserEntity;
-import com.CustomerRelationshipManagement.repository.MonthlySignup; // NEW IMPORT
+import com.CustomerRelationshipManagement.repository.MonthlySignup;
 import com.CustomerRelationshipManagement.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList; // NEW IMPORT
-import java.util.HashMap;   // NEW IMPORT
-import java.util.List;      // NEW IMPORT
-import java.util.Map;       // NEW IMPORT
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -19,10 +19,15 @@ public class UserService {
     @Autowired
     private UserRepository userRepo;
 
+    // 1. INJECT THE CONTACT SERVICE SO YOU CAN USE IT
+    @Autowired
+    private ContactService contactService;
+
     public UserEntity registerUser(UserEntity user) {
         String email = user.getEmail();
         String username = user.getUsername();
 
+        // (All your existing validation checks remain here...)
         if (!email.endsWith("@gmail.com")) {
             throw new RuntimeException("Only @gmail.com emails are allowed");
         }
@@ -48,7 +53,20 @@ public class UserService {
         user.setCreatedAt(LocalDateTime.now());
         user.setStatus("inactive");
 
-        return userRepo.save(user);
+        // First, save the new user
+        UserEntity savedUser = userRepo.save(user);
+
+        // 2. CALL THE NEW METHOD FROM CONTACT SERVICE
+        // This will automatically qualify the lead if one exists with this email.
+        try {
+            contactService.qualifyLeadByEmail(savedUser.getEmail());
+            System.out.println("Checked for lead conversion for email: " + savedUser.getEmail());
+        } catch (Exception e) {
+            // Log an error, but don't stop the registration process
+            System.err.println("Error during lead qualification check: " + e.getMessage());
+        }
+
+        return savedUser;
     }
 
     public UserEntity loginUser(String username, String password) {
@@ -88,25 +106,16 @@ public class UserService {
         return userRepo.count();
     }
 
-    /**
-     * THIS IS THE CORRECTED METHOD.
-     * It now calls the efficient native query from your UserRepository.
-     */
     public Map<String, Object> getMonthlySignupData() {
-        // 1. Call the NEW, efficient repository method
         List<MonthlySignup> results = userRepo.findMonthlySignups();
-
-        // 2. Prepare lists for the response
         List<String> months = new ArrayList<>();
         List<Integer> counts = new ArrayList<>();
 
-        // 3. Loop through the clean results from the database
         for (MonthlySignup signup : results) {
             months.add(signup.getMonth());
             counts.add(signup.getCount());
         }
 
-        // 4. Create the final map object to send as JSON
         Map<String, Object> response = new HashMap<>();
         response.put("months", months);
         response.put("counts", counts);

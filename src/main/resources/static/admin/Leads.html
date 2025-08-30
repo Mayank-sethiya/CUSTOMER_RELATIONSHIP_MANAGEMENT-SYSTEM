@@ -230,6 +230,10 @@
         .control-label { font-size: 14px; font-weight: 600; color: var(--text-primary); }
         .control-input { padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; background: transparent; color: var(--text-primary); font-size: 14px; }
         .control-input:focus { outline: none; border-color: var(--primary); }
+        .control-input option {
+            background: var(--sidebar-bg);
+            color: var(--text-primary);
+        }
 
         .btn { padding: 12px 24px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; }
@@ -516,15 +520,14 @@
                 ...lead,
                 id: lead.id || index + 1,
                 status: lead.status || getRandomStatus(),
-                date: lead.createdAt || new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+                createdAt: lead.createdAt || new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString()
             }));
         } catch (error) {
             console.error('Error loading leads, falling back to demo data:', error);
             allLeads = []; // Start with empty if API fails
         }
         updateStats();
-        filteredLeads = [...allLeads];
-        displayLeads();
+        filterAndDisplayLeads();
         hideLoading();
     }
 
@@ -533,32 +536,53 @@
     function updateStats() {
         const total = allLeads.length;
         const today = new Date().toISOString().split('T')[0];
-        const newToday = allLeads.filter(lead => (lead.date || '').startsWith(today)).length;
+        const newToday = allLeads.filter(lead => (lead.createdAt || '').startsWith(today)).length;
         const contacted = allLeads.filter(lead => lead.status === 'contacted').length;
         const qualified = allLeads.filter(lead => lead.status === 'qualified').length;
+
         document.getElementById('totalLeads').textContent = total;
         document.getElementById('newLeads').textContent = newToday;
         document.getElementById('contactedLeads').textContent = contacted;
         document.getElementById('conversionRate').textContent = (total > 0 ? Math.round((qualified / total) * 100) : 0) + '%';
     }
 
+    // ✅ FIX: Simplified and corrected the sorting logic per your request.
     function filterAndDisplayLeads() {
         const search = document.getElementById('searchInput').value.toLowerCase();
         const status = document.getElementById('statusFilter').value;
         const sort = document.getElementById('sortFilter').value;
-        filteredLeads = allLeads.filter(lead =>
-            (!status || lead.status === status) &&
-            (!search || (lead.name && lead.name.toLowerCase().includes(search)) || (lead.email && lead.email.toLowerCase().includes(search)) || (lead.company && lead.company.toLowerCase().includes(search)))
-        );
-        filteredLeads.sort((a, b) => {
-            if (sort === 'newest') return new Date(b.date) - new Date(a.date);
-            if (sort === 'oldest') return new Date(a.date) - new Date(b.date);
-            if (sort === 'name') return (a.name || '').localeCompare(b.name || '');
-            return 0;
+
+        // Step 1: Filter by search and status first.
+        let tempLeads = allLeads.filter(lead => {
+            const leadStatus = lead.status ? lead.status.trim().toLowerCase() : '';
+            const statusMatch = !status || leadStatus === status;
+
+            const searchMatch = !search ||
+                (lead.name && lead.name.toLowerCase().includes(search)) ||
+                (lead.email && lead.email.toLowerCase().includes(search)) ||
+                (lead.company && lead.company.toLowerCase().includes(search));
+
+            return statusMatch && searchMatch;
         });
+
+        // Step 2: Apply the selected sorting method to the filtered results.
+        if (sort === 'oldest') {
+            // Sorts by date ascending (oldest first)
+            tempLeads.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        } else if (sort === 'name') {
+            // Sorts alphabetically by name
+            tempLeads.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+        } else {
+            // Default sort is 'newest'
+            // Sorts by date descending (newest first)
+            tempLeads.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        }
+
+        filteredLeads = tempLeads;
         currentPage = 1;
         displayLeads();
     }
+
 
     function displayLeads() {
         const tbody = document.getElementById('leadsTableBody');
@@ -583,8 +607,8 @@
                 <td><strong>${lead.name || 'N/A'}</strong></td>
                 <td>${lead.email || 'N/A'}</td>
                 <td>${lead.phone || '-'}</td>
-                <td><span class="status-badge status-${lead.status}">${lead.status}</span></td>
-                <td>${new Date(lead.date).toLocaleDateString()}</td>
+                <td><span class="status-badge status-${(lead.status || '').trim().toLowerCase()}">${(lead.status || 'N/A')}</span></td>
+                <td>${new Date(lead.createdAt).toLocaleDateString()}</td>
                 <td>
                     <div class="action-buttons">
                         <button class="btn btn-sm btn-secondary" onclick="viewLead(${lead.id})"><i class="fas fa-eye"></i></button>
@@ -616,16 +640,23 @@
         const lead = allLeads.find(l => l.id === leadId);
         if (!lead) return;
 
-        document.getElementById('modalTitle').textContent = `Details for ${lead.name}`;
+        let descriptionHtml = '';
+        const descriptionText = lead.problemDescription || lead.description;
+        if (descriptionText) {
+            descriptionHtml = `<p><strong>Description:</strong> ${descriptionText}</p>`;
+        }
+
+        document.getElementById('modalTitle').textContent = `Details for ${lead.name || 'Lead'}`;
         document.getElementById('modalContent').innerHTML = `
             <p><strong>Name:</strong> ${lead.name || 'N/A'}</p>
             <p><strong>Email:</strong> ${lead.email || 'N/A'}</p>
             <p><strong>Phone:</strong> ${lead.phone || 'N/A'}</p>
             <p><strong>Company:</strong> ${lead.company || 'N/A'}</p>
-            <p><strong>Description:</strong> ${lead.description || 'N/A'}</p>
-            <p><strong>Status:</strong> <span class="status-badge status-${lead.status}">${lead.status}</span></p>
-            <p><strong>Date:</strong> ${new Date(lead.date).toLocaleDateString()}</p>
+            ${descriptionHtml}
+            <p><strong>Status:</strong> <span class="status-badge status-${(lead.status || '').trim().toLowerCase()}">${lead.status}</span></p>
+            <p><strong>Date Added:</strong> ${new Date(lead.createdAt).toLocaleString()}</p>
         `;
+
         document.getElementById('leadDetailModal').classList.add('active');
     }
 
@@ -658,8 +689,51 @@
     }
 
     function refreshLeads() { loadLeads(); }
-    function exportLeads() { /* Your existing export logic */ alert('Exporting leads...'); }
-    function showLoading() { document.getElementById('loadingState').style.display = 'block'; }
+
+    function exportLeads() {
+        if (filteredLeads.length === 0) {
+            alert('No leads to export.');
+            return;
+        }
+
+        const headers = ['Name', 'Email', 'Phone', 'Company', 'Status', 'Date Added'];
+
+        const escapeCsvCell = (cell) => {
+            if (cell === null || cell === undefined) return '';
+            const str = String(cell);
+            if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                return `"${str.replace(/"/g, '""')}"`;
+            }
+            return str;
+        };
+
+        const csvRows = [
+            headers.join(','),
+            ...filteredLeads.map(lead => [
+                escapeCsvCell(lead.name),
+                escapeCsvCell(lead.email),
+                escapeCsvCell(lead.phone),
+                escapeCsvCell(lead.company),
+                escapeCsvCell(lead.status),
+                escapeCsvCell(new Date(lead.createdAt).toLocaleString())
+            ].join(','))
+        ];
+
+        const csvContent = csvRows.join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        const today = new Date().toISOString().split('T')[0];
+        link.setAttribute('download', `leads-export-${today}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function showLoading() { document.getElementById('loadingState').style.display = 'block'; document.getElementById('tableContainer').style.display = 'none'; }
     function hideLoading() { document.getElementById('loadingState').style.display = 'none'; }
 </script>
 

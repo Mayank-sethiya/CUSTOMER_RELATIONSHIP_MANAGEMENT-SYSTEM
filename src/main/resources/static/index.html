@@ -1635,9 +1635,51 @@
             window.location.href = "admin/admin_login.html";
         }, 300);
     }
-    function handleContactForm(event) {
+    async function handleContactForm(event) {
         event.preventDefault();
-        showContactForm(); /* Form submission logic here */
+        const form = event.target;
+        const submitButton = form.querySelector('button[type="submit"]');
+        const originalButtonContent = submitButton.innerHTML;
+
+        // Disable button and show a loading state
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+        const formData = {
+            name: document.getElementById("name").value,
+            email: document.getElementById("email").value,
+            phone: document.getElementById("phone").value,
+            company: document.getElementById("company").value,
+            problemDescription: document.getElementById("problemDescription").value,
+            status: 'New'
+        };
+
+        try {
+            // ✅ Changed to use the CONTACT_API variable from config.js
+            const response = await fetch(CONTACT_API, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                alert('Success! Your message has been sent. We will get back to you shortly.');
+                hideContactForm();
+                form.reset();
+            } else {
+                const errorData = await response.json();
+                alert(`Error: ${errorData.message || 'Something went wrong. Please try again.'}`);
+            }
+        } catch (error) {
+            console.error('Form submission failed:', error);
+            alert('There was a network error. Please check your connection and try again.');
+        } finally {
+            // Re-enable the button and restore its original content
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalButtonContent;
+        }
     }
     function playVideo() {
         document.querySelector(".play-button").style.display = "none";
