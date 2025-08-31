@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Broadcast Messaging - TrackForce CRM</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #764ba2 0%, #4a0361 100%);
+            color: #f1f5f9;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Live Background Container */
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, rgba(74, 3, 97, 0.9) 0%, rgba(12, 13, 163, 0.62) 100%);
+        }
+
+        /* Define CSS Variables for theming */
+        :root {
+            --primary: #8a2be2;
+            --primary-light: #9932cc;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border: rgba(99, 102, 241, 0.3);
+            --shadow: rgba(0, 0, 0, 0.4);
+            --sidebar-bg: rgba(28, 36, 55, 0.95);
+            --card-bg: rgba(28, 36, 55, 0.9);
+            --sidebar-text: rgba(226, 232, 240, 0.91);
+            --sidebar-text-secondary: #a0aec0;
+            --hover-bg: rgba(138, 43, 226, 0.15);
+            --button-hover-shadow: rgba(138, 43, 226, 0.5);
+            --header-bg-start: rgba(28, 36, 55, 0.95);
+            --header-bg-end: rgba(15, 20, 30, 0.95);
+            --spacing-large: 30px;
+            --spacing-medium: 20px;
+            --spacing-small: 10px;
+            --sidebar-width-expanded: 280px;
+            --sidebar-width-collapsed: 80px;
+            --sidebar-padding-expanded: 30px;
+        }
+
+        body[data-theme="light"] {
+            --primary: #6a0dad;
+            --primary-light: #8a2be2;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --border: rgb(160, 174, 192);
+            --shadow: rgba(0, 0, 0, 0.15);
+            --sidebar-bg: rgba(255, 255, 255, 0.98);
+            --card-bg: rgb(247, 250, 252);
+            --sidebar-text: #2d3748;
+            --sidebar-text-secondary: #718096;
+            --hover-bg: rgba(106, 13, 173, 0.1);
+            --button-hover-shadow: rgba(106, 13, 173, 0.3);
+            --header-bg-start: rgba(255, 255, 255, 0.95);
+            --header-bg-end: rgba(240, 244, 247, 0.95);
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--sidebar-bg);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 4px;
+            border: 2px solid var(--sidebar-bg);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(90deg, var(--header-bg-start), var(--header-bg-end));
+            backdrop-filter: blur(8px);
+            padding: var(--spacing-small) var(--spacing-large);
+            min-height: 70px;
+            box-shadow: 0 4px 25px var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-medium);
+        }
+
+        .back-button, .theme-toggle, .sidebar-toggle {
+            background: rgba(138, 43, 226, 0.2);
+            color: var(--primary);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-medium);
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width-expanded);
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(8px);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 3px 0 25px var(--shadow);
+            z-index: 900;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+            border-right: 1px solid var(--border);
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-width-collapsed);
+        }
+        .sidebar.collapsed .sidebar-title,
+        .sidebar.collapsed .sidebar-subtitle,
+        .sidebar.collapsed .nav-section-title {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-item {
+            justify-content: center;
+            padding: 15px 0;
+        }
+        .sidebar.collapsed .nav-item span {
+            display: none;
+        }
+        .sidebar.collapsed .nav-item i {
+            margin: 0;
+        }
+
+        .sidebar-header {
+            height: 80px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: var(--spacing-medium);
+        }
+
+        .sidebar-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--sidebar-text);
+            margin-bottom: 8px;
+        }
+
+        .sidebar-subtitle {
+            font-size: 15px;
+            color: var(--sidebar-text-secondary);
+        }
+
+        .nav-section {
+            margin-bottom: var(--spacing-medium);
+        }
+        .nav-section + .nav-section {
+            border-top: 1px solid var(--border);
+            padding-top: var(--spacing-medium);
+        }
+        .nav-section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--sidebar-text-secondary);
+            padding: 0 var(--spacing-large);
+            margin-bottom: var(--spacing-small);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px var(--spacing-large);
+            color: var(--sidebar-text);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 10px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: var(--hover-bg);
+            color: var(--primary);
+            transform: translateX(8px);
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            width: 28px;
+        }
+
+        /* Main Container Styles */
+        .main-container {
+            margin-left: var(--sidebar-width-expanded);
+            padding: calc(70px + var(--spacing-large)) var(--spacing-large) var(--spacing-large);
+            transition: margin-left 0.3s ease;
+            overflow-y: auto;
+            height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-container.shifted {
+            margin-left: var(--sidebar-width-collapsed);
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: white; /* Always white */
+            margin-bottom: var(--spacing-large);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .page-title i {
+            color: var(--primary);
+            font-size: 28px;
+        }
+
+        /* Shining Button Effect */
+        .back-button::before, .theme-toggle::before, .sidebar-toggle::before, .logout-btn::before, .action-btn::before, .recipient-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: none;
+        }
+        .back-button:hover::before, .theme-toggle:hover::before, .sidebar-toggle:hover::before, .logout-btn:hover::before, .action-btn:hover::before, .recipient-btn:hover::before {
+            animation: shine 0.8s forwards;
+        }
+        @keyframes shine { to { left: 100%; } }
+
+        .back-button:hover, .theme-toggle:hover, .sidebar-toggle:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px var(--button-hover-shadow);
+        }
+
+        /* --- BROADCAST PAGE SPECIFIC STYLES --- */
+        .card {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: var(--spacing-large);
+            box-shadow: 0 6px 25px var(--shadow);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(5px);
+            margin-bottom: var(--spacing-large);
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-title i {
+            color: var(--primary);
+        }
+
+        .content-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--spacing-large);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: transparent;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+        }
+        body[data-theme="light"] .form-input,
+        body[data-theme="light"] .form-select {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.1);
+        }
+        .form-select option {
+            background-color: var(--card-bg);
+        }
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .recipient-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .recipient-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        .recipient-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px var(--button-hover-shadow);
+        }
+        .recipient-btn.active {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+        }
+
+        .action-buttons-section {
+            display: none;
+            margin-top: 20px;
+        }
+        .action-buttons-section.show {
+            display: block;
+        }
+        .action-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-list-container {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .user-item:hover {
+            background: var(--hover-bg);
+        }
+        .user-item.selected {
+            background: var(--hover-bg);
+            box-shadow: inset 0 0 0 2px var(--primary);
+        }
+        .user-avatar {
+            width: 35px; height: 35px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 600; font-size: 14px;
+            flex-shrink: 0;
+        }
+        .user-info { flex: 1; overflow: hidden; }
+        .user-name { font-weight: 600; color: var(--text-primary); font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .user-email { color: var(--text-secondary); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .user-checkbox { width: 18px; height: 18px; accent-color: var(--primary); }
+
+        .search-select-row {
+            display: flex; gap: 15px; align-items: center; margin-bottom: 15px;
+        }
+        .search-select-row input[type="text"] { flex: 1; }
+        .select-all-wrapper {
+            display: flex; align-items: center; gap: 8px;
+            white-space: nowrap; color: var(--text-primary); font-size: 14px;
+        }
+        .user-count-badge {
+            background: var(--primary); color: white; padding: 4px 8px; border-radius: 12px;
+            font-size: 12px; font-weight: 500; margin-left: 10px;
+        }
+
+        .preview-content {
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid var(--primary);
+            min-height: 100px;
+        }
+        .preview-subject { font-weight: 600; color: var(--text-primary); margin-bottom: 10px; }
+        .preview-message { color: var(--text-secondary); line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; }
+
+        .stat-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 0; border-bottom: 1px solid var(--border);
+        }
+        .stat-item:last-child { border-bottom: none; }
+        .stat-label { color: var(--text-secondary); font-size: 14px; }
+        .stat-value { color: var(--text-primary); font-weight: 600; }
+
+        .history-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        .history-item:hover { background: var(--hover-bg); }
+        .history-subject { font-weight: 600; color: var(--text-primary); margin-bottom: 5px; }
+        .history-recipients, .history-date { font-size: 12px; color: var(--text-secondary); }
+
+        .history-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .status-badge.sent {
+            background-color: #22c55e; /* Green */
+        }
+
+        .status-badge.pending {
+            background-color: #f97316; /* Orange */
+        }
+
+        .history-recipient-count {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+        .history-recipient-count i {
+            color: var(--primary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .content-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: calc(70px + var(--spacing-medium)) var(--spacing-medium) var(--spacing-medium);
+            }
+            .page-title {
+                font-size: 28px;
+            }
+            .recipient-buttons, .action-buttons-section {
+                grid-template-columns: 1fr;
+            }
+            .history-item {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .history-item-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: var(--spacing-small) var(--spacing-medium);
+            }
+            .logout-btn span { display: none; }
+            .logout-btn { padding: 0; width: 45px; height: 45px; border-radius: 50%; }
+            .search-select-row { flex-direction: column; align-items: stretch; }
+            .history-item { align-items: flex-start; }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+<div id="particles-js"></div>
+
+<div class="header">
+    <div class="header-left">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+        <button class="back-button" onclick="navigateToPage('dashboard.html')">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="sidebar-title">TrackForce CRM <br>
+            <span class="sidebar-subtitle">Admin Panel</span>
+        </div>
+    </div>
+    <div class="header-right">
+        <button class="theme-toggle" onclick="toggleTheme()">
+            <i class="fas fa-adjust"></i>
+        </button>
+        <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+        </button>
+    </div>
+</div>
+
+<div class="sidebar collapsed">
+    <div class="sidebar-header"></div>
+    <nav class="sidebar-nav">
+        <div class="nav-section">
+            <div class="nav-section-title">Main</div>
+            <button class="nav-item" onclick="navigateToPage('dashboard.html')">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </button>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">Management</div>
+            <button class="nav-item" onclick="navigateToPage('user-management.html')">
+                <i class="fas fa-users"></i>
+                <span>User Management</span>
+            </button>
+            <button class="nav-item" onclick="navigateToPage('contact-management.html')">
+                <i class="fas fa-address-book"></i>
+                <span>Contact Management</span>
+            </button>
+            <button class="nav-item active" onclick="navigateToPage('broadcast-messaging.html')">
+                <i class="fas fa-bullhorn"></i>
+                <span>Broadcast Messaging</span>
+            </button>
+            <button class="nav-item" onclick="navigateToPage('Task-Assign.html')">
+                <i class="fas fa-tasks"></i>
+                <span>Task Assignment</span>
+            </button>
+            <button class="nav-item" onclick="navigateToPage('View-Reports.html')">
+                <i class="fas fa-file-alt"></i>
+                <span>View Reports</span>
+            </button>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">Support</div>
+            <button class="nav-item" onclick="navigateToPage('Leads.html')">
+                <i class="fas fa-envelope"></i>
+                <span>Leads</span>
+            </button>
+        </div>
+    </nav>
+</div>
+
+<div class="main-container shifted">
+    <h1 class="page-title">
+        <i class="fas fa-bullhorn"></i>
+        Broadcast Messaging
+    </h1>
+
+    <div class="card recipient-selection">
+        <h2 class="card-title">
+            <i class="fas fa-users"></i>
+            1. Select Recipients
+        </h2>
+        <div class="recipient-buttons">
+            <button class="recipient-btn" id="allUsersBtn" onclick="selectRecipientType('all-users')">
+                <i class="fas fa-globe"></i>
+                All Users
+            </button>
+            <button class="recipient-btn" id="particularUsersBtn" onclick="selectRecipientType('particular-users')">
+                <i class="fas fa-user-check"></i>
+                Choose Specific Users
+            </button>
+        </div>
+        <div id="allUsersActions" class="action-buttons-section">
+            <button class="action-btn" onclick="showBroadcastMessage()">
+                <i class="fas fa-arrow-down"></i>
+                Proceed to Compose Message
+            </button>
+        </div>
+        <div id="particularUsersActions" class="action-buttons-section">
+            <button class="action-btn" onclick="showParticularMessage()">
+                <i class="fas fa-arrow-down"></i>
+                Proceed to Compose Message
+            </button>
+        </div>
+    </div>
+
+    <div class="card user-list-section" id="userListSection" style="display: none;">
+        <h2 class="card-title">
+            <i class="fas fa-user-check"></i>
+            Select Users From List
+        </h2>
+        <div class="search-select-row">
+            <input type="text" id="userSearch" class="form-input" placeholder="🔍 Search users..." oninput="filterUsers()">
+            <div class="select-all-wrapper">
+                <input type="checkbox" id="selectAllUsers" onchange="toggleSelectAll(this)">
+                <label for="selectAllUsers">Select All Visible</label>
+            </div>
+        </div>
+        <div class="form-label" style="display: flex; align-items: center;">
+            <span>Available Users</span>
+            <span id="selectedCount" class="user-count-badge" style="display: none;">0 selected</span>
+        </div>
+        <div id="userCheckboxList" class="user-list-container"></div>
+    </div>
+
+    <div class="content-layout">
+        <div class="left-column">
+            <div class="card message-composer" id="messageComposer" style="display: none;">
+                <h2 class="card-title">
+                    <i class="fas fa-edit"></i>
+                    2. Compose Message
+                </h2>
+                <form id="messageForm">
+                    <div class="form-group">
+                        <label class="form-label" for="messageType">Message Type</label>
+                        <select class="form-select" id="messageType" required>
+                            <option value="">Select Type</option>
+                            <option value="email">Email</option>
+                            <option value="sms">SMS</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="messageSubject">Subject</label>
+                        <input type="text" class="form-input" id="messageSubject" placeholder="Enter message subject..." required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="messageContent">Message</label>
+                        <textarea class="form-input form-textarea" id="messageContent" placeholder="Enter your message here..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="scheduledTime">Schedule (Optional)</label>
+                        <input type="datetime-local" class="form-input" id="scheduledTime">
+                    </div>
+                    <div class="form-group" style="display: flex; gap: 15px;">
+                        <button type="submit" class="recipient-btn" style="flex: 1;"><i class="fas fa-paper-plane"></i> Send Message</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="right-column">
+            <div class="card">
+                <h3 class="card-title"><i class="fas fa-eye"></i> Preview</h3>
+                <div class="preview-content" id="previewContent">
+                    <div class="preview-subject" id="previewSubject">Subject will appear here...</div>
+                    <div class="preview-message" id="previewMessage">Message content will appear here...</div>
+                </div>
+            </div>
+            <div class="card">
+                <h3 class="card-title"><i class="fas fa-chart-bar"></i> Stats</h3>
+                <div style="position: relative; height:180px; margin-bottom: 20px;">
+                    <canvas id="broadcastChart"></canvas>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Total Recipients</span>
+                    <span class="stat-value" id="totalRecipients">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Messages Sent</span>
+                    <span class="stat-value" id="messageCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Pending Messages</span>
+                    <span class="stat-value" id="pendingCount">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card message-history" id="messageHistory">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <h2 class="card-title" style="margin: 0;">
+                <i class="fas fa-history"></i> Recent Broadcasts
+            </h2>
+            <button onclick="deleteAllMessages()" class="recipient-btn" style="background: #dc2626; padding: 10px 20px; font-size: 14px;">
+                <i class="fas fa-trash-alt"></i> Delete All
+            </button>
+        </div>
+        <div id="historyList" style="margin-top: 20px;"></div>
+    </div>
+</div>
+
+<script src="js/particles.min.js"></script>
+<script src="../config.js"></script>
+<script>
+    let broadcastChartInstance = null;
+    let allUsers = [];
+    let selectedUsers = new Set();
+    let currentRecipientType = '';
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.body.setAttribute('data-theme', savedTheme);
+        }
+        initParticles(savedTheme || 'dark');
+
+        const savedSidebarState = localStorage.getItem('sidebarCollapsed');
+        const sidebar = document.querySelector('.sidebar');
+        const mainContainer = document.querySelector('.main-container');
+        if (savedSidebarState === 'true') {
+            sidebar.classList.add('collapsed');
+            mainContainer.classList.add('shifted');
+        } else {
+            sidebar.classList.add('collapsed');
+            mainContainer.classList.add('shifted');
+            localStorage.setItem('sidebarCollapsed', 'true');
+        }
+
+        initializeBroadcastChart();
+        initializeFormHandlers();
+        updateRecipientCount();
+        loadRecentBroadcasts();
+        updateStatsAndChart();
+        setInterval(updateRecipientCount, 10000);
+        setInterval(loadRecentBroadcasts, 30000); // Reduce frequency
+        setInterval(updateStatsAndChart, 30000); // Reduce frequency
+    });
+
+    function initParticles(theme) {
+        if (typeof particlesJS === 'undefined') return;
+        if (window.pJSDom && window.pJSDom[0]) {
+            window.pJSDom[0].pJS.fn.vendors.destroypJS();
+            window.pJSDom = [];
+        }
+        const particleColor = "#ffffff";
+        particlesJS('particles-js', { particles: { number: { value: 80 }, color: { value: particleColor }, shape: { type: "circle" }, opacity: { value: 0.3, random: true }, size: { value: 3, random: true }, line_linked: { enable: true, distance: 150, color: particleColor, opacity: 0.2, width: 1 }, move: { enable: true, speed: 3, direction: "none", out_mode: "out" } }, interactivity: { events: { onhover: { enable: true, mode: "grab" }, onclick: { enable: true, mode: "push" } } }, });
+    }
+
+    function toggleTheme() {
+        const body = document.body;
+        const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        body.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        initParticles(newTheme);
+
+        if (broadcastChartInstance) {
+            setTimeout(() => {
+                const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim();
+                broadcastChartInstance.options.plugins.legend.labels.color = textColor;
+                broadcastChartInstance.update();
+            }, 100);
+        }
+    }
+
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        const mainContainer = document.querySelector('.main-container');
+        sidebar.classList.toggle('collapsed');
+        mainContainer.classList.toggle('shifted');
+        localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+    }
+
+    function logout() {
+        localStorage.clear();
+        window.location.href = '../index.html';
+    }
+
+    function navigateToPage(pageName) {
+        window.location.href = pageName;
+    }
+
+    function initializeBroadcastChart() {
+        const ctx = document.getElementById('broadcastChart').getContext('2d');
+        const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim();
+        broadcastChartInstance = new Chart(ctx, { type: 'doughnut', data: { labels: ['Sent', 'Pending'], datasets: [{ label: 'Broadcasts', data: [0, 0], backgroundColor: ['rgba(34, 197, 94, 0.8)', 'rgba(249, 115, 22, 0.8)'], borderColor: ['rgba(34, 197, 94, 1)', 'rgba(249, 115, 22, 1)'], borderWidth: 1, hoverOffset: 4 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '60%', plugins: { legend: { position: 'top', labels: { color: textColor, padding: 20 } } } } });
+    }
+
+    async function updateStatsAndChart() {
+        try {
+            if (typeof BROADCAST_API === 'undefined') return;
+            const [sentRes, pendingRes] = await Promise.all([
+                fetch(`${BROADCAST_API}/count`),
+                fetch(`${BROADCAST_API}/pending/count`)
+            ]);
+            const sentCount = await sentRes.text();
+            const pendingCount = await pendingRes.text();
+
+            document.getElementById("messageCount").textContent = sentCount;
+            document.getElementById("pendingCount").textContent = pendingCount;
+
+            if (broadcastChartInstance) {
+                broadcastChartInstance.data.datasets[0].data = [sentCount, pendingCount];
+                broadcastChartInstance.update('none');
+            }
+        } catch (error) {
+            console.error("Failed to update stats:", error);
+        }
+    }
+
+    function selectRecipientType(type) {
+        // ✨ FIX: Clear previous selections when switching modes for cleaner state management
+        if (currentRecipientType !== type) {
+            selectedUsers.clear();
+        }
+        currentRecipientType = type;
+
+        document.getElementById('allUsersBtn').classList.toggle('active', type === 'all-users');
+        document.getElementById('particularUsersBtn').classList.toggle('active', type === 'particular-users');
+        document.getElementById('allUsersActions').classList.toggle('show', type === 'all-users');
+        document.getElementById('particularUsersActions').classList.toggle('show', type === 'particular-users');
+        document.getElementById('userListSection').style.display = type === 'particular-users' ? 'block' : 'none';
+        document.getElementById('messageComposer').style.display = 'none';
+
+        if ((type === 'all-users' && allUsers.length === 0) || type === 'particular-users') {
+            loadBroadcastUsers();
+        }
+        updateRecipientCount();
+    }
+
+    function showBroadcastMessage() { document.getElementById('messageComposer').style.display = 'block'; }
+    function showParticularMessage() {
+        if (selectedUsers.size === 0) {
+            alert('Please select at least one user first.');
+            return;
+        }
+        document.getElementById('messageComposer').style.display = 'block';
+    }
+
+    function initializeFormHandlers() {
+        document.getElementById('messageSubject').addEventListener('input', updatePreview);
+        document.getElementById('messageContent').addEventListener('input', updatePreview);
+        document.getElementById('messageForm').addEventListener('submit', (e) => { e.preventDefault(); sendMessage(); });
+    }
+
+    function updatePreview() {
+        document.getElementById('previewSubject').textContent = document.getElementById('messageSubject').value || 'Subject will appear here...';
+        document.getElementById('previewMessage').textContent = document.getElementById('messageContent').value || 'Message content will appear here...';
+    }
+
+    async function updateRecipientCount() {
+        const totalDisplay = document.getElementById('totalRecipients');
+        if (currentRecipientType === 'all-users') {
+            try {
+                if (typeof USER_API === 'undefined') throw new Error("USER_API not configured.");
+                const res = await fetch(`${USER_API}/count`);
+                const count = await res.json();
+                totalDisplay.textContent = count;
+            } catch {
+                totalDisplay.textContent = "N/A";
+            }
+        } else if (currentRecipientType === 'particular-users') {
+            totalDisplay.textContent = selectedUsers.size;
+        } else {
+            totalDisplay.textContent = "0";
+        }
+    }
+
+    async function loadBroadcastUsers() {
+        const container = document.getElementById("userCheckboxList");
+        container.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--text-secondary);"><i class="fas fa-spinner fa-spin"></i> Loading users...</div>`;
+
+        try {
+            if (typeof USER_API === 'undefined') throw new Error('USER_API is not defined in config.js');
+
+            const res = await fetch(USER_API);
+            if (!res.ok) throw new Error(`Failed to fetch users. Status: ${res.status}`);
+
+            allUsers = await res.json();
+            if (!Array.isArray(allUsers)) throw new Error("Invalid data format received from server.");
+
+            displayUsers(allUsers);
+        } catch (error) {
+            console.error("Failed to load users:", error);
+            container.innerHTML = `<div style="color: #ef4444; text-align: center; padding: 20px;"><i class="fas fa-exclamation-triangle"></i> Could not load users.<br>Please check API connection.</div>`;
+        }
+    }
+
+    function displayUsers(users) {
+        const container = document.getElementById("userCheckboxList");
+        container.innerHTML = "";
+
+        if (users.length === 0) {
+            container.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--text-secondary);"><i class="fas fa-user-slash"></i> No users found.</div>`;
+            return;
+        }
+
+        users.forEach((user) => {
+            const userItem = document.createElement("div");
+            userItem.className = "user-item";
+            const isSelected = selectedUsers.has(user.email);
+            const initial = user.username ? user.username.charAt(0).toUpperCase() : '?';
+            userItem.innerHTML = `<div class="user-avatar">${initial}</div><div class="user-info"><div class="user-name">${user.username || 'N/A'}</div><div class="user-email">${user.email || 'N/A'}</div></div><input type="checkbox" class="user-checkbox" value="${user.email}" ${isSelected ? 'checked' : ''}>`;
+            if (isSelected) userItem.classList.add('selected');
+
+            const checkbox = userItem.querySelector('.user-checkbox');
+            userItem.addEventListener('click', () => {
+                checkbox.checked = !checkbox.checked;
+                handleUserCheckboxChange(checkbox, user.email);
+            });
+            checkbox.addEventListener('change', (e) => {
+                e.stopPropagation();
+                handleUserCheckboxChange(checkbox, user.email);
+            });
+            container.appendChild(userItem);
+        });
+        updateSelectAllCheckbox();
+    }
+
+    function handleUserCheckboxChange(checkbox, email) {
+        checkbox.closest('.user-item').classList.toggle('selected', checkbox.checked);
+        checkbox.checked ? selectedUsers.add(email) : selectedUsers.delete(email);
+        updateSelectedCount();
+        updateRecipientCount();
+        updateSelectAllCheckbox();
+    }
+
+    function updateSelectedCount() {
+        const badge = document.getElementById('selectedCount');
+        const count = selectedUsers.size;
+        badge.textContent = `${count} selected`;
+        badge.style.display = count > 0 ? 'inline-block' : 'none';
+    }
+
+    function updateSelectAllCheckbox() {
+        const selectAllCheckbox = document.getElementById('selectAllUsers');
+        const visibleCheckboxes = [...document.querySelectorAll('.user-checkbox:not([style*="display: none"])')];
+        if (visibleCheckboxes.length === 0) {
+            selectAllCheckbox.checked = false;
+            selectAllCheckbox.indeterminate = false;
+            return;
+        }
+        const checkedCount = visibleCheckboxes.filter(cb => cb.checked).length;
+        selectAllCheckbox.checked = checkedCount === visibleCheckboxes.length;
+        selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < visibleCheckboxes.length;
+    }
+
+    function toggleSelectAll(checkbox) {
+        const visibleCheckboxes = [...document.querySelectorAll('.user-checkbox')].filter(cb => cb.closest('.user-item').style.display !== 'none');
+        visibleCheckboxes.forEach(cb => {
+            if (cb.checked !== checkbox.checked) {
+                cb.checked = checkbox.checked;
+                handleUserCheckboxChange(cb, cb.value);
+            }
+        });
+    }
+
+    function filterUsers() {
+        const query = document.getElementById("userSearch").value.toLowerCase();
+        document.querySelectorAll(".user-item").forEach(item => {
+            const name = item.querySelector('.user-name').textContent.toLowerCase();
+            const email = item.querySelector('.user-email').textContent.toLowerCase();
+            item.style.display = (name.includes(query) || email.includes(query)) ? 'flex' : 'none';
+        });
+        updateSelectAllCheckbox();
+    }
+
+    async function sendMessage() {
+        const messageData = await getMessageData();
+        if (!validateMessage(messageData)) return;
+
+        try {
+            if (typeof BROADCAST_API === 'undefined') throw new Error("BROADCAST_API is not configured.");
+            const response = await fetch(`${BROADCAST_API}/send`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(messageData) });
+            if (!response.ok) throw new Error(`Server responded with status: ${response.status}`);
+
+            alert("Message sent successfully!");
+            resetForm();
+            loadRecentBroadcasts();
+        } catch (error) {
+            console.error("Error sending message:", error);
+            alert(`Error: Could not send message. ${error.message}`);
+        }
+    }
+
+    async function getMessageData() {
+        let recipients = [];
+        if (currentRecipientType === "all-users") {
+            if (allUsers.length === 0) await loadBroadcastUsers();
+            recipients = allUsers.map(user => user.email);
+        } else if (currentRecipientType === "particular-users") {
+            recipients = Array.from(selectedUsers);
+        }
+        return {
+            type: document.getElementById('messageType').value,
+            recipients: recipients,
+            subject: document.getElementById('messageSubject').value,
+            content: document.getElementById('messageContent').value,
+            scheduledTime: document.getElementById('scheduledTime').value || null
+        };
+    }
+
+    function validateMessage(data) {
+        if (!data.type) { alert('Message Type is required.'); return false; }
+        if (!data.subject.trim()) { alert('Subject is required.'); return false; }
+        if (!data.content.trim()) { alert('Message is required.'); return false; }
+        if (!currentRecipientType) { alert('Please select a recipient type.'); return false; }
+        if (data.recipients.length === 0) { alert('Please select at least one recipient.'); return false; }
+        return true;
+    }
+
+    function resetForm() {
+        document.getElementById('messageForm').reset();
+        selectedUsers.clear();
+        currentRecipientType = '';
+        document.querySelectorAll('.recipient-btn.active, .action-buttons-section.show').forEach(el => el.classList.remove('active', 'show'));
+        document.querySelectorAll('.user-list-section, .message-composer').forEach(el => el.style.display = 'none');
+        updateSelectedCount();
+        updateRecipientCount();
+        updatePreview();
+        displayUsers(allUsers);
+    }
+
+    function loadRecentBroadcasts() {
+        if (typeof BROADCAST_API === 'undefined') return;
+        fetch(`${BROADCAST_API}/all`).then(res => res.json()).then(data => {
+            const container = document.getElementById("historyList");
+            container.innerHTML = "";
+            data.forEach(msg => {
+                const recipientsText = Array.isArray(msg.recipients) ? (msg.recipients.length > 5 ? `${msg.recipients.slice(0,5).join(', ')}...` : msg.recipients.join(', ')) : msg.recipients;
+                const recipientCount = Array.isArray(msg.recipients) ? msg.recipients.length : (msg.recipients ? 1 : 0);
+                const status = msg.status || (new Date(msg.scheduledTime) > new Date() ? 'Pending' : 'Sent');
+                const statusClass = status.toLowerCase();
+                container.innerHTML += `
+                    <div class="history-item">
+                        <div style="flex-grow: 1;">
+                            <div class="history-subject">${msg.subject}</div>
+                            <div class="history-recipients">To: ${recipientsText}</div>
+                            <div class="history-date">${new Date(msg.createdAt).toLocaleString()}</div>
+                        </div>
+                        <div class="history-item-actions">
+                            <span class="status-badge ${statusClass}">${status}</span>
+                            <div class="history-recipient-count"><i class="fas fa-users"></i><span>${recipientCount}</span></div>
+                            <button onclick="deleteMessage(${msg.id})" style="background:none;border:none;color:var(--text-secondary);cursor:pointer;"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>`;
+            });
+        });
+    }
+
+    function deleteMessage(id) {
+        if (!confirm("Delete this message?")) return;
+        fetch(`${BROADCAST_API}/delete/${id}`, { method: "DELETE" }).then(() => { alert("Message deleted"); loadRecentBroadcasts(); });
+    }
+
+    function deleteAllMessages() {
+        if (!confirm("Are you sure you want to delete all broadcast messages?")) return;
+        fetch(`${BROADCAST_API}/deleteAll`, { method: "DELETE" }).then(res => { if(res.ok) { alert("All messages deleted."); loadRecentBroadcasts(); } else { alert("Failed to delete messages."); }});
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - TrackForce CRM</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+    <style>
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #764ba2 0%, #4a0361 100%);
+            color: #f1f5f9;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, rgba(74, 3, 97, 0.9) 0%, rgba(12, 13, 163, 0.62) 100%);
+        }
+
+        :root {
+            --primary: #8a2be2;
+            --primary-light: #9932cc;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border: rgba(99, 102, 241, 0.3);
+            --shadow: rgba(0, 0, 0, 0.4);
+            --sidebar-bg: rgba(28, 36, 55, 0.95);
+            --card-bg: rgba(28, 36, 55, 0.9);
+            --sidebar-text: #e2e8f0;
+            --sidebar-text-secondary: #a0aec0;
+            --hover-bg: rgba(138, 43, 226, 0.15);
+            --button-hover-shadow: rgba(138, 43, 226, 0.5);
+            --header-bg-start: rgba(28, 36, 55, 0.95);
+            --header-bg-end: rgba(15, 20, 30, 0.95);
+            --spacing-large: 30px;
+            --spacing-medium: 20px;
+            --spacing-small: 10px;
+            --sidebar-width-expanded: 260px;
+            --sidebar-width-collapsed: 80px;
+            --sidebar-padding-expanded: 25px;
+        }
+
+        body[data-theme="light"] {
+            --primary: #6a0dad;
+            --primary-light: #8a2be2;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --border: rgba(226, 232, 240, 1);
+            --shadow: rgba(0, 0, 0, 0.15);
+            --sidebar-bg: rgba(255, 255, 255, 0.98);
+            --card-bg: rgba(255, 255, 255, 0.93);
+            --sidebar-text: #2d3748;
+            --sidebar-text-secondary: #718096;
+            --hover-bg: rgba(106, 13, 173, 0.1);
+            --button-hover-shadow: rgba(106, 13, 173, 0.3);
+            --header-bg-start: rgba(255, 255, 255, 0.95);
+            --header-bg-end: rgba(240, 244, 247, 0.95);
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--sidebar-bg); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 4px; border: 2px solid var(--sidebar-bg); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* Header Styles */
+        .header { background: linear-gradient(90deg, var(--header-bg-start), var(--header-bg-end)); backdrop-filter: blur(8px); padding: var(--spacing-small) var(--spacing-large); min-height: 65px; box-shadow: 0 4px 25px var(--shadow); display: flex; justify-content: space-between; align-items: center; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; border-bottom: 1px solid var(--border); }
+        .header-left, .header-right { display: flex; align-items: center; gap: var(--spacing-medium); }
+        .header-icon, .theme-toggle, .sidebar-toggle, .back-button { background: rgba(138, 43, 226, 0.2); color: var(--primary); border: none; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; font-size: 20px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); position: relative; overflow: hidden; }
+        .header-icon:hover, .theme-toggle:hover, .sidebar-toggle:hover, .back-button:hover { background: var(--primary); color: white; transform: translateY(-3px); box-shadow: 0 6px 20px var(--button-hover-shadow); }
+        .notification-badge { position: absolute; top: 2px; right: 2px; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: 600; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } }
+        .logout-btn { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none; padding: 10px 22px; border-radius: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); position: relative; overflow: hidden; }
+        .logout-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(220, 38, 38, 0.5); }
+        .header-icon::before, .theme-toggle::before, .sidebar-toggle::before, .back-button::before, .logout-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent); transition: none; }
+        .header-icon:hover::before, .theme-toggle:hover::before, .sidebar-toggle:hover::before, .back-button:hover::before, .logout-btn:hover::before { animation: shine 0.8s forwards; }
+        @keyframes shine { to { left: 100%; } }
+
+        /* Sidebar Styles */
+        .sidebar { width: var(--sidebar-width-expanded); background: var(--sidebar-bg); backdrop-filter: blur(8px); height: 100vh; position: fixed; top: 0; left: 0; padding-top: 80px; box-shadow: 3px 0 25px var(--shadow); z-index: 900; transition: width 0.3s ease; overflow-y: auto; border-right: 1px solid var(--border); }
+        .sidebar.collapsed { width: var(--sidebar-width-collapsed); }
+        .sidebar.collapsed .sidebar-header { padding: 20px 10px; }
+        .sidebar.collapsed .sidebar-title, .sidebar.collapsed .sidebar-subtitle, .sidebar.collapsed .nav-section-title { display: none; }
+        .sidebar.collapsed .nav-item { justify-content: center; padding: 15px 0; }
+        .sidebar.collapsed .nav-item span { display: none; }
+        .sidebar.collapsed .nav-item i { margin: 0; }
+        .sidebar-header { padding: var(--sidebar-padding-expanded); text-align: center; border-bottom: 1px solid var(--border); margin-bottom: var(--spacing-medium); }
+        .sidebar-title { font-size: 22px; font-weight: 700; color: var(--sidebar-text); margin-bottom: 6px; }
+        .sidebar-subtitle { font-size: 14px; color: var(--sidebar-text-secondary); }
+        .sidebar-nav { padding: 0; }
+        .nav-section { margin-bottom: var(--spacing-medium); }
+        .nav-section-title { font-size: 13px; font-weight: 600; color: var(--sidebar-text-secondary); padding: 0 var(--sidebar-padding-expanded); margin-bottom: var(--spacing-small); text-transform: uppercase; letter-spacing: 0.8px; }
+        .nav-item { display: flex; align-items: center; gap: 15px; padding: 14px var(--sidebar-padding-expanded); color: var(--sidebar-text); text-decoration: none; transition: all 0.3s ease; border-radius: 10px; border: none; background: transparent; cursor: pointer; width: 100%; text-align: left; font-size: 15px; font-weight: 500; }
+        .nav-item:hover, .nav-item.active { background: var(--hover-bg); color: var(--primary); transform: translateX(8px); }
+        .nav-item i { font-size: 20px; width: 28px; }
+
+        /* Main Container */
+        .main-container { margin-left: var(--sidebar-width-expanded); padding: calc(65px + var(--spacing-large)) var(--spacing-large) var(--spacing-large); transition: margin-left 0.3s ease; overflow-y: auto; height: 100vh; }
+        .main-container.shifted { margin-left: var(--sidebar-width-collapsed); }
+        .dashboard-card { background: var(--card-bg); border-radius: 18px; padding: var(--spacing-large); box-shadow: 0 6px 25px var(--shadow); border: 1px solid var(--border); transition: all 0.3s ease; backdrop-filter: blur(5px); margin-bottom: var(--spacing-large); }
+        .dashboard-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px var(--shadow); }
+
+        /* MODIFIED/ADDED CSS FOR ADMIN-STYLE WELCOME LAYOUT */
+        .welcome-content {
+            width: 100%;
+            margin-bottom: var(--spacing-medium);
+        }
+        .animation-and-stats-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            gap: var(--spacing-medium);
+            width: 100%;
+        }
+        .welcome-animation {
+            width: 250px;
+            height: 250px;
+            flex-shrink: 0;
+        }
+        .welcome-title { font-size: 32px; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; }
+        .welcome-heading { font-size: 48px; font-weight: 700; color: var(--text-primary); display: inline-block; position: relative; transform: translateY(100%); opacity: 0; }
+        .welcome-heading.animate { animation: subtle-flip-in 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards, gradient-fill-and-stay-white 2s ease-in-out forwards; background: linear-gradient(to right, #FF00FF, #00FFFF, #FF00FF); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        @keyframes subtle-flip-in { 0% { transform: translateY(100%) rotateX(-80deg); opacity: 0; transform-origin: bottom center; } 100% { transform: translateY(0) rotateX(0); opacity: 1; transform-origin: bottom center; } }
+        @keyframes gradient-fill-and-stay-white { 0% { background-position: 0% 50%; color: transparent; -webkit-background-clip: text; -webkit-text-fill-color: transparent; opacity: 1; background-image: linear-gradient(to right, #FF00FF, #00FFFF, #FF00FF); background-size: 200% auto; } 99% { background-position: 100% 50%; color: transparent; -webkit-background-clip: text; -webkit-text-fill-color: transparent; opacity: 1; background-image: linear-gradient(to right, #FF00FF, #00FFFF, #FF00FF); background-size: 200% auto; } 100% { color: var(--text-primary); opacity: 1; -webkit-background-clip: unset; -webkit-text-fill-color: unset; background-image: none; } }
+        .welcome-subtitle { font-size: 17px; color: var(--text-secondary); line-height: 1.6; max-width: 800px; }
+
+        /* Stats Styles */
+        .welcome-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* FORCED 2x2 GRID */
+            gap: 20px;
+            flex-grow: 1;
+        }
+        .stat-card { background: rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 25px; text-align: center; box-shadow: 0 5px 20px var(--shadow); transition: all 0.3s ease; position: relative; overflow: hidden; border: 1px solid var(--border); }
+        body[data-theme="light"] .stat-card { background: rgba(240, 244, 247, 0.95); }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 5px; transition: all 0.3s ease; }
+        .stat-card:nth-child(1)::before { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .stat-card:nth-child(2)::before { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .stat-card:nth-child(3)::before { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+        .stat-card:nth-child(4)::before { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px var(--shadow); }
+        .stat-card:hover::before { width: 8px; }
+        .stat-number { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        .stat-card:nth-child(1) .stat-number { color: #3498db; }
+        .stat-card:nth-child(2) .stat-number { color: #2ecc71; }
+        .stat-card:nth-child(3) .stat-number { color: #9b59b6; }
+        .stat-card:nth-child(4) .stat-number { color: #e74c3c; }
+        .stat-label { font-size: 15px; color: var(--text-secondary); font-weight: 500; }
+
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-medium); }
+        .card-title { font-size: 20px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 12px; }
+        .card-title i { color: var(--primary); font-size: 22px; }
+        .chart-container { position: relative; height: 250px; }
+        .toast { position: fixed; top: 25px; right: 25px; padding: 18px 30px; border-radius: 12px; color: white; font-weight: 500; z-index: 10000; animation: slideIn 0.4s ease forwards, fadeOut 0.5s ease forwards 2.5s; display: none; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .toast.success { background: var(--primary); }
+        .toast.warning { background: #f59e0b; }
+        .toast.error { background: #ef4444; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+        @media (max-width: 992px) {
+            .main-container.shifted { margin-left: 0; }
+            .animation-and-stats-wrapper {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); z-index: 1100; width: var(--sidebar-width-expanded); }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar.collapsed { transform: translateX(-100%); }
+            .sidebar.collapsed.active { transform: translateX(0); }
+            .main-container { margin-left: 0; padding: 85px 20px 20px; }
+            .welcome-stats { grid-template-columns: 1fr; }
+            .logout-btn span { display: none; }
+            .logout-btn { width: 45px; height: 45px; padding: 0; border-radius: 50%; justify-content: center; }
+            .logout-btn i { margin: 0; }
+        }
+    </style>
+</head>
+
+<body data-theme="dark">
+<div id="particles-js"></div>
+
+<div class="header">
+    <div class="header-left">
+        <button class="sidebar-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <button class="back-button" onclick="logoutUser()">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="header-title-container">
+            <span class="sidebar-title" style="font-size: 20px;">TrackForce CRM</span><br>
+            <span class="sidebar-subtitle">User Panel</span>
+        </div>
+    </div>
+
+    <div class="header-right">
+        <button class="header-icon" id="notificationBtn">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge" id="notificationCount" style="display: none;">0</span>
+        </button>
+
+        <button class="theme-toggle">
+            <i class="fas fa-adjust"></i>
+        </button>
+        <button class="logout-btn" onclick="logoutUser()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </button>
+    </div>
+</div>
+
+<div class="sidebar">
+    <div class="sidebar-header"></div>
+    <nav class="sidebar-nav">
+        <div class="nav-section">
+            <h6 class="nav-section-title">Main</h6>
+            <button class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </button>
+        </div>
+        <div class="nav-section">
+            <h6 class="nav-section-title">Tasks</h6>
+            <button class="nav-item" onclick="location.href='view-tasks.html'">
+                <i class="fas fa-tasks"></i>
+                <span>View Tasks</span>
+            </button>
+        </div>
+    </nav>
+</div>
+
+<div class="main-container">
+    <section class="dashboard-card welcome-section">
+        <div class="welcome-content">
+            <h1 class="welcome-title">
+                <span class="welcome-heading" id="userWelcomeHeading"></span>
+            </h1>
+            <p class="welcome-subtitle">Here's a quick overview of your account. Manage your tasks and explore new opportunities.</p>
+        </div>
+
+        <div class="animation-and-stats-wrapper">
+            <div class="welcome-animation">
+                <lottie-player
+                        src="../admin/animations/user-welcome-animation.json"
+                        background="transparent"
+                        speed="1"
+                        style="width: 100%; height: 100%;"
+                        loop
+                        autoplay>
+                </lottie-player>
+            </div>
+            <div class="welcome-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="openTasksCount">0</div>
+                    <div class="stat-label">Open Tasks</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="completedCount">0</div>
+                    <div class="stat-label">Completed Tasks</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="newMessagesCount">0</div>
+                    <div class="stat-label">New Messages</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="deadlineTimer">--</div>
+                    <div class="stat-label">Next Deadline</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="dashboard-card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-chart-pie"></i>
+                Task Status Overview
+            </h3>
+        </div>
+        <div class="chart-container">
+            <canvas id="userTaskChart"></canvas>
+        </div>
+    </section>
+</div>
+
+<div class="toast success">Success message here</div>
+<div class="toast warning">Warning message here</div>
+<div class="toast error">Error message here</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+<script src="../config.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.body.setAttribute('data-theme', savedTheme);
+        initParticles(savedTheme);
+        const savedSidebarState = localStorage.getItem('sidebarCollapsed');
+        const sidebar = document.querySelector('.sidebar');
+        const mainContainer = document.querySelector('.main-container');
+        if (window.innerWidth > 992 && savedSidebarState === 'true') {
+            sidebar.classList.add('collapsed');
+            mainContainer.classList.add('shifted');
+        }
+        const rawUserName = localStorage.getItem('userName');
+        const userName = formatUsername(rawUserName);
+        const welcomeHeading = document.getElementById('userWelcomeHeading');
+        if (welcomeHeading) {
+            welcomeHeading.textContent = `Hi, ${userName}!`;
+            void welcomeHeading.offsetWidth; // Trigger reflow for animation
+            welcomeHeading.classList.add('animate');
+        }
+        loadUserAnalytics();
+        updateAllStats();
+        setupNotificationMonitoring();
+        document.querySelector('.theme-toggle')?.addEventListener('click', toggleTheme);
+        document.querySelector('.sidebar-toggle')?.addEventListener('click', toggleSidebar);
+        document.getElementById('notificationBtn')?.addEventListener('click', () => window.location.href = 'notification.html');
+        const logoutButtons = document.querySelectorAll('.logout-btn, .back-button');
+        logoutButtons.forEach(btn => btn.addEventListener('click', logoutUser));
+        setInterval(updateAllStats, 30000);
+    });
+    function updateAllStats() {
+        fetchUserTasks().then(tasks => {
+            updateOpenTaskCount(tasks);
+            updateCompletedTaskCount(tasks);
+            updateNewMessagesCount();
+            startDeadlineCountdown(tasks);
+        });
+    }
+    function formatUsername(name) {
+        if (!name) return 'User';
+        return name
+            .replace(/_/g, ' ')
+            .replace(/\b\w/g, char => char.toUpperCase());
+    }
+    function initParticles(theme) {
+        if (typeof particlesJS === 'undefined') return console.error('particles.js not loaded.');
+        if (window.pJSDom && window.pJSDom[0]) {
+            window.pJSDom[0].pJS.fn.vendors.destroypJS();
+            window.pJSDom = [];
+        }
+        const particleColor = theme === 'dark' ? "#ffffff" : "#ffffff";
+        particlesJS('particles-js', { particles: { number: { value: 80, density: { enable: true, value_area: 800 } }, color: { value: particleColor }, shape: { type: "circle" }, opacity: { value: 0.5, random: true }, size: { value: 3, random: true }, line_linked: { enable: true, distance: 150, color: particleColor, opacity: 0.4, width: 1 }, move: { enable: true, speed: 2, direction: "none", random: false, straight: false, out_mode: "out", bounce: false } }, interactivity: { detect_on: "canvas", events: { onhover: { enable: true, mode: "grab" }, onclick: { enable: true, mode: "push" }, resize: true }, modes: { grab: { distance: 140, line_linked: { opacity: 1 } }, push: { particles_nb: 4 } } }, retina_detect: true });
+    }
+    function toggleTheme() {
+        const body = document.body;
+        const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        body.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        initParticles(newTheme);
+        loadUserAnalytics();
+    }
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        const mainContainer = document.querySelector('.main-container');
+        if (window.innerWidth <= 768) {
+            sidebar.classList.toggle('active');
+        } else {
+            sidebar.classList.toggle('collapsed');
+            mainContainer.classList.toggle('shifted');
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        }
+    }
+    function logoutUser() {
+        const username = localStorage.getItem('userName');
+        fetch(`${USER_API}/logout`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username })
+        }).finally(() => {
+            localStorage.clear();
+            window.location.href = '../index.html';
+        });
+    }
+    function updateNotificationCount() {
+        const count = parseInt(localStorage.getItem('notificationCount') || '0');
+        const badge = document.getElementById('notificationCount');
+        if (badge) {
+            badge.textContent = count;
+            badge.style.display = count > 0 ? 'flex' : 'none';
+        }
+    }
+    function setupNotificationMonitoring() {
+        const fetchNotifications = () => {
+            fetch(`${BROADCAST_API}/all`)
+                .then(res => res.ok ? res.json() : [])
+                .then(messages => {
+                    const read = JSON.parse(localStorage.getItem('readNotifications') || '[]');
+                    const now = new Date();
+                    const unreadCount = messages.filter(msg => msg.status === "Sent" && new Date(msg.scheduledTime) <= now && !read.includes(msg.id)).length;
+                    if (localStorage.getItem('notificationCount') != unreadCount) {
+                        localStorage.setItem('notificationCount', unreadCount.toString());
+                        updateNotificationCount();
+                        updateNewMessagesCount();
+                    }
+                }).catch(err => console.error('Error fetching notifications:', err));
+        };
+        fetchNotifications();
+        setInterval(fetchNotifications, 15000);
+    }
+    async function fetchUserTasks() {
+        const email = localStorage.getItem('userEmail');
+        if (!email) return [];
+        try {
+            const response = await fetch(`${TASK_API}/user/${email}`);
+            if (!response.ok) return [];
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching tasks:', error);
+            return [];
+        }
+    }
+    function updateOpenTaskCount(tasks) {
+        const openTasks = tasks.filter(task => task.status !== 'completed').length;
+        document.getElementById('openTasksCount').textContent = openTasks;
+    }
+    function updateCompletedTaskCount(tasks) {
+        const completed = tasks.filter(task => task.status === 'completed').length;
+        document.getElementById('completedCount').textContent = completed;
+    }
+    function updateNewMessagesCount() {
+        const unreadCount = parseInt(localStorage.getItem('notificationCount') || '0');
+        document.getElementById('newMessagesCount').textContent = unreadCount;
+    }
+    function startDeadlineCountdown(tasks) {
+        if (window.deadlineInterval) clearInterval(window.deadlineInterval);
+        const openTasks = tasks.filter(task => task.status !== 'completed' && task.dueDate);
+        if (openTasks.length === 0) {
+            document.getElementById('deadlineTimer').textContent = 'No Deadlines';
+            return;
+        }
+        const now = new Date().getTime();
+        let nearestTask = null;
+        let minDiff = Infinity;
+        openTasks.forEach(task => {
+            const dueTime = new Date(task.dueDate).getTime();
+            const diff = dueTime - now;
+            if (diff > 0 && diff < minDiff) {
+                minDiff = diff;
+                nearestTask = task;
+            }
+        });
+        if (!nearestTask) {
+            document.getElementById('deadlineTimer').textContent = 'No Upcoming';
+            return;
+        }
+        const dueTime = new Date(nearestTask.dueDate + 'T23:59:59');
+        const updateCountdown = () => {
+            const diff = dueTime - new Date();
+            if (diff <= 0) {
+                clearInterval(window.deadlineInterval);
+                document.getElementById('deadlineTimer').textContent = 'Deadline Passed';
+                return;
+            }
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hrs = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            document.getElementById('deadlineTimer').textContent = `${days}d ${hrs}h ${mins}m`;
+        };
+        updateCountdown();
+        setInterval(updateCountdown, 60000);
+    }
+    async function loadUserAnalytics() {
+        const tasks = await fetchUserTasks();
+        let open = 0, inProgress = 0, completed = 0, overdue = 0;
+        if (tasks.length > 0) {
+            const now = new Date();
+            tasks.forEach(task => {
+                const status = (task.status || 'pending').toLowerCase();
+                const dueDate = task.dueDate ? new Date(task.dueDate) : null;
+                if (status === 'completed') completed++;
+                else if (status === 'in-progress') inProgress++;
+                else if (dueDate && dueDate < now) overdue++;
+                else open++;
+            });
+        }
+        renderUserTaskChart([open, inProgress, completed, overdue]);
+    }
+    function renderUserTaskChart(data) {
+        const ctx = document.getElementById('userTaskChart')?.getContext('2d');
+        if (!ctx) return;
+        const isDarkMode = document.body.getAttribute('data-theme') === 'dark';
+        const chartFontColor = isDarkMode ? '#f1f5f9' : '#2d3748';
+        if (window.taskChart) window.taskChart.destroy();
+        window.taskChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Open', 'In Progress', 'Completed', 'Overdue'],
+                datasets: [{
+                    data: data,
+                    backgroundColor: ['#3498db', '#f1c40f', '#2ecc71', '#e74c3c'],
+                    borderWidth: 4,
+                    borderColor: isDarkMode ? 'rgba(28, 36, 55, 0.9)' : 'rgba(255, 255, 255, 0.85)',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: chartFontColor, padding: 20, usePointStyle: true }
+                    },
+                    tooltip: {
+                        backgroundColor: isDarkMode ? '#1e293b' : 'rgba(255,255,255)',
+                        titleColor: chartFontColor,
+                        bodyColor: chartFontColor,
+                        borderColor: 'rgba(255, 255, 255, 0.1)',
+                        borderWidth: 1
+                    }
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

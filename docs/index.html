@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TrackForce - Task Management & Analytics Platform</title>
+    <meta
+            name="description"
+            content="TrackForce - Streamline your workflow with powerful task management, broadcast messaging, user management, and advanced analytics."
+    />
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+            rel="stylesheet"
+    />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+            rel="stylesheet"
+    />
+    <link
+            href="https://unpkg.com/aos@2.3.1/dist/aos.css"
+            rel="stylesheet"
+    />
+
+    <style>
+        /*
+          KEY ENHANCEMENTS FOR TABLET & ALL DEVICES:
+
+          1. FLUID TYPOGRAPHY & SPACING: Uses the modern `clamp()` function for font sizes and section padding.
+             This allows text and layout spacing to scale smoothly with the viewport size, eliminating abrupt
+             changes at breakpoints and looking great on any device.
+
+          2. ADAPTIVE GRID LAYOUTS: The feature and stats grids now use `repeat(auto-fit, minmax(320px, 1fr))`.
+             This automatically adjusts the number of columns based on screen space. On a typical tablet,
+             it will naturally create a 2-column layout, which is more balanced than stacking everything in one column.
+
+          3. ASPECT RATIO FOR MEDIA: The hero video container now uses `aspect-ratio: 16 / 9;`. This ensures
+             it maintains a perfect widescreen ratio without distortion, which is critical on various tablet aspect ratios.
+
+          4. REFINED TABLET BREAKPOINT: A new media query for screens up to 1024px (common for landscape tablets)
+             has been added to fine-tune the navigation bar and layout before switching to the full mobile view.
+
+          5. IMPROVED PADDING & MARGINS: Global padding on the body and sections is now fluid (`clamp(1rem, 4vw, 2.5rem)`),
+             ensuring content never touches the edges of the screen on any device.
+        */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: rgba(75, 162, 255, 0.6);
+            --primary-dark: #4f46e5;
+            --secondary: #06b6d4;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --background: rgba(243, 249, 253, 0.82);
+            --surface: rgba(248, 250, 252, 0.62);
+            --surface-card: rgb(255, 255, 255);
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --border: rgba(203, 213, 225, 0.6);
+            --shadow: rgba(15, 23, 42, 0.08);
+            --gradient-primary: linear-gradient(
+                    135deg,
+                    #6366f1 0%,
+                    #8b5cf6 100%
+            );
+            --gradient-hero: linear-gradient(
+                    135deg,
+                    #667eea 0%,
+                    #764ba2 100%
+            );
+            --gradient-accent: linear-gradient(
+                    135deg,
+                    #06b6d4 0%,
+                    #3b82f6 100%
+            );
+            --navbar-bg: rgba(248, 250, 252, 0.7);
+            --navbar-border: rgba(203, 213, 225, 0.5);
+            --navbar-shadow: rgba(15, 23, 42, 0.08);
+            --card-bg-1: linear-gradient(
+                    135deg,
+                    rgba(99, 102, 241, 0.08) 0%,
+                    rgba(139, 92, 246, 0.08) 100%
+            );
+            --card-bg-2: linear-gradient(
+                    135deg,
+                    rgba(6, 182, 212, 0.08) 0%,
+                    rgba(59, 130, 246, 0.08) 100%
+            );
+            --card-bg-3: linear-gradient(
+                    135deg,
+                    rgba(245, 158, 11, 0.08) 0%,
+                    rgba(217, 119, 6, 0.08) 100%
+            );
+            --card-bg-4: linear-gradient(
+                    135deg,
+                    rgba(16, 185, 129, 0.08) 0%,
+                    rgba(5, 150, 105, 0.08) 100%
+            );
+
+            /* Fluid section spacing for vertical rhythm */
+            --section-spacing: clamp(5rem, 10vw, 7.5rem); /* 80px to 120px */
+            /* Fluid side padding */
+            --side-padding: clamp(
+                    1rem,
+                    4vw,
+                    2.5rem
+            ); /* 16px to 40px */
+        }
+
+        [data-theme="dark"] {
+            --background: #0f172a;
+            --surface: rgba(30, 41, 59, 0.95);
+            --surface-card: rgba(30, 41, 59, 0.9);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: rgba(71, 85, 105, 0.5);
+            --shadow: rgba(0, 0, 0, 0.3);
+            --navbar-bg: rgba(15, 23, 42, 0.7);
+            --navbar-border: rgba(255, 255, 255, 0.1);
+            --navbar-shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        html {
+            font-size: 100%;
+        }
+
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont,
+            "Segoe UI", sans-serif;
+            background: var(--background);
+            min-height: 100vh;
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            scroll-behavior: smooth;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        section {
+            padding: var(--section-spacing) var(--side-padding);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+        }
+
+        /* Enhanced Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--navbar-bg);
+            backdrop-filter: blur(20px) saturate(1.8);
+            -webkit-backdrop-filter: blur(20px) saturate(1.8);
+            padding: 1.25rem var(--side-padding); /* 20px */
+            box-shadow: 0 4px 20px var(--navbar-shadow);
+            border-bottom: 1px solid var(--navbar-border);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: padding 0.3s ease, background-color 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            padding-top: 0.5rem; /* 8px */
+            padding-bottom: 0.5rem; /* 8px */
+            box-shadow: 0 8px 30px var(--navbar-shadow);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem; /* 15px */
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: clamp(
+                    1.25rem,
+                    3vw,
+                    1.625rem
+            ); /* 20px to 26px */
+        }
+
+        .logo-icon {
+            width: clamp(2.5rem, 5vw, 3.25rem); /* 40px to 52px */
+            height: clamp(2.5rem, 5vw, 3.25rem);
+            background: var(--gradient-primary);
+            border-radius: 0.875rem; /* 14px */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: clamp(1.25rem, 3vw, 1.625rem);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .logo-icon:hover {
+            transform: scale(1.05) rotate(5deg);
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.625rem 1.125rem; /* 10px 18px */
+            border-radius: 0.625rem;
+            transition: all 0.3s ease;
+            font-size: 0.94rem; /* 15px */
+        }
+
+        .nav-menu a:hover {
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+            transform: translateY(-1px);
+        }
+        .nav-menu a.active {
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 0.75rem; /* 12px */
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 0.875rem; /* 14px */
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                    90deg,
+                    transparent,
+                    rgb(255, 255, 255, 0.3),
+                    transparent
+            );
+            transition: left 0.5s;
+        }
+        .btn:hover::before {
+            left: 100%;
+        }
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+        }
+        .btn-admin {
+            background: var(--gradient-accent);
+            color: white;
+            box-shadow: 0 6px 18px rgba(6, 182, 212, 0.3);
+        }
+        .btn-admin:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(6, 182, 212, 0.4);
+        }
+        .btn-outline {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .theme-toggle {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            border: none;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 1.125rem;
+            margin-left: 0.5rem;
+        }
+        .theme-toggle:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            border: none;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.125rem;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            left: 0;
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem;
+            box-shadow: 0 8px 30px var(--shadow);
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+        .mobile-menu.active {
+            display: flex;
+        }
+        .mobile-nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        .mobile-nav-menu a {
+            color: var(--text-primary);
+            text-decoration: none;
+            padding: 1rem 1.25rem;
+            border-radius: 0.625rem;
+            transition: all 0.3s ease;
+        }
+        .mobile-nav-menu a:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: var(--gradient-hero);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 120px;
+            padding-bottom: 80px;
+        }
+
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .hero-content {
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: clamp(
+                    2.25rem,
+                    5vw,
+                    3.625rem
+            ); /* Fluid font size: 36px to 58px */
+            font-weight: 800;
+            margin-bottom: 1.75rem;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: clamp(
+                    1.125rem,
+                    2.5vw,
+                    1.5rem
+            ); /* Fluid font size: 18px to 24px */
+            margin-bottom: 3rem;
+            opacity: 0.95;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-video {
+            width: 100%;
+            max-width: 900px;
+            aspect-ratio: 16 / 9; /* MAINTAINS 16:9 RATIO */
+            margin: 3rem auto;
+            background: url("https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop")
+            center/cover;
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .hero-video:hover {
+            transform: scale(1.02);
+        }
+
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: clamp(4.5rem, 8vw, 5.3rem); /* Fluid size */
+            height: clamp(4.5rem, 8vw, 5.3rem);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--primary);
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .play-button:hover {
+            background: white;
+            transform: translate(-50%, -50%) scale(1.15);
+        }
+        #videoContainer iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 1.5rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 3.75rem;
+        }
+
+        .btn-lg {
+            padding: 1.25rem 2.5rem;
+            font-size: 1.06rem;
+            border-radius: 0.875rem;
+        }
+
+        .btn-cta {
+            background: linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--primary-dark)
+            );
+            color: white;
+            border: none;
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        @keyframes pulse {
+            50% {
+                transform: translateY(-4px) scale(1.05);
+                box-shadow: 0 12px 35px rgba(99, 102, 241, 0.6);
+            }
+        }
+        .hero .btn-cta:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 35px rgba(99, 102, 241, 0.5);
+        }
+        .hero .btn-cta {
+            animation: pulse 2.5s infinite ease-in-out;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-4px);
+        }
+
+        /* Features Section */
+        .features {
+            background: var(--background);
+            position: relative;
+        }
+        .features::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                    45deg,
+                    rgba(99, 102, 241, 0.03) 0%,
+                    rgba(139, 92, 246, 0.03) 100%
+            );
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+        .section-header h2 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .section-header p {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(
+                    auto-fit,
+                    minmax(320px, 1fr)
+                ); /* ADAPTIVE GRID */
+            gap: 2.5rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg-1);
+            padding: 2.5rem 2.2rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 15px 45px var(--shadow);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .feature-card:nth-child(2) {
+            background: var(--card-bg-2);
+        }
+        .feature-card:nth-child(3) {
+            background: var(--card-bg-3);
+        }
+        .feature-card:nth-child(4) {
+            background: var(--card-bg-4);
+        }
+        .feature-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--gradient-primary);
+            transition: height 0.3s ease;
+        }
+        .feature-card:nth-child(2)::before {
+            background: var(--gradient-accent);
+        }
+        .feature-card:nth-child(3)::before {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+        .feature-card:nth-child(4)::before {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        .feature-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 25px 60px var(--shadow);
+        }
+        .feature-card:hover::before {
+            height: 8px;
+        }
+
+        .feature-image {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            background-size: cover;
+            background-position: center;
+            border-radius: 1.1rem;
+            margin-bottom: 1.8rem;
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease;
+        }
+        .feature-card:hover .feature-image {
+            transform: scale(1.05);
+        }
+
+        .feature-icon {
+            width: 65px;
+            height: 65px;
+            background: var(--gradient-primary);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+            transition: transform 0.3s ease;
+        }
+        .feature-card:nth-child(2) .feature-icon {
+            background: var(--gradient-accent);
+            box-shadow: 0 8px 20px rgba(6, 182, 212, 0.3);
+        }
+        .feature-card:nth-child(3) .feature-icon {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+        }
+        .feature-card:nth-child(4) .feature-icon {
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+        .feature-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.1rem;
+            color: var(--text-primary);
+        }
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        /* Stats Section */
+        .stats {
+            background: var(--surface);
+            position: relative;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.22);
+            border-radius: 1.25rem;
+            padding: 2.8rem 2.2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            box-shadow: 0 15px 40px var(--shadow);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+        .stat-card:nth-child(1) {
+            background: linear-gradient(
+                    135deg,
+                    rgba(99, 102, 241, 0.08) 0%,
+                    rgba(139, 92, 246, 0.08) 100%
+            );
+        }
+        .stat-card:nth-child(2) {
+            background: linear-gradient(
+                    135deg,
+                    rgba(6, 182, 212, 0.08) 0%,
+                    rgba(59, 130, 246, 0.08) 100%
+            );
+        }
+        .stat-card:nth-child(3) {
+            background: linear-gradient(
+                    135deg,
+                    rgba(245, 158, 11, 0.08) 0%,
+                    rgba(217, 119, 6, 0.08) 100%
+            );
+        }
+        .stat-card:nth-child(4) {
+            background: linear-gradient(
+                    135deg,
+                    rgba(16, 185, 129, 0.08) 0%,
+                    rgba(5, 150, 105, 0.08) 100%
+            );
+        }
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px var(--shadow);
+        }
+        .stat-number {
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+        .stat-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 1.06rem;
+        }
+
+        /* About & Contact Sections */
+        .about {
+            background: var(--background);
+            position: relative;
+        }
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+        }
+        .about-text h3 {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+        .about-text p {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1.8rem;
+        }
+        .about-content img {
+            width: 100%;
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease;
+        }
+        .about-content img:hover {
+            transform: scale(1.02);
+        }
+
+        .contact-button-container {
+            text-align: center;
+            padding: 3.75rem 2.5rem;
+            background: var(--surface);
+            border-radius: 1.5rem;
+            margin: 2.5rem auto;
+            max-width: 800px;
+            box-shadow: 0 10px 40px var(--shadow);
+            border: 1px solid var(--border);
+        }
+        .contact-button-container h3 {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+        }
+        .contact-button-container p {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.8rem;
+            line-height: 1.6;
+        }
+
+        /* Contact Form Modal */
+        .contact-form-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1.25rem;
+            backdrop-filter: blur(5px);
+        }
+        .contact-form-modal {
+            background: var(--surface);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.8rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 2px solid var(--border);
+        }
+        .modal-header h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .close-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.125rem;
+            transition: all 0.3s ease;
+        }
+        .close-btn:hover {
+            background: var(--danger);
+            color: white;
+            transform: scale(1.1);
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 1rem 1.1rem;
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            background: var(--surface);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--gradient-hero);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 6rem var(--side-padding) 3rem;
+        }
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        .footer-section h3 {
+            font-size: 1.375rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+        .footer-section p,
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            line-height: 1.7;
+            transition: color 0.2s ease;
+            font-size: 1rem;
+        }
+        .footer-section a:hover {
+            color: white;
+        }
+        .footer-links {
+            list-style: none;
+        }
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 2.5rem;
+            text-align: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        /* Utility classes */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: var(--gradient-primary);
+            z-index: 10000;
+            transition: width 0.1s ease;
+        }
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 55px;
+            height: 55px;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        .back-to-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(99, 102, 241, 0.5);
+        }
+        .emoji {
+            font-family: "Apple Color Emoji", "Segoe UI Emoji",
+            "Noto Color Emoji", sans-serif !important;
+            color: initial !important;
+            text-shadow: none !important;
+            filter: none !important;
+            -webkit-text-fill-color: initial !important;
+            font-style: normal !important;
+            font-weight: normal !important;
+            background: none !important;
+            -webkit-background-clip: initial !important;
+            background-clip: initial !important;
+        }
+
+        /* ===== RESPONSIVE STYLES ===== */
+
+        /* TABLET VIEW (e.g., iPad Landscape) */
+        @media (max-width: 1024px) {
+            .nav-buttons {
+                gap: 0.8rem;
+            }
+            .nav-menu a {
+                padding: 0.5rem 0.8rem;
+            }
+            .btn {
+                padding: 0.7rem 1.2rem;
+            }
+            .about-content {
+                gap: 2.5rem;
+            }
+        }
+
+        /* TABLET & MOBILE VIEW (e.g., iPad Portrait & smaller) */
+        @media (max-width: 900px) {
+            .nav-menu,
+            .nav-buttons {
+                display: none;
+            }
+            .mobile-menu-btn {
+                display: flex;
+            }
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+            .about-content > div:last-child {
+                grid-row: 1; /* Puts image on top on tablets */
+            }
+            .about-text {
+                text-align: center;
+            }
+        }
+
+        /* MOBILE VIEW */
+        @media (max-width: 600px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .footer-content {
+                text-align: center;
+            }
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+        }
+
+        /* SMALL MOBILE VIEW */
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<nav class="navbar" id="navbar">
+    <a href="#home" class="logo">
+        <div class="logo-icon"><i class="fas fa-tasks"></i></div>
+        TrackForce
+    </a>
+    <ul class="nav-menu">
+        <li><a href="#home" class="nav-link active">Home</a></li>
+        <li><a href="#features" class="nav-link">Features</a></li>
+        <li><a href="#about" class="nav-link">About</a></li>
+        <li><a href="#contact" class="nav-link">Contact</a></li>
+    </ul>
+    <div class="nav-buttons">
+        <button onclick="redirectToUserLogin()" class="btn btn-primary">
+            <i class="fas fa-user"></i> User Login
+        </button>
+        <button onclick="redirectToAdminLogin()" class="btn btn-admin">
+            <i class="fas fa-shield-alt"></i> Admin Panel
+        </button>
+        <button
+                onclick="window.location.href='user/register.html'"
+                class="btn btn-outline"
+        >
+            <i class="fas fa-user-plus"></i> Sign Up
+        </button>
+        <button
+                class="theme-toggle"
+                onclick="toggleTheme()"
+                title="Toggle Theme"
+        >
+            <i class="fas fa-moon" id="themeIcon"></i>
+        </button>
+    </div>
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-nav-menu">
+            <a href="#home" class="nav-link">Home</a>
+            <a href="#features" class="nav-link">Features</a>
+            <a href="#about" class="nav-link">About</a>
+            <a href="#contact" class="nav-link">Contact</a>
+        </div>
+        <button onclick="redirectToUserLogin()" class="btn btn-primary">
+            <i class="fas fa-user"></i> User Login
+        </button>
+        <button
+                onclick="redirectToAdminLogin()"
+                class="btn btn-admin"
+        >
+            <i class="fas fa-shield-alt"></i> Admin Panel
+        </button>
+        <button
+                onclick="window.location.href='user/register.html'"
+                class="btn btn-outline"
+        >
+            <i class="fas fa-user-plus"></i> Sign Up
+        </button>
+    </div>
+</nav>
+
+<div id="contactFormOverlay" class="contact-form-overlay">
+    <div class="contact-form-modal">
+        <div class="modal-header">
+            <h3><i class="fas fa-envelope"></i> Contact Us</h3>
+            <button class="close-btn" onclick="hideContactForm()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form id="contactForm" onsubmit="handleContactForm(event)">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">Full Name *</label
+                    ><input
+                        type="text"
+                        id="name"
+                        name="name"
+                        required
+                        placeholder="Enter your full name"
+                />
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address *</label
+                    ><input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        placeholder="Enter your email"
+                />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="phone">Phone Number</label
+                    ><input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        placeholder="Enter your phone number"
+                />
+                </div>
+                <div class="form-group">
+                    <label for="company">Company</label
+                    ><input
+                        type="text"
+                        id="company"
+                        name="company"
+                        placeholder="Enter your company name"
+                />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="problemDescription"
+                >Problem Description *</label
+                ><textarea
+                    id="problemDescription"
+                    name="problemDescription"
+                    required
+                    placeholder="Please describe your issue..."
+            ></textarea>
+            </div>
+            <div
+                    style="
+                            display: flex;
+                            gap: 15px;
+                            justify-content: flex-end;
+                            margin-top: 30px;
+                        "
+            >
+                <button
+                        type="button"
+                        class="btn btn-outline"
+                        onclick="hideContactForm()"
+                >
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="submit" class="btn btn-cta">
+                    <i class="fas fa-paper-plane"></i> Send Message
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<section id="home" class="hero">
+    <div id="particles-js"></div>
+    <div class="hero-content container">
+        <h1 data-aos="fade-down">
+            <span class="emoji">🚀</span> Streamline Your Workflow with
+            TrackForce
+        </h1>
+        <p data-aos="fade-down" data-aos-delay="200">
+            Powerful task management, broadcast messaging, user
+            management, and analytics platform designed to boost
+            productivity and streamline team collaboration.
+        </p>
+        <div
+                class="hero-video"
+                id="videoHero"
+                data-aos="zoom-in-up"
+                data-aos-delay="400"
+        >
+            <div class="play-button" onclick="playVideo()">
+                <i class="fas fa-play"></i>
+            </div>
+            <div
+                    id="videoContainer"
+                    style="
+                            display: none;
+                            width: 100%;
+                            height: 100%;
+                        "
+            >
+                <iframe
+                        src="https://drive.google.com/file/d/14ouWpLkq0rXE5E_VKDKrMsk8aywDM6-c/preview"
+                        allow="autoplay"
+                ></iframe>
+            </div>
+        </div>
+        <div
+                class="cta-buttons"
+                data-aos="fade-up"
+                data-aos-delay="600"
+        >
+            <button
+                    class="btn btn-cta btn-lg"
+                    onclick="scrollToFeatures()"
+            >
+                <i class="fas fa-rocket"></i> Explore Features
+            </button>
+            <button
+                    onclick="window.location.href='user/register.html'"
+                    class="btn btn-secondary btn-lg"
+            >
+                <i class="fas fa-arrow-right"></i> Start Free Trial
+            </button>
+        </div>
+    </div>
+</section>
+
+<section class="stats">
+    <div class="container">
+        <div class="section-header" data-aos="fade-up">
+            <h2>
+                <span class="emoji">📊</span> Trusted by Teams Worldwide
+            </h2>
+            <p>
+                Join thousands of successful organizations that rely on
+                TrackForce to streamline their operations and boost
+                productivity.
+            </p>
+        </div>
+        <div class="stats-grid">
+            <div
+                    class="stat-card"
+                    data-aos="fade-up"
+                    data-aos-delay="100"
+            >
+                <div class="stat-number">25K+</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            <div
+                    class="stat-card"
+                    data-aos="fade-up"
+                    data-aos-delay="200"
+            >
+                <div class="stat-number">99.9%</div>
+                <div class="stat-label">System Uptime</div>
+            </div>
+            <div
+                    class="stat-card"
+                    data-aos="fade-up"
+                    data-aos-delay="300"
+            >
+                <div class="stat-number">1,500+</div>
+                <div class="stat-label">Companies Trust Us</div>
+            </div>
+            <div
+                    class="stat-card"
+                    data-aos="fade-up"
+                    data-aos-delay="400"
+            >
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Expert Support</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="features" class="features">
+    <div class="container">
+        <div class="section-header" data-aos="fade-up">
+            <h2><span class="emoji">🎯</span> Core Platform Features</h2>
+            <p>
+                Comprehensive tools designed to streamline your
+                workflow, enhance team collaboration, and drive
+                productivity with intelligent automation and real-time
+                insights.
+            </p>
+        </div>
+        <div class="features-grid">
+            <div
+                    class="feature-card"
+                    data-aos="zoom-in-up"
+                    data-aos-delay="100"
+            >
+                <div
+                        class="feature-image"
+                        style="
+                                background-image: url('https://images.unsplash.com/photo-1611224923853-80b023f02d71?q=80&w=800&auto=format&fit=crop');
+                            "
+                ></div>
+                <div class="feature-icon">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <h3>Advanced Task Management</h3>
+                <p>
+                    Create, assign, and track tasks with powerful
+                    project management tools, priority settings, due
+                    dates, progress tracking, and automated workflows to
+                    keep your projects on track.
+                </p>
+            </div>
+            <div
+                    class="feature-card"
+                    data-aos="zoom-in-up"
+                    data-aos-delay="200"
+            >
+                <div
+                        class="feature-image"
+                        style="
+                                background-image: url('https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=800&auto=format&fit=crop');
+                            "
+                ></div>
+                <div class="feature-icon">
+                    <i class="fas fa-broadcast-tower"></i>
+                </div>
+                <h3>Broadcast Messaging</h3>
+                <p>
+                    Communicate effectively with your entire team or
+                    specific groups through instant broadcast messages.
+                    Send announcements, updates, and important
+                    notifications with delivery tracking.
+                </p>
+            </div>
+            <div
+                    class="feature-card"
+                    data-aos="zoom-in-up"
+                    data-aos-delay="300"
+            >
+                <div
+                        class="feature-image"
+                        style="
+                                background-image: url('https://images.unsplash.com/photo-1560472354-b33ff0c44a43?q=80&w=800&auto=format&fit=crop');
+                            "
+                ></div>
+                <div class="feature-icon">
+                    <i class="fas fa-users-cog"></i>
+                </div>
+                <h3>User Management System</h3>
+                <p>
+                    Comprehensive user administration with role-based
+                    access control, team organization, permission
+                    management, and detailed user activity tracking to
+                    maintain security.
+                </p>
+            </div>
+            <div
+                    class="feature-card"
+                    data-aos="zoom-in-up"
+                    data-aos-delay="400"
+            >
+                <div
+                        class="feature-image"
+                        style="
+                                background-image: url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop');
+                            "
+                ></div>
+                <div class="feature-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h3>Advanced Analytics</h3>
+                <p>
+                    Gain deep insights into team performance, task
+                    completion rates, and productivity trends.
+                    Interactive dashboards with real-time data
+                    visualization and comprehensive reporting tools.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="about" class="about">
+    <div class="container">
+        <div class="section-header" data-aos="fade-up">
+            <h2><span class="emoji">💡</span> About TrackForce</h2>
+            <p>
+                Empowering organizations worldwide with cutting-edge
+                productivity solutions that transform how teams
+                collaborate and achieve their goals.
+            </p>
+        </div>
+        <div class="about-content">
+            <div class="about-text" data-aos="fade-right">
+                <h3>Our Mission</h3>
+                <p>
+                    TrackForce is a comprehensive productivity platform
+                    designed to streamline workflows and enhance team
+                    collaboration. Our mission is to provide
+                    organizations with powerful tools that simplify task
+                    management, improve communication, and deliver
+                    actionable insights.
+                </p>
+                <p>
+                    Join thousands of successful teams who trust
+                    TrackForce to manage their daily operations and
+                    drive business growth.
+                </p>
+                <div style="margin-top: 30px">
+                    <button
+                            class="btn btn-primary btn-lg"
+                            onclick="window.location.href='user/register.html'"
+                    >
+                        <i class="fas fa-rocket"></i> Start Your Journey
+                    </button>
+                </div>
+            </div>
+            <div data-aos="fade-left" data-aos-delay="200">
+                <img
+                        src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&auto=format&fit=crop"
+                        alt="Team collaboration with TrackForce"
+                />
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="contact" class="about" style="background: var(--surface)">
+    <div class="container">
+        <div class="section-header" data-aos="fade-up">
+            <h2><span class="emoji">🤝</span> Get In Touch</h2>
+            <p>
+                Ready to transform your workflow? Contact our team to
+                learn more about TrackForce and how it can benefit your
+                organization.
+            </p>
+        </div>
+        <div class="contact-button-container" data-aos="zoom-in">
+            <h3>Need Help or Have Questions?</h3>
+            <p>
+                Our support team is ready to assist you with any
+                inquiries about our platform, features, or pricing.
+                Click the button below to get in touch with us!
+            </p>
+            <button class="btn btn-cta btn-lg" onclick="showContactForm()">
+                <i class="fas fa-envelope"></i> Contact Us
+            </button>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container footer-content">
+        <div
+                class="footer-section"
+                data-aos="fade-up"
+                data-aos-delay="100"
+        >
+            <h3>TrackForce</h3>
+            <p>
+                Streamlining workflows and enhancing productivity for
+                teams worldwide. Join the revolution in task management
+                and team collaboration.
+            </p>
+        </div>
+        <div
+                class="footer-section"
+                data-aos="fade-up"
+                data-aos-delay="200"
+        >
+            <h3>Core Features</h3>
+            <ul class="footer-links">
+                <li><a>Task Management</a></li>
+                <li><a>Broadcast Messages</a></li>
+                <li><a>User Management</a></li>
+                <li><a>Analytics Dashboard</a></li>
+            </ul>
+        </div>
+        <div
+                class="footer-section"
+                data-aos="fade-up"
+                data-aos-delay="300"
+        >
+            <h3>Solutions</h3>
+            <ul class="footer-links">
+                <li><a>Team Collaboration</a></li>
+                <li><a>Productivity Tools</a></li>
+                <li><a>Workflow Automation</a></li>
+                <li><a>Enterprise Solutions</a></li>
+            </ul>
+        </div>
+        <div
+                class="footer-section"
+                data-aos="fade-up"
+                data-aos-delay="400"
+        >
+            <h3>Support & Resources</h3>
+            <ul class="footer-links">
+                <li><a>Help Center</a></li>
+                <li><a>Training Resources</a></li>
+                <li><a>API Documentation</a></li>
+                <li><a>System Status</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom container">
+        © 2025 TrackForce | Advanced Task Management & Team
+        Collaboration Platform. All rights reserved.
+    </div>
+</footer>
+
+<button
+        class="back-to-top"
+        id="backToTop"
+        onclick="scrollToTop()"
+>
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    // All JavaScript is unchanged and robust for all devices.
+    document.addEventListener("DOMContentLoaded", function () {
+        particlesJS("particles-js", {
+            particles: {
+                number: {
+                    value: 80,
+                    density: { enable: true, value_area: 800 },
+                },
+                color: { value: "#ffffff" },
+                shape: { type: "circle" },
+                opacity: { value: 0.5, random: false },
+                size: { value: 3, random: true },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#ffffff",
+                    opacity: 0.4,
+                    width: 1,
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: "none",
+                    out_mode: "out",
+                },
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: { enable: false },
+                    onclick: { enable: false },
+                    resize: true,
+                },
+            },
+            retina_detect: true,
+        });
+    });
+    function showContactForm() {
+        document.getElementById("contactFormOverlay").style.display =
+            "flex";
+        document.body.style.overflow = "hidden";
+    }
+    function hideContactForm() {
+        document.getElementById("contactFormOverlay").style.display =
+            "none";
+        document.body.style.overflow = "auto";
+        document.getElementById("contactForm").reset();
+    }
+    document
+        .getElementById("contactFormOverlay")
+        .addEventListener("click", function (e) {
+            if (e.target === this) {
+                hideContactForm();
+            }
+        });
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+            hideContactForm();
+        }
+    });
+    function redirectToUserLogin() {
+        setTimeout(() => {
+            window.location.href = "user/user-login.html";
+        }, 300);
+    }
+    function redirectToAdminLogin() {
+        setTimeout(() => {
+            window.location.href = "admin/admin_login.html";
+        }, 300);
+    }
+    async function handleContactForm(event) {
+        event.preventDefault();
+        const form = event.target;
+        const submitButton = form.querySelector('button[type="submit"]');
+        const originalButtonContent = submitButton.innerHTML;
+
+        // Disable button and show a loading state
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+        const formData = {
+            name: document.getElementById("name").value,
+            email: document.getElementById("email").value,
+            phone: document.getElementById("phone").value,
+            company: document.getElementById("company").value,
+            problemDescription: document.getElementById("problemDescription").value,
+            status: 'New'
+        };
+
+        try {
+            // ✅ Changed to use the CONTACT_API variable from config.js
+            const response = await fetch(CONTACT_API, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                alert('Success! Your message has been sent. We will get back to you shortly.');
+                hideContactForm();
+                form.reset();
+            } else {
+                const errorData = await response.json();
+                alert(`Error: ${errorData.message || 'Something went wrong. Please try again.'}`);
+            }
+        } catch (error) {
+            console.error('Form submission failed:', error);
+            alert('There was a network error. Please check your connection and try again.');
+        } finally {
+            // Re-enable the button and restore its original content
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalButtonContent;
+        }
+    }
+    function playVideo() {
+        document.querySelector(".play-button").style.display = "none";
+        document.getElementById("videoHero").style.background = "none";
+        document.getElementById("videoContainer").style.display =
+            "block";
+    }
+    function toggleTheme() {
+        const body = document.body;
+        const themeIcon = document.getElementById("themeIcon");
+        if (body.getAttribute("data-theme") === "dark") {
+            body.removeAttribute("data-theme");
+            themeIcon.className = "fas fa-moon";
+            localStorage.setItem("theme", "light");
+        } else {
+            body.setAttribute("data-theme", "dark");
+            themeIcon.className = "fas fa-sun";
+            localStorage.setItem("theme", "dark");
+        }
+    }
+    function toggleMobileMenu() {
+        document.getElementById("mobileMenu").classList.toggle("active");
+    }
+    function scrollToFeatures() {
+        document
+            .getElementById("features")
+            .scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    function updateScrollProgress() {
+        const scrollProgress =
+            document.getElementById("scrollProgress");
+        const scrollTop = window.pageYOffset;
+        const docHeight =
+            document.documentElement.scrollHeight -
+            window.innerHeight;
+        scrollProgress.style.width =
+            (scrollTop / docHeight) * 100 + "%";
+    }
+    function updateNavbar() {
+        const navbar = document.getElementById("navbar");
+        if (window.scrollY > 50) {
+            navbar.classList.add("scrolled");
+        } else {
+            navbar.classList.remove("scrolled");
+        }
+    }
+    function updateBackToTop() {
+        const backToTop = document.getElementById("backToTop");
+        if (window.scrollY > 300) {
+            backToTop.style.display = "flex";
+        } else {
+            backToTop.style.display = "none";
+        }
+    }
+    function updateActiveNavLink() {
+        const sections = ["home", "features", "about", "contact"];
+        const navLinks = document.querySelectorAll(".nav-link");
+        sections.forEach((sectionId, index) => {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                const rect = section.getBoundingClientRect();
+                if (rect.top <= 100 && rect.bottom >= 100) {
+                    navLinks.forEach((link) =>
+                        link.classList.remove("active")
+                    );
+                    if (navLinks[index])
+                        navLinks[index].classList.add("active");
+                }
+            }
+        });
+    }
+    document.querySelectorAll(".nav-link").forEach((link) => {
+        link.addEventListener("click", function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute("href").substring(1);
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) {
+                targetSection.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                });
+            }
+            document
+                .getElementById("mobileMenu")
+                .classList.remove("active");
+        });
+    });
+    window.addEventListener("scroll", function () {
+        updateScrollProgress();
+        updateNavbar();
+        updateBackToTop();
+        updateActiveNavLink();
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme === "dark") {
+            document.body.setAttribute("data-theme", "dark");
+            document.getElementById("themeIcon").className =
+                "fas fa-sun";
+        }
+        AOS.init({
+            duration: 600,
+            easing: "ease-in-out-quad",
+            once: true,
+        });
+    });
+    document.addEventListener("click", function (e) {
+        const mobileMenu = document.getElementById("mobileMenu");
+        const menuButton = e.target.closest(".mobile-menu-btn");
+        if (!menuButton && !mobileMenu.contains(e.target)) {
+            mobileMenu.classList.remove("active");
+        }
+    });
+</script>
+</body>
+</html>
