@@ -58,16 +58,16 @@
             --spacing-small: 10px;
             --sidebar-width-expanded: 260px;
             --sidebar-width-collapsed: 80px;
-            --sidebar-padding-expanded: 25px;
         }
 
         body[data-theme="light"] {
+            background: #f0f2f5;
             --primary: #6a0dad;
             --primary-light: #8a2be2;
             --text-primary: #2d3748;
             --text-secondary: #4a5568;
             --border: rgba(226, 232, 240, 1);
-            --shadow: rgba(0, 0, 0, 0.15);
+            --shadow: rgba(0, 0, 0, 0.1);
             --sidebar-bg: rgba(255, 255, 255, 0.98);
             --card-bg: rgba(255, 255, 255, 0.93);
             --sidebar-text: #2d3748;
@@ -88,6 +88,7 @@
         .header {
             background: linear-gradient(90deg, var(--header-bg-start), var(--header-bg-end));
             backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             padding: var(--spacing-small) var(--spacing-medium);
             min-height: 65px;
             box-shadow: 0 4px 25px var(--shadow);
@@ -116,8 +117,6 @@
             transition: all 0.3s ease;
             font-size: 16px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            position: relative;
-            overflow: hidden;
         }
         .header-icon:hover, .theme-toggle:hover, .sidebar-toggle:hover, .back-button:hover {
             background: var(--primary);
@@ -156,27 +155,11 @@
             align-items: center;
             gap: 6px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            position: relative;
-            overflow: hidden;
         }
         .logout-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5);
         }
-        .header-icon::before, .theme-toggle::before, .sidebar-toggle::before, .back-button::before, .logout-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: none;
-        }
-        .header-icon:hover::before, .theme-toggle:hover::before, .sidebar-toggle:hover::before, .back-button:hover::before, .logout-btn:hover::before {
-            animation: shine 0.8s forwards;
-        }
-        @keyframes shine { to { left: 100%; } }
         .header-title-container .sidebar-title {
             font-size: 16px;
             font-weight: 600;
@@ -191,6 +174,7 @@
             width: var(--sidebar-width-expanded);
             background: var(--sidebar-bg);
             backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             height: calc(100vh - 65px);
             position: fixed;
             top: 65px;
@@ -282,6 +266,7 @@
             border: 1px solid var(--border);
             transition: all 0.3s ease;
             backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
             margin-bottom: 20px;
         }
         .dashboard-card:hover {
@@ -329,43 +314,13 @@
             -webkit-text-fill-color: transparent;
         }
         @keyframes subtle-flip-in {
-            0% {
-                transform: translateY(100%) rotateX(-80deg);
-                opacity: 0;
-                transform-origin: bottom center;
-            }
-            100% {
-                transform: translateY(0) rotateX(0);
-                opacity: 1;
-                transform-origin: bottom center;
-            }
+            0% { transform: translateY(100%) rotateX(-80deg); opacity: 0; transform-origin: bottom center; }
+            100% { transform: translateY(0) rotateX(0); opacity: 1; transform-origin: bottom center; }
         }
         @keyframes gradient-fill-and-stay-white {
-            0% {
-                background-position: 0% 50%;
-                color: transparent;
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                opacity: 1;
-                background-image: linear-gradient(to right, #FF00FF, #00FFFF, #FF00FF);
-                background-size: 200% auto;
-            }
-            99% {
-                background-position: 100% 50%;
-                color: transparent;
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                opacity: 1;
-                background-image: linear-gradient(to right, #FF00FF, #00FFFF, #FF00FF);
-                background-size: 200% auto;
-            }
-            100% {
-                color: var(--text-primary);
-                opacity: 1;
-                -webkit-background-clip: unset;
-                -webkit-text-fill-color: unset;
-                background-image: none;
-            }
+            0% { background-position: 0% 50%; color: transparent; -webkit-background-clip: text; -webkit-text-fill-color: transparent; opacity: 1; background-image: linear-gradient(to right, #FF00FF, #00FFFF, #FF00FF); background-size: 200% auto; }
+            99% { background-position: 100% 50%; color: transparent; -webkit-background-clip: text; -webkit-text-fill-color: transparent; opacity: 1; background-image: linear-gradient(to right, #FF00FF, #00FFFF, #FF00FF); background-size: 200% auto; }
+            100% { color: var(--text-primary); opacity: 1; -webkit-background-clip: unset; -webkit-text-fill-color: unset; background-image: none; }
         }
         .welcome-subtitle {
             font-size: 14px;
@@ -413,9 +368,7 @@
             transform: translateY(-3px);
             box-shadow: 0 6px 20px var(--shadow);
         }
-        .stat-card:hover::before {
-            width: 6px;
-        }
+        .stat-card:hover::before { width: 6px; }
         .stat-number {
             font-size: 22px;
             font-weight: 700;
@@ -430,7 +383,6 @@
             color: var(--text-secondary);
             font-weight: 500;
         }
-
         .card-header {
             display: flex;
             justify-content: space-between;
@@ -453,325 +405,63 @@
             position: relative;
             height: 220px;
         }
-        .toast {
-            position: fixed;
-            top: 25px;
-            right: 25px;
-            padding: 15px 25px;
-            border-radius: 10px;
-            color: white;
-            font-weight: 500;
-            z-index: 10000;
-            animation: slideIn 0.4s ease forwards, fadeOut 0.5s ease forwards 2.5s;
-            display: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-        .toast.success { background: var(--primary); }
-        .toast.warning { background: #f59e0b; }
-        .toast.error { background: #ef4444; }
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        @keyframes fadeOut {
-            from {
-                opacity: 1;
-            }
-            to {
-                opacity: 0;
-            }
-        }
 
         /* Tablet Optimizations */
         @media (max-width: 1024px) {
             :root {
-                --spacing-large: 20px;
-                --spacing-medium: 15px;
                 --sidebar-width-expanded: 240px;
             }
-
             .sidebar {
-                background: rgba(28, 36, 55, 0.88);
-                backdrop-filter: blur(10px);
                 height: calc(100vh - 60px);
                 top: 60px;
             }
-
-            body[data-theme="light"] .sidebar {
-                background: rgba(255, 255, 255, 0.88);
-            }
-
             .header {
                 padding: 8px 15px;
                 min-height: 60px;
-            }
-
-            .welcome-heading {
-                font-size: 28px;
-            }
-
-            .welcome-animation {
-                width: 160px;
-                height: 160px;
-            }
-
-            .dashboard-card {
-                padding: 18px;
-                margin-bottom: 18px;
-            }
-
-            .stat-card {
-                padding: 15px;
-            }
-
-            .stat-number {
-                font-size: 20px;
-            }
-
-            .chart-container {
-                height: 200px;
             }
         }
 
         /* Mobile Optimizations */
         @media (max-width: 768px) {
-            :root {
-                --spacing-large: 15px;
-                --spacing-medium: 12px;
-                --spacing-small: 8px;
-            }
-
             .sidebar {
                 transform: translateX(-100%);
                 z-index: 1100;
-                width: var(--sidebar-width-expanded);
-                background: rgba(28, 36, 55, 0.85);
-                backdrop-filter: blur(12px);
+                width: var(--sidebar-width-expanded); /* Keep width for active state */
                 height: calc(100vh - 55px);
                 top: 55px;
-                padding-top: 15px;
             }
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            .sidebar.collapsed {
-                transform: translateX(-100%);
-            }
-            .sidebar.collapsed.active {
-                transform: translateX(0);
-            }
-
-            body[data-theme="light"] .sidebar {
-                background: rgba(255, 255, 255, 0.85);
-            }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar.collapsed { transform: translateX(-100%); } /* Ensure it hides when collapsed */
+            .sidebar.collapsed.active { transform: translateX(0); }
 
             .main-container {
                 margin-left: 0;
                 padding: 70px 12px 12px;
             }
-
-            .header {
-                padding: 6px 12px;
-                min-height: 55px;
+            .main-container.shifted {
+                margin-left: 0; /* Override shifted state on mobile */
             }
-
-            .header-icon, .theme-toggle, .sidebar-toggle, .back-button {
-                width: 36px;
-                height: 36px;
-                font-size: 14px;
-            }
-
-            .logout-btn {
-                padding: 6px 12px;
-                font-size: 11px;
-                gap: 4px;
-            }
-
-            .header-title-container .sidebar-title {
-                font-size: 14px;
-            }
-
-            .header-title-container .sidebar-subtitle {
-                font-size: 10px;
-            }
-
+            .header { min-height: 55px; }
             .animation-and-stats-wrapper {
                 flex-direction: column;
                 align-items: center;
-                gap: 15px;
             }
-
-            .welcome-animation {
-                width: 120px;
-                height: 120px;
-            }
-
-            .welcome-heading {
-                font-size: 22px;
-            }
-
-            .welcome-title {
-                font-size: 18px;
-            }
-
-            .welcome-subtitle {
-                font-size: 13px;
-            }
-
             .welcome-stats {
                 grid-template-columns: 1fr;
-                gap: 12px;
                 width: 100%;
-                min-width: auto;
-            }
-
-            .stat-card {
-                padding: 12px;
-            }
-
-            .stat-number {
-                font-size: 18px;
-                margin-bottom: 4px;
-            }
-
-            .stat-label {
-                font-size: 11px;
-            }
-
-            .dashboard-card {
-                padding: 15px;
-                margin-bottom: 15px;
-                border-radius: 12px;
-            }
-
-            .card-title {
-                font-size: 16px;
-                gap: 8px;
-            }
-
-            .card-title i {
-                font-size: 16px;
-            }
-
-            .chart-container {
-                height: 180px;
-            }
-
-            .nav-item {
-                padding: 10px 15px;
-                font-size: 13px;
-                gap: 10px;
-            }
-
-            .nav-item i {
-                font-size: 14px;
-                width: 18px;
-            }
-
-            .sidebar-title {
-                font-size: 16px;
-            }
-
-            .sidebar-subtitle {
-                font-size: 11px;
-            }
-
-            .nav-section-title {
-                font-size: 10px;
-                padding: 0 15px;
-                margin-bottom: 6px;
             }
         }
-
-        /* Extra small mobile screens */
+        /* Further mobile adjustments */
         @media (max-width: 480px) {
-            .main-container {
-                padding: 65px 8px 8px;
-            }
-
-            .header {
-                padding: 6px 8px;
-            }
-
-            .header-left, .header-right {
-                gap: 6px;
-            }
-
-            .welcome-animation {
-                width: 100px;
-                height: 100px;
-            }
-
-            .welcome-heading {
-                font-size: 20px;
-            }
-
-            .welcome-title {
-                font-size: 16px;
-            }
-
-            .welcome-subtitle {
-                font-size: 12px;
-            }
-
-            .dashboard-card {
-                padding: 12px;
-            }
-
-            .stat-card {
-                padding: 10px;
-            }
-
-            .stat-number {
-                font-size: 16px;
-            }
-
-            .stat-label {
-                font-size: 10px;
-            }
-
-            .chart-container {
-                height: 160px;
-            }
-
-            .logout-btn span {
-                display: none;
-            }
-
+            .logout-btn span { display: none; }
             .logout-btn {
-                width: 36px;
-                height: 36px;
+                width: 40px;
+                height: 40px;
                 padding: 0;
                 border-radius: 50%;
                 justify-content: center;
             }
-
-            .logout-btn i {
-                margin: 0;
-            }
-        }
-
-        /* Landscape mobile optimizations */
-        @media (max-width: 768px) and (orientation: landscape) {
-            .animation-and-stats-wrapper {
-                flex-direction: row;
-                align-items: flex-start;
-            }
-
-            .welcome-animation {
-                width: 140px;
-                height: 140px;
-            }
-
-            .welcome-stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .logout-btn i { margin: 0; }
         }
     </style>
 </head>
@@ -781,10 +471,10 @@
 
 <div class="header">
     <div class="header-left">
-        <button class="sidebar-toggle">
+        <button class="sidebar-toggle" aria-label="Toggle Sidebar">
             <i class="fas fa-bars"></i>
         </button>
-        <button class="back-button" onclick="logoutUser()">
+        <button class="back-button" onclick="window.history.back()" aria-label="Go Back">
             <i class="fas fa-arrow-left"></i>
         </button>
         <div class="header-title-container">
@@ -794,15 +484,14 @@
     </div>
 
     <div class="header-right">
-        <button class="header-icon" id="notificationBtn">
+        <button class="header-icon" id="notificationBtn" aria-label="View Notifications">
             <i class="fas fa-bell"></i>
             <span class="notification-badge" id="notificationCount" style="display: none;">0</span>
         </button>
-
-        <button class="theme-toggle">
+        <button class="theme-toggle" aria-label="Toggle Theme">
             <i class="fas fa-adjust"></i>
         </button>
-        <button class="logout-btn" onclick="logoutUser()">
+        <button class="logout-btn">
             <i class="fas fa-sign-out-alt"></i>
             <span>Logout</span>
         </button>
@@ -883,25 +572,27 @@
     </section>
 </div>
 
-<div class="toast success">Success message here</div>
-<div class="toast warning">Warning message here</div>
-<div class="toast error">Error message here</div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
 <script src="../config.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // --- Initial Setup ---
         const savedTheme = localStorage.getItem('theme') || 'dark';
         document.body.setAttribute('data-theme', savedTheme);
         initParticles(savedTheme);
+
         const savedSidebarState = localStorage.getItem('sidebarCollapsed');
         const sidebar = document.querySelector('.sidebar');
         const mainContainer = document.querySelector('.main-container');
-        if (window.innerWidth > 992 && savedSidebarState === 'true') {
+
+        // Apply sidebar state only on desktop
+        if (window.innerWidth > 768 && savedSidebarState === 'true') {
             sidebar.classList.add('collapsed');
             mainContainer.classList.add('shifted');
         }
+
+        // --- Welcome Message ---
         const rawUserName = localStorage.getItem('userName');
         const userName = formatUsername(rawUserName);
         const welcomeHeading = document.getElementById('userWelcomeHeading');
@@ -910,16 +601,22 @@
             void welcomeHeading.offsetWidth; // Trigger reflow for animation
             welcomeHeading.classList.add('animate');
         }
+
+        // --- Load Data and Setup Listeners ---
         loadUserAnalytics();
         updateAllStats();
         setupNotificationMonitoring();
+
+        // ✅ FIX: Centralized event listeners for clarity
         document.querySelector('.theme-toggle')?.addEventListener('click', toggleTheme);
         document.querySelector('.sidebar-toggle')?.addEventListener('click', toggleSidebar);
         document.getElementById('notificationBtn')?.addEventListener('click', () => window.location.href = 'notification.html');
-        const logoutButtons = document.querySelectorAll('.logout-btn, .back-button');
-        logoutButtons.forEach(btn => btn.addEventListener('click', logoutUser));
-        setInterval(updateAllStats, 30000);
+        document.querySelector('.logout-btn')?.addEventListener('click', logoutUser);
+
+        // --- Set Interval for Live Updates ---
+        setInterval(updateAllStats, 30000); // Refresh stats every 30 seconds
     });
+
     function updateAllStats() {
         fetchUserTasks().then(tasks => {
             updateOpenTaskCount(tasks);
@@ -928,41 +625,46 @@
             startDeadlineCountdown(tasks);
         });
     }
+
     function formatUsername(name) {
         if (!name) return 'User';
         return name
             .replace(/_/g, ' ')
             .replace(/\b\w/g, char => char.toUpperCase());
     }
+
     function initParticles(theme) {
         if (typeof particlesJS === 'undefined') return console.error('particles.js not loaded.');
         if (window.pJSDom && window.pJSDom[0]) {
             window.pJSDom[0].pJS.fn.vendors.destroypJS();
             window.pJSDom = [];
         }
-        const particleColor = theme === 'dark' ? "#ffffff" : "#ffffff";
-        particlesJS('particles-js', { particles: { number: { value: 80, density: { enable: true, value_area: 800 } }, color: { value: particleColor }, shape: { type: "circle" }, opacity: { value: 0.5, random: true }, size: { value: 3, random: true }, line_linked: { enable: true, distance: 150, color: particleColor, opacity: 0.4, width: 1 }, move: { enable: true, speed: 2, direction: "none", random: false, straight: false, out_mode: "out", bounce: false } }, interactivity: { detect_on: "canvas", events: { onhover: { enable: true, mode: "grab" }, onclick: { enable: true, mode: "push" }, resize: true }, modes: { grab: { distance: 140, line_linked: { opacity: 1 } }, push: { particles_nb: 4 } } }, retina_detect: true });
+        const particleColor = theme === 'dark' ? "#ffffff" : "#4a5568";
+        particlesJS('particles-js', { particles: { number: { value: 60, density: { enable: true, value_area: 800 } }, color: { value: particleColor }, shape: { type: "circle" }, opacity: { value: 0.4, random: true }, size: { value: 2, random: true }, line_linked: { enable: true, distance: 150, color: particleColor, opacity: 0.2, width: 1 }, move: { enable: true, speed: 2, direction: "none", out_mode: "out" } }, interactivity: { detect_on: "canvas", events: { onhover: { enable: true, mode: "grab" }, onclick: { enable: false }, resize: true }, modes: { grab: { distance: 140, line_linked: { opacity: 0.5 } } } }, retina_detect: true });
     }
+
     function toggleTheme() {
         const body = document.body;
         const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
         body.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
         initParticles(newTheme);
-        loadUserAnalytics();
+        loadUserAnalytics(); // Reload chart to update colors
     }
+
     function toggleSidebar() {
         const sidebar = document.querySelector('.sidebar');
         const mainContainer = document.querySelector('.main-container');
 
-        if (window.innerWidth <= 768) {
+        if (window.innerWidth <= 768) { // Mobile behavior
             sidebar.classList.toggle('active');
-        } else {
+        } else { // Desktop behavior
             sidebar.classList.toggle('collapsed');
             mainContainer.classList.toggle('shifted');
             localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
         }
     }
+
     function logoutUser() {
         const username = localStorage.getItem('userName');
         fetch(`${USER_API}/logout`, {
@@ -974,6 +676,7 @@
             window.location.href = '../index.html';
         });
     }
+
     function updateNotificationCount() {
         const count = parseInt(localStorage.getItem('notificationCount') || '0');
         const badge = document.getElementById('notificationCount');
@@ -982,6 +685,7 @@
             badge.style.display = count > 0 ? 'flex' : 'none';
         }
     }
+
     function setupNotificationMonitoring() {
         const fetchNotifications = () => {
             fetch(`${BROADCAST_API}/all`)
@@ -1000,6 +704,7 @@
         fetchNotifications();
         setInterval(fetchNotifications, 15000);
     }
+
     async function fetchUserTasks() {
         const email = localStorage.getItem('userEmail');
         if (!email) return [];
@@ -1012,43 +717,45 @@
             return [];
         }
     }
+
     function updateOpenTaskCount(tasks) {
         const openTasks = tasks.filter(task => task.status !== 'completed').length;
         document.getElementById('openTasksCount').textContent = openTasks;
     }
+
     function updateCompletedTaskCount(tasks) {
         const completed = tasks.filter(task => task.status === 'completed').length;
         document.getElementById('completedCount').textContent = completed;
     }
+
     function updateNewMessagesCount() {
         const unreadCount = parseInt(localStorage.getItem('notificationCount') || '0');
         document.getElementById('newMessagesCount').textContent = unreadCount;
     }
+
     function startDeadlineCountdown(tasks) {
         if (window.deadlineInterval) clearInterval(window.deadlineInterval);
+
         const openTasks = tasks.filter(task => task.status !== 'completed' && task.dueDate);
         if (openTasks.length === 0) {
             document.getElementById('deadlineTimer').textContent = 'No Deadlines';
             return;
         }
-        const now = new Date().getTime();
-        let nearestTask = null;
-        let minDiff = Infinity;
-        openTasks.forEach(task => {
-            const dueTime = new Date(task.dueDate).getTime();
-            const diff = dueTime - now;
-            if (diff > 0 && diff < minDiff) {
-                minDiff = diff;
-                nearestTask = task;
-            }
-        });
-        if (!nearestTask) {
+
+        const now = new Date();
+        const futureDeadlines = openTasks
+            .map(task => new Date(task.dueDate + 'T23:59:59'))
+            .filter(dueDate => dueDate > now);
+
+        if (futureDeadlines.length === 0) {
             document.getElementById('deadlineTimer').textContent = 'No Upcoming';
             return;
         }
-        const dueTime = new Date(nearestTask.dueDate + 'T23:59:59');
+
+        const nearestDueDate = new Date(Math.min.apply(null, futureDeadlines));
+
         const updateCountdown = () => {
-            const diff = dueTime - new Date();
+            const diff = nearestDueDate - new Date();
             if (diff <= 0) {
                 clearInterval(window.deadlineInterval);
                 document.getElementById('deadlineTimer').textContent = 'Deadline Passed';
@@ -1060,8 +767,9 @@
             document.getElementById('deadlineTimer').textContent = `${days}d ${hrs}h ${mins}m`;
         };
         updateCountdown();
-        setInterval(updateCountdown, 60000);
+        window.deadlineInterval = setInterval(updateCountdown, 60000);
     }
+
     async function loadUserAnalytics() {
         const tasks = await fetchUserTasks();
         let open = 0, inProgress = 0, completed = 0, overdue = 0;
@@ -1070,14 +778,21 @@
             tasks.forEach(task => {
                 const status = (task.status || 'pending').toLowerCase();
                 const dueDate = task.dueDate ? new Date(task.dueDate) : null;
-                if (status === 'completed') completed++;
-                else if (status === 'in-progress') inProgress++;
-                else if (dueDate && dueDate < now) overdue++;
-                else open++;
+                // A task is only overdue if it's not completed and its due date is in the past.
+                if (status !== 'completed' && dueDate && dueDate < now) {
+                    overdue++;
+                } else if (status === 'completed') {
+                    completed++;
+                } else if (status === 'in-progress') {
+                    inProgress++;
+                } else { // Includes 'pending', 'new', etc.
+                    open++;
+                }
             });
         }
         renderUserTaskChart([open, inProgress, completed, overdue]);
     }
+
     function renderUserTaskChart(data) {
         const ctx = document.getElementById('userTaskChart')?.getContext('2d');
         if (!ctx) return;
