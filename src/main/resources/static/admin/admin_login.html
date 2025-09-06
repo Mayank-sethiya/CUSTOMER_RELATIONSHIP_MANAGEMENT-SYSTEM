@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Portal - TrackForce CRM</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
-        /* === UI Variables from User Login for Consistency === */
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --glass-bg: rgba(255, 255, 255, 0.95);
@@ -16,26 +15,26 @@
             --text-primary: #374151;
             --text-secondary: #64748b;
             --accent-color: #667eea;
-            --input-bg: rgb(249, 250, 251);
-            --input-border: #d1d5db;
-            --input-focus-border: #667eea;
-            --success-color: #10b981;
-            --error-color: #ef4444;
+            --input-bg: rgb(254, 254, 255);
+            --input-border: #4add10;
+            --input-focus-bg: rgba(255, 255, 255, 0.9);
+            --input-focus-text: #1f2937;
+            --success-color: #16a34a;
+            --error-color: #dc2626;
             --shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
         }
 
         [data-theme="dark"] {
             --primary-gradient: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-            --glass-bg: rgba(15, 23, 42, 0.9);
+            --glass-bg: rgba(15, 23, 42, 0.95);
             --glass-border: rgba(255, 255, 255, 0.1);
             --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
+            --text-secondary: #cbd5e1;
             --accent-color: #818cf8;
-            --input-bg: #1f2937;
-            --input-border: #4b5563;
-            --input-focus-border: #818cf8;
-            --success-color: #34d399;
-            --error-color: #f87171;
+            --input-bg: rgb(254, 254, 255);
+            --input-border: rgba(58, 228, 0, 0.71);
+            --input-focus-bg: rgba(30, 41, 59, 0.8);
+            --input-focus-text: #f1f5f9;
             --shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
         }
 
@@ -58,7 +57,6 @@
             transition: all 0.3s ease;
         }
 
-        /* === Background Elements Added === */
         #particles-js {
             position: absolute;
             width: 100%;
@@ -66,6 +64,31 @@
             top: 0;
             left: 0;
             z-index: 1;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+            font-size: 18px;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px) rotate(10deg);
+            box-shadow: var(--shadow);
         }
 
         .tech-bg {
@@ -97,10 +120,60 @@
             100% { transform: translate(50px, 50px); }
         }
 
-        /* Floating Buttons Adjusted */
-        .theme-toggle, .back-arrow {
+        .floating-nodes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .node {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .node:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+        .node:nth-child(2) { top: 60%; right: 15%; animation-delay: 2s; }
+        .node:nth-child(3) { bottom: 30%; left: 60%; animation-delay: 4s; }
+        .node:nth-child(4) { top: 40%; left: 80%; animation-delay: 1s; }
+        .node:nth-child(5) { bottom: 60%; right: 30%; animation-delay: 3s; }
+        .node:nth-child(6) { top: 70%; left: 30%; animation-delay: 5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) scale(0.8); opacity: 0.4; }
+            50% { transform: translateY(-30px) scale(1.2); opacity: 1; }
+        }
+
+        .connection-lines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: pulse 6s ease-in-out infinite;
+            border-radius: 1px;
+        }
+
+        .line:nth-child(1) { top: 25%; left: 10%; width: 200px; animation-delay: 0s; }
+        .line:nth-child(2) { top: 70%; right: 20%; width: 150px; animation-delay: 2s; }
+        .line:nth-child(3) { top: 45%; left: 50%; width: 180px; animation-delay: 4s; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.2; transform: scaleX(0.8); }
+            50% { opacity: 0.9; transform: scaleX(1.1); }
+        }
+
+        .back-arrow {
             position: fixed;
             top: 20px;
+            left: 20px;
             z-index: 100;
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
@@ -113,19 +186,16 @@
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
+            text-decoration: none;
             color: var(--text-primary);
             font-size: 18px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
-        .theme-toggle { right: 20px; }
-        .back-arrow { left: 20px; text-decoration: none; }
 
-        .theme-toggle:hover, .back-arrow:hover {
-            transform: translateY(-2px) scale(1.05);
+        .back-arrow:hover {
+            transform: translateY(-3px) rotate(-5deg);
             box-shadow: var(--shadow);
         }
 
-        /* Container styles updated to match other pages */
         .login-container {
             position: relative;
             z-index: 10;
@@ -133,27 +203,34 @@
             backdrop-filter: blur(30px);
             border: 1px solid var(--glass-border);
             border-radius: 24px;
-            padding: 35px;
+            padding: 20px 30px;
             width: 100%;
             max-width: 420px;
             box-shadow: var(--shadow);
             animation: slideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             transition: all 0.3s ease;
+            margin: 0 auto;
         }
+
         .login-container:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
+            box-shadow: 0 35px 70px rgba(0, 0, 0, 0.2);
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
-
-        /* --- STYLES FOR YOUR ADMIN CONTAINER CONTENT --- */
 
         .header {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .header h1 {
@@ -161,6 +238,7 @@
             font-size: 28px;
             font-weight: 700;
             margin-bottom: 8px;
+            letter-spacing: -0.5px;
             background: linear-gradient(135deg, var(--accent-color), #764ba2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -170,6 +248,8 @@
         .header p {
             color: var(--text-secondary);
             font-size: 14px;
+            font-weight: 400;
+            line-height: 1.4;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -177,7 +257,8 @@
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
+            position: relative;
         }
 
         .form-group label {
@@ -187,16 +268,12 @@
             margin-bottom: 8px;
             display: flex;
             align-items: center;
-            gap: 8px;
-        }
-
-        .input-wrapper {
-            position: relative;
+            gap: 6px;
         }
 
         .form-group input {
             width: 100%;
-            padding: 14px 20px 14px 45px;
+            padding: 16px 20px 16px 45px;
             background: var(--input-bg);
             border: 2px solid var(--input-border);
             border-radius: 14px;
@@ -204,21 +281,34 @@
             font-size: 15px;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             outline: none;
+            backdrop-filter: blur(10px);
         }
 
-        .input-wrapper .input-icon {
+        .form-group input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent-color);
+            background: var(--input-focus-bg);
+            color: var(--input-focus-text);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        .input-icon {
             position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
+            top: 38px;
             left: 16px;
             color: var(--text-secondary);
             font-size: 15px;
             pointer-events: none;
+            transition: all 0.3s ease;
         }
 
-        .form-group input:focus {
-            border-color: var(--input-focus-border);
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        .form-group input:focus + .input-icon {
+            color: var(--accent-color);
+            transform: scale(1.1);
         }
 
         .login-btn {
@@ -233,131 +323,280 @@
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+        }
+
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .login-btn:hover::before {
+            left: 100%;
         }
 
         .login-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.4);
         }
 
-        .login-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
-        .login-btn .loading { display: none; animation: spin 1s linear infinite; }
-        .login-btn.loading .loading { display: inline-block; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-btn .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
         .message {
-            padding: 12px 16px;
+            padding: 14px 18px;
             border-radius: 10px;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             text-align: center;
             font-size: 13px;
             font-weight: 500;
             display: none;
+            animation: slideIn 0.3s ease;
         }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .message.success {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.2);
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
             color: var(--success-color);
         }
+
         .message.error {
             background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
             color: var(--error-color);
+            animation: shake 0.5s ease-in-out;
         }
 
-        .divider {
-            text-align: center;
-            margin: 25px 0;
-            position: relative;
-        }
-        .divider::before {
-            content: '';
-            position: absolute;
-            top: 50%; left: 0; right: 0;
-            height: 1px;
-            background: var(--input-border);
-        }
-        .divider span {
-            background: var(--glass-bg);
-            padding: 0 15px;
-            color: var(--text-secondary);
-            font-size: 13px;
-            font-weight: 500;
-            position: relative;
-            z-index: 1;
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
 
-        .nav-links {
-            text-align: center;
+        .security-badge {
+            background: rgba(102, 126, 234, 0.05);
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin: 20px 0;
             display: flex;
-            gap: 10px;
+            align-items: center;
             justify-content: center;
-            flex-wrap: wrap;
+            gap: 10px;
+            border-left: 3px solid var(--accent-color);
         }
 
-        .nav-btn {
-            background: transparent;
-            border: 2px solid var(--input-border);
-            color: var(--text-primary);
-            padding: 10px 16px;
+        .security-badge i {
+            color: var(--success-color);
+            font-size: 16px;
+        }
+
+        .security-badge span {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .register-section {
+            text-align: center;
+            padding: 12px 0 8px;
+            border-top: 1px solid var(--input-border);
+        }
+
+        .register-section p {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .register-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .register-btn {
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            border: 2px solid #cbd5e1;
+            color: #475569;
+            padding: 12px 16px;
             border-radius: 10px;
             text-decoration: none;
             font-weight: 500;
             font-size: 13px;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .nav-btn:hover {
-            background: var(--accent-color);
-            color: white;
-            border-color: var(--accent-color);
-        }
-
-        .security-badge {
-            margin-top: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            padding: 12px;
-            background: rgba(102, 126, 234, 0.05);
-            border-radius: 10px;
-            border-left: 3px solid var(--accent-color);
+            gap: 6px;
         }
-        .security-badge i { color: var(--success-color); font-size: 16px; }
-        .security-badge span { color: var(--text-secondary); font-size: 12px; font-weight: 500; }
+
+        .register-btn:hover {
+            background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+            border-color: #94a3b8;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .nav-links {
+            text-align: center;
+            padding-top: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-color);
+            transform: translateY(-1px);
+        }
 
         @media (max-width: 480px) {
-            body { padding: 0; }
-            .login-container {
-                max-width: 100%;
-                height: 100vh;
-                border-radius: 0;
-                box-shadow: none;
-                border: none;
-                background: var(--container-bg);
-                justify-content: center;
-                display: flex;
-                flex-direction: column;
-                padding: 20px;
+            body {
+                padding: 15px;
             }
-            #particles-js, .tech-bg { display: none; }
-            .back-arrow, .theme-toggle { background: var(--input-bg); }
-            .header h1 { font-size: 26px; }
+            .login-container {
+                padding: 30px 25px;
+                border-radius: 20px;
+                max-width: 100%;
+            }
+            .header h1 {
+                font-size: 24px;
+            }
+            .header p {
+                font-size: 13px;
+            }
+            .form-group input {
+                padding: 14px 18px 14px 40px;
+                font-size: 14px;
+            }
+            .input-icon {
+                top: 36px;
+                left: 14px;
+                font-size: 14px;
+            }
+            .login-btn {
+                padding: 16px;
+                font-size: 15px;
+            }
+            .back-arrow, .theme-toggle {
+                top: 15px;
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+            .theme-toggle {
+                right: 15px;
+            }
+            .back-arrow {
+                left: 15px;
+            }
+            .register-buttons {
+                gap: 6px;
+            }
+            .register-btn {
+                padding: 10px 14px;
+                font-size: 12px;
+            }
+            .nav-links {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .nav-links a {
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .login-container {
+                padding: 25px 20px;
+            }
+            .header h1 {
+                font-size: 22px;
+            }
+            .form-group {
+                margin-bottom: 20px;
+            }
+            .login-btn {
+                padding: 14px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-height: 600px) and (orientation: landscape) {
+            body {
+                padding: 10px;
+            }
+            .login-container {
+                padding: 20px 25px;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            .header {
+                margin-bottom: 20px;
+            }
+            .form-group {
+                margin-bottom: 18px;
+            }
+            .register-section {
+                padding: 15px 0 10px;
+            }
+            .nav-links {
+                padding-top: 15px;
+            }
         }
     </style>
 </head>
 <body>
 <div id="particles-js"></div>
-<div class="tech-bg">
-    <div class="grid-lines"></div>
-</div>
 
 <a href="../index.html" class="back-arrow">
     <i class="fas fa-arrow-left"></i>
@@ -365,6 +604,23 @@
 <button class="theme-toggle" id="themeToggle">
     <i class="fas fa-moon"></i>
 </button>
+
+<div class="tech-bg">
+    <div class="grid-lines"></div>
+    <div class="floating-nodes">
+        <div class="node"></div>
+        <div class="node"></div>
+        <div class="node"></div>
+        <div class="node"></div>
+        <div class="node"></div>
+        <div class="node"></div>
+    </div>
+    <div class="connection-lines">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+    </div>
+</div>
 
 <div class="login-container">
     <div class="header">
@@ -381,27 +637,26 @@
 
         <div class="form-group">
             <label for="username">
+                <i class="fas fa-user-tie"></i>
                 Administrator Username
             </label>
-            <div class="input-wrapper">
-                <input type="text" id="username" placeholder="Enter your admin username" required>
-                <i class="fas fa-user-tie input-icon"></i>
-            </div>
+            <input type="text" id="username" placeholder="Enter your admin username" required>
+            <i class="fas fa-user-tie input-icon"></i>
         </div>
 
         <div class="form-group">
             <label for="password">
+                <i class="fas fa-lock"></i>
                 Password
             </label>
-            <div class="input-wrapper">
-                <input type="password" id="password" placeholder="Enter your password" required>
-                <i class="fas fa-lock input-icon"></i>
-            </div>
+            <input type="password" id="password" placeholder="Enter your password" required>
+            <i class="fas fa-lock input-icon"></i>
         </div>
 
         <button type="submit" class="login-btn" id="loginButton">
-            <i class="fas fa-spinner loading"></i>
+            <i class="fas fa-user-shield"></i>
             <span>Access Admin Panel</span>
+            <div class="spinner"></div>
         </button>
     </form>
 
@@ -410,40 +665,47 @@
         <span>Secure administrative access with end-to-end encryption</span>
     </div>
 
-    <div class="divider">
-        <span>Other Options</span>
+    <div class="register-section">
+        <p>Other options</p>
+        <div class="register-buttons">
+            <a href="../user/user-login.html" class="register-btn">
+                <i class="fas fa-user"></i>
+                User Login
+            </a>
+            <a href="../user/register.html" class="register-btn">
+                <i class="fas fa-user-plus"></i>
+                New Registration
+            </a>
+        </div>
     </div>
 
-    <div class="nav-links">
-        <a href="../user/user-login.html" class="nav-btn">
-            <i class="fas fa-user"></i>
-            User Login
-        </a>
-        <a href="../user/register.html" class="nav-btn">
-            <i class="fas fa-user-plus"></i>
-            New Registration
-        </a>
-    </div>
 </div>
 
 <script src="../config.js"></script>
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
 <script>
-    // Initialize Particles.js
     document.addEventListener('DOMContentLoaded', function () {
-        if(window.innerWidth > 480) {
-            particlesJS('particles-js', {
-                "particles": { "number": { "value": 80, "density": { "enable": true, "value_area": 800 } }, "color": { "value": "#ffffff" }, "shape": { "type": "circle" }, "opacity": { "value": 0.5, "random": false }, "size": { "value": 3, "random": true }, "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.4, "width": 1 }, "move": { "enable": true, "speed": 2, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false } },
-                "interactivity": { "detect_on": "canvas", "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true }, "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 1 } }, "push": { "particles_nb": 4 } } },
-                "retina_detect": true
-            });
-        }
+        particlesJS('particles-js', {
+            "particles": { "number": { "value": 80, "density": { "enable": true, "value_area": 800 } }, "color": { "value": "#ffffff" }, "shape": { "type": "circle" }, "opacity": { "value": 0.5, "random": true, "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false } }, "size": { "value": 3, "random": true, "anim": { "enable": false } }, "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.4, "width": 1 }, "move": { "enable": true, "speed": 2, "direction": "none", "random": true, "straight": false, "out_mode": "out", "bounce": false } },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": { "enable": true, "mode": "grab" },
+                    "onclick": { "enable": true, "mode": "push" }
+                },
+                "modes": {
+                    "grab": { "distance": 140, "line_linked": { "opacity": 1 } },
+                    "push": { "particles_nb": 4 }
+                }
+            },
+            "retina_detect": true
+        });
     });
 
-    // Theme functionality
     const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
+    const themeIcon = themeToggle.querySelector('i');
 
     const savedTheme = localStorage.getItem('theme') || 'light';
     body.setAttribute('data-theme', savedTheme);
@@ -459,56 +721,63 @@
     });
 
     function updateThemeIcon(theme) {
-        const icon = themeToggle.querySelector('i');
-        icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        themeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
     }
 
-    // Form functionality (Your original JS)
     const form = document.getElementById('adminLoginForm');
     const errorDiv = document.getElementById('errorMsg');
     const successDiv = document.getElementById('successMsg');
     const loginButton = document.getElementById('loginButton');
-    const loginButtonText = loginButton.querySelector('span');
+    const buttonText = loginButton.querySelector('span');
+    const buttonIcon = loginButton.querySelector('.fa-user-shield');
+    const spinner = loginButton.querySelector('.spinner');
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
 
-        errorDiv.style.display = 'none';
-        successDiv.style.display = 'none';
+        if (!username || !password) {
+            showError('⚠️ Please enter both username and password');
+            return;
+        }
 
         setLoadingState(true);
+        showSuccess('Signing you in...');
 
         try {
             const response = await fetch(`${ADMIN_API}/login`, {
-
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password })
             });
 
-            if (response.ok) {
-                const message = await response.text();
-                if (message === "success") {
-                    localStorage.setItem('adminName', username);
-                    showSuccess('🎉 Login successful! Redirecting to admin panel...');
-                    setSuccessState();
-                    setTimeout(() => {
-                        window.location.href = "dashboard.html";
-                    }, 2000);
-                } else {
-                    showError("Unexpected response from server.");
-                    setLoadingState(false);
-                }
+            let data;
+            try {
+                data = await response.text();
+            } catch (parseError) {
+                data = 'Server error';
+            }
+
+            if (response.ok && data === "success") {
+                localStorage.setItem('adminName', username);
+                showSuccess('🎉 Login successful! Redirecting to admin panel...');
+                setSuccessState();
+                setTimeout(() => {
+                    window.location.href = "dashboard.html";
+                }, 1500);
             } else {
-                const errorMsg = await response.text();
-                showError(errorMsg || "Login failed. Please check your credentials.");
+                showError('❌ Invalid credentials. Please check your username and password.');
                 setLoadingState(false);
             }
-        } catch (err) {
-            showError("Unable to connect to server. Please check your connection and try again.");
+        } catch (error) {
+            console.error('Login error:', error);
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                showError('🌐 Unable to connect to server. Please check your connection and try again.');
+            } else {
+                showError('❌ An unexpected error occurred. Please try again later.');
+            }
             setLoadingState(false);
         }
     });
@@ -517,39 +786,63 @@
         errorDiv.textContent = message;
         errorDiv.className = 'message error';
         errorDiv.style.display = 'block';
+        successDiv.style.display = 'none';
     }
 
     function showSuccess(message) {
         successDiv.textContent = message;
         successDiv.className = 'message success';
         successDiv.style.display = 'block';
+        errorDiv.style.display = 'none';
+
+        if (message.includes('Signing you in...')) {
+            setTimeout(() => {
+                if (successDiv.classList.contains('success')) {
+                    successDiv.style.display = 'none';
+                }
+            }, 5000);
+        }
     }
 
     function setLoadingState(loading) {
         loginButton.disabled = loading;
-        loginButton.classList.toggle('loading', loading);
-        loginButtonText.textContent = loading ? 'Signing In...' : 'Access Admin Panel';
+        if (loading) {
+            buttonText.textContent = 'Signing you in...';
+            buttonIcon.style.display = 'none';
+            spinner.style.display = 'block';
+        } else {
+            buttonText.textContent = 'Access Admin Panel';
+            buttonIcon.className = 'fas fa-user-shield';
+            buttonIcon.style.display = 'inline';
+            spinner.style.display = 'none';
+            loginButton.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+        }
     }
 
     function setSuccessState() {
-        loginButton.disabled = true;
-        loginButton.classList.remove('loading');
-        loginButtonText.textContent = 'Access Granted!';
+        buttonText.textContent = 'Access Granted!';
+        buttonIcon.className = 'fas fa-check';
+        buttonIcon.style.display = 'inline';
+        spinner.style.display = 'none';
         loginButton.style.background = 'linear-gradient(135deg, #10b981, #059669)';
     }
 
-    // Input validation feedback
-    const inputs = document.querySelectorAll('input[required]');
+    const inputs = document.querySelectorAll('input');
     inputs.forEach(input => {
-        input.addEventListener('blur', function () {
-            this.style.borderColor = this.value.trim() === '' ? 'var(--error-color)' : '';
+        input.addEventListener('focus', () => {
+            input.parentElement.classList.add('focused');
         });
-
-        input.addEventListener('input', function () {
-            if (this.style.borderColor) this.style.borderColor = '';
+        input.addEventListener('blur', () => {
+            if (!input.value) {
+                input.parentElement.classList.remove('focused');
+            }
+        });
+        input.addEventListener('input', () => {
+            if (errorDiv.style.display === 'block') {
+                errorDiv.style.display = 'none';
+            }
         });
     });
-
 </script>
 </body>
 </html>
