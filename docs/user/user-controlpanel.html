@@ -117,6 +117,8 @@
             transition: all 0.3s ease;
             font-size: 16px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            position: relative; /* ADDED for shine effect */
+            overflow: hidden;  /* ADDED for shine effect */
         }
         .header-icon:hover, .theme-toggle:hover, .sidebar-toggle:hover, .back-button:hover {
             background: var(--primary);
@@ -155,6 +157,8 @@
             align-items: center;
             gap: 6px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            position: relative; /* ADDED for shine effect */
+            overflow: hidden;  /* ADDED for shine effect */
         }
         .logout-btn:hover {
             transform: translateY(-2px);
@@ -167,6 +171,27 @@
         .header-title-container .sidebar-subtitle {
             font-size: 11px;
             color: var(--text-secondary);
+        }
+
+        /* ✅ ADDED: Shine animation for buttons */
+        .header-icon::before, .theme-toggle::before, .sidebar-toggle::before, .back-button::before, .logout-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -75%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+            transform: skewX(-25deg);
+            transition: none;
+        }
+        .header-icon:hover::before, .theme-toggle:hover::before, .sidebar-toggle:hover::before, .back-button:hover::before, .logout-btn:hover::before {
+            animation: shine 0.7s forwards;
+        }
+        @keyframes shine {
+            100% {
+                left: 125%;
+            }
         }
 
         /* Sidebar Styles */
@@ -607,7 +632,6 @@
         updateAllStats();
         setupNotificationMonitoring();
 
-        // ✅ FIX: Centralized event listeners for clarity
         document.querySelector('.theme-toggle')?.addEventListener('click', toggleTheme);
         document.querySelector('.sidebar-toggle')?.addEventListener('click', toggleSidebar);
         document.getElementById('notificationBtn')?.addEventListener('click', () => window.location.href = 'notification.html');

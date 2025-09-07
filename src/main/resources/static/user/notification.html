@@ -7,63 +7,100 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* --- Dark Theme (Default) --- */
         :root {
-            --primary: #8a2be2; --primary-light: #9932cc; --text-primary: #f1f5f9;
-            --text-secondary: #cbd5e1; --border: rgba(99, 102, 241, 0.3); --shadow: rgba(0, 0, 0, 0.4);
-            --card-bg: rgba(28, 36, 55, 0.9); --card-hover: rgba(40, 50, 70, 0.9);
-            --success: #10b981; --danger: #ef4444; --info: #3b82f6;
+            --primary: #8a2be2;
+            --primary-light: #9932cc;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border: rgba(99, 102, 241, 0.3);
+            --shadow: rgba(0, 0, 0, 0.4);
+            --card-bg: rgba(28, 36, 55, 0.9);
+            --card-hover: rgba(40, 50, 70, 0.9);
+            --success: #10b981;
+            --danger: #ef4444;
+            --info: #3b82f6;
         }
+
+        /* --- Light Theme --- */
+        body[data-theme="light"] {
+            --primary: #6a0dad;
+            --primary-light: #8a2be2;
+            --text-primary: #f1f5f9;      /* ✅ Set to dark theme value */
+            --text-secondary: #cbd5e1;   /* ✅ Set to dark theme value */
+            --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --card-bg: rgba(255, 255, 255, 0.98); /* Light card background */
+            --card-hover: #f1f5f9;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            /* ✅ Background is now always the dark theme gradient */
+            background: linear-gradient(135deg, #764ba2 0%, #4a0361 100%);
             color: var(--text-primary);
             min-height: 100vh;
             overflow: hidden;
         }
+
         #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
         .page-wrapper { display: flex; justify-content: center; padding: 30px; height: 100vh; }
         .notification-container {
-            width: 100%; max-width: 900px; background: var(--card-bg); border-radius: 18px;
+            width: 100%; max-width: 800px; background: var(--card-bg); border-radius: 15px;
             box-shadow: 0 6px 25px var(--shadow); border: 1px solid var(--border);
-            overflow: hidden; backdrop-filter: blur(5px); animation: slideUp 0.4s ease-out;
+            overflow: hidden; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+            animation: slideUp 0.4s ease-out;
             display: flex; flex-direction: column; height: calc(100vh - 60px);
         }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
         .notification-header {
-            background: var(--primary); color: white; padding: 20px 25px;
+            background: var(--primary); color: white; padding: 15px 20px;
             display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
         }
-        .notification-title { font-size: 24px; font-weight: 600; display: flex; align-items: center; gap: 12px; }
-        .header-actions { display: flex; gap: 12px; }
+        .notification-title { font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .header-actions { display: flex; gap: 10px; }
         .btn {
-            border: none; border-radius: 10px; padding: 10px 18px; cursor: pointer;
-            transition: all 0.3s ease; display: flex; align-items: center; gap: 8px;
-            font-weight: 500; font-size: 14px;
+            border: none; border-radius: 8px; padding: 8px 16px; cursor: pointer;
+            transition: all 0.3s ease; display: flex; align-items: center; gap: 6px;
+            font-weight: 500; font-size: 13px;
+            position: relative; overflow: hidden;
         }
-        .btn:hover { transform: translateY(-2px); }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .clear-all-btn { background: var(--danger); color: white; }
         .back-btn { background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2); }
+
+        /* Shine Animation for Buttons */
+        .btn::before, .action-btn::before {
+            content: ''; position: absolute; top: 0; left: -75%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+            transform: skewX(-25deg); transition: none;
+        }
+        .btn:hover::before, .action-btn:hover::before { animation: shine 0.7s forwards; }
+        @keyframes shine { 100% { left: 125%; } }
+
         .notification-stats {
-            padding: 15px 25px; background: var(--card-hover); border-bottom: 1px solid var(--border);
+            padding: 12px 20px; background: var(--card-hover); border-bottom: 1px solid var(--border);
             display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
-            font-size: 14px; color: var(--text-secondary);
+            font-size: 13px; color: var(--text-secondary);
         }
         #unreadCountBadge {
-            background: var(--primary); color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 600;
+            background: var(--primary); color: white; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;
         }
         .notification-list { flex-grow: 1; overflow-y: auto; }
         .notification-item {
-            display: flex; align-items: flex-start; gap: 16px; padding: 15px 25px;
+            display: flex; align-items: flex-start; gap: 15px; padding: 15px 20px;
             border-bottom: 1px solid var(--border); transition: all 0.3s ease; position: relative;
         }
-        .notification-item.unread { background: rgba(138, 43, 226, 0.1); }
+        .notification-item.unread { background: rgba(138, 43, 226, 0.08); }
+        body[data-theme="light"] .notification-item.unread { background: rgba(106, 13, 173, 0.05); }
         .notification-item.read { opacity: 0.7; }
         .notification-item:hover { background: var(--card-hover); }
         .notification-icon-wrapper { position: relative; flex-shrink: 0; }
         .notification-icon {
-            width: 40px; height: 40px; border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; font-size: 16px; color: white;
+            width: 38px; height: 38px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 15px; color: white;
         }
         .notification-icon.task { background: var(--success); }
         .notification-icon.message, .notification-icon.email { background: var(--info); }
@@ -72,27 +109,27 @@
         .notification-icon.alert { background: var(--danger); }
         .notification-icon.sms { background: #14b8a6; }
         .notification-badge {
-            position: absolute; top: -2px; right: -2px;
-            width: 12px; height: 12px; background-color: var(--danger);
-            border-radius: 50%; border: 2px solid var(--card-bg);
+            position: absolute; top: -2px; right: -2px; width: 10px; height: 10px;
+            background-color: var(--danger); border-radius: 50%; border: 2px solid var(--card-bg);
         }
         .notification-content { flex: 1; cursor: pointer; }
-        .notification-subject { font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+        .notification-subject { font-weight: 600; color: var(--text-primary); margin-bottom: 4px; font-size: 15px; }
         .notification-body { color: var(--text-secondary); font-size: 14px; line-height: 1.5; }
-        .notification-time { font-size: 13px; color: var(--text-secondary); margin-top: 8px; }
+        .notification-time { font-size: 12px; color: var(--text-secondary); margin-top: 8px; }
         .notification-actions { display: flex; gap: 8px; margin-top: 12px; }
         .action-btn {
-            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
-            color: var(--text-secondary); padding: 6px 12px; border-radius: 8px;
-            cursor: pointer; font-size: 13px; font-weight: 500;
+            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border);
+            color: var(--text-secondary); padding: 5px 10px; border-radius: 6px;
+            cursor: pointer; font-size: 12px; font-weight: 500;
             display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;
+            position: relative; overflow: hidden;
         }
-        .action-btn:hover { background: rgba(255, 255, 255, 0.2); color: var(--text-primary); }
+        .action-btn:hover { background: rgba(255, 255, 255, 0.1); color: var(--text-primary); }
         .view-btn { border-color: var(--info); color: var(--info); }
         .view-btn:hover { background: rgba(59, 130, 246, 0.2); }
         .delete-btn { border-color: var(--danger); color: var(--danger); }
         .delete-btn:hover { background: rgba(239, 68, 68, 0.2); }
-        .loading-spinner, .empty-state { text-align: center; padding: 80px 32px; }
+        .loading-spinner, .empty-state { text-align: center; padding: 60px 20px; color: var(--text-secondary);}
         .empty-state { display: none; } .empty-state.visible { display: block; }
         .spinner {
             width: 24px; height: 24px; border: 3px solid var(--border);
@@ -100,36 +137,45 @@
             animation: spin 1s ease-in-out infinite; display: inline-block;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-
         /* Modal Styles */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
             display: none; align-items: center; justify-content: center; z-index: 1000;
             animation: fadeIn 0.3s ease;
         }
         .modal-overlay.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
         .modal-content {
-            background: var(--card-bg); border-radius: 12px; padding: 30px;
-            width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto;
+            background: var(--card-bg); border-radius: 15px; padding: 25px;
+            width: 90%; max-width: 550px; max-height: 80vh; overflow-y: auto;
             border: 1px solid var(--border); box-shadow: 0 10px 30px var(--shadow);
             animation: slideUpModal 0.3s ease;
         }
         @keyframes slideUpModal { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .modal-title { font-size: 22px; font-weight: 600; color: var(--text-primary); }
+        .modal-title { font-size: 20px; font-weight: 600; color: var(--text-primary); }
         .modal-close-btn {
             background: none; border: none; font-size: 24px; color: var(--text-secondary);
-            cursor: pointer; padding: 5px; border-radius: 50%;
-            transition: all 0.2s ease;
+            cursor: pointer; padding: 5px; border-radius: 50%; transition: all 0.2s ease;
         }
         .modal-close-btn:hover { background: rgba(255, 255, 255, 0.1); color: var(--text-primary); }
-        .modal-body {
-            font-size: 16px; line-height: 1.6; color: var(--text-secondary);
-            white-space: pre-wrap; word-wrap: break-word;
+        .modal-body { font-size: 15px; line-height: 1.6; color: var(--text-secondary); white-space: pre-wrap; word-wrap: break-word; }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            .page-wrapper { padding: 0; }
+            .notification-container { border-radius: 0; height: 100vh; max-width: 100%; }
+            .notification-header { padding: 15px; }
+            .notification-title { font-size: 18px; }
+            .btn { padding: 8px 12px; font-size: 12px; }
+            .notification-item { padding: 12px 15px; gap: 12px; }
+        }
+        @media (max-width: 480px) {
+            .header-actions { gap: 8px; }
+            .btn span { display: none; }
+            .btn { padding: 8px; width: 36px; height: 36px; justify-content: center; }
+            .btn i { margin-right: 0; }
         }
     </style>
 </head>
@@ -140,8 +186,8 @@
         <div class="notification-header">
             <div class="notification-title"><i class="fas fa-bell"></i> Notifications</div>
             <div class="header-actions">
-                <button class="btn clear-all-btn" onclick="clearAllNotifications()"><i class="fas fa-trash-alt"></i> Clear All</button>
-                <button class="btn back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</button>
+                <button class="btn clear-all-btn" onclick="clearAllNotifications()"><i class="fas fa-trash-alt"></i><span>&nbsp;Clear All</span></button>
+                <button class="btn back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i><span>&nbsp;Back</span></button>
             </div>
         </div>
         <div class="notification-stats">
@@ -172,33 +218,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
 <script src="../config.js"></script>
 <script>
-    // Global state management
-    const notificationStore = new Map();
-
-    let totalNotifications = 0;
-    let unreadNotifications = 0;
-    let isLoading = false;
-
-    // Debug mode - set to true for debugging
-    const DEBUG = false;
-    const debugLog = (...args) => DEBUG && console.log('[NotificationPanel]', ...args);
-
-    // ✨ FIX: Creates user-specific keys for localStorage to persist state across logins.
-    function getUserSpecificStorageKeys() {
-        const currentUserEmail = localStorage.getItem('userEmail');
-        if (!currentUserEmail) {
-            console.error("User email not found in localStorage. Notification state will not be persisted.");
-            return null;
-        }
-        return {
-            CLEARED: `clearedNotifications_v2_${currentUserEmail}`,
-            READ: `readNotifications_v2_${currentUserEmail}`
-        };
-    }
-
     document.addEventListener('DOMContentLoaded', function () {
-        debugLog('Initializing notification panel');
-        initParticles(localStorage.getItem('theme') || 'dark');
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.body.setAttribute('data-theme', savedTheme);
+
+        initParticles(); // Theme parameter is no longer needed
         loadNotifications();
 
         setInterval(loadNotifications, 30000);
@@ -212,295 +236,196 @@
         });
     });
 
-    // Enhanced storage helpers
+    function initParticles() {
+        if (typeof particlesJS === 'undefined') return;
+        if (window.pJSDom && window.pJSDom[0]) {
+            window.pJSDom[0].pJS.fn.vendors.destroypJS();
+            window.pJSDom = [];
+        }
+
+        // ✅ FIX: Particles are now always white to be visible against the dark background.
+        const particleColor = "#ffffff";
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 60, density: { enable: true, value_area: 800 } },
+                color: { value: particleColor },
+                shape: { type: "circle" },
+                opacity: { value: 0.5, random: true },
+                size: { value: 3, random: true },
+                line_linked: { enable: true, distance: 150, color: particleColor, opacity: 0.4, width: 1 },
+                move: { enable: true, speed: 2, direction: "none", out_mode: "out" }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: { onhover: { enable: true, mode: "grab" } },
+                modes: { grab: { distance: 140, line_linked: { opacity: 0.5 } } }
+            },
+            retina_detect: true
+        });
+    }
+
+    // --- All other JavaScript functions remain unchanged ---
+
+    const notificationStore = new Map();
+    let isLoading = false;
+
+    function getUserSpecificStorageKeys() {
+        const currentUserEmail = localStorage.getItem('userEmail');
+        if (!currentUserEmail) return null;
+        return {
+            CLEARED: `clearedNotifications_v2_${currentUserEmail}`,
+            READ: `readNotifications_v2_${currentUserEmail}`
+        };
+    }
+
     const getStoredIds = (key) => {
         try {
-            // Check if key is valid before proceeding
             if (!key) return new Set();
-            const stored = localStorage.getItem(key);
-            return new Set(JSON.parse(stored || '[]'));
-        } catch (e) {
-            debugLog('Error reading from localStorage:', e);
-            return new Set();
-        }
+            return new Set(JSON.parse(localStorage.getItem(key) || '[]'));
+        } catch (e) { return new Set(); }
     };
 
     const saveStoredIds = (key, idsSet) => {
-        try {
-            // Check if key is valid before proceeding
-            if (!key) return;
-            localStorage.setItem(key, JSON.stringify([...idsSet]));
-            debugLog(`Saved ${idsSet.size} IDs to ${key}`);
-        } catch (e) {
-            debugLog('Error saving to localStorage:', e);
-        }
+        if (!key) return;
+        localStorage.setItem(key, JSON.stringify([...idsSet]));
     };
 
-    const getNotificationId = (msg) => {
-        if (msg.id) return String(msg.id);
-        if (msg._id) return String(msg._id);
-        const content = `${msg.subject || 'no-subject'}-${msg.content || 'no-content'}-${msg.createdAt || Date.now()}`;
-        let hash = 0;
-        for (let i = 0; i < content.length; i++) {
-            const char = content.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash = hash & hash;
-        }
-        return `generated_${Math.abs(hash)}`;
-    };
+    const getNotificationId = (msg) => msg.id ? String(msg.id) : String(msg._id);
 
     function showState(state, title, message) {
-        const loadingEl = document.getElementById('loadingState');
+        document.getElementById('loadingState').style.display = state === 'loading' ? 'flex' : 'none';
         const emptyEl = document.getElementById('emptyState');
-
-        if (loadingEl) loadingEl.style.display = state === 'loading' ? 'flex' : 'none';
-
-        if (emptyEl) {
-            if (state === 'empty') {
-                emptyEl.querySelector('#emptyStateTitle').textContent = title || '';
-                emptyEl.querySelector('#emptyStateMessage').textContent = message || '';
-                emptyEl.classList.add('visible');
-            } else {
-                emptyEl.classList.remove('visible');
-            }
+        if (state === 'empty') {
+            emptyEl.querySelector('#emptyStateTitle').textContent = title || '';
+            emptyEl.querySelector('#emptyStateMessage').textContent = message || '';
+            emptyEl.classList.add('visible');
+        } else {
+            emptyEl.classList.remove('visible');
         }
     }
 
     function updateCounts() {
-        const visibleItems = document.querySelectorAll('.notification-item:not([style*="display: none"])');
-        const visibleUnreadItems = document.querySelectorAll('.notification-item.unread:not([style*="display: none"])');
-
-        totalNotifications = visibleItems.length;
-        unreadNotifications = visibleUnreadItems.length;
-
-        document.getElementById('totalCount').textContent = totalNotifications;
-        document.getElementById('unreadCountBadge').textContent = unreadNotifications;
-
-        // This count is generic, but still useful for other parts of the app.
-        localStorage.setItem('notificationCount', unreadNotifications);
-
-        window.dispatchEvent(new CustomEvent('notificationCountUpdated', {
-            detail: { total: totalNotifications, unread: unreadNotifications }
-        }));
+        const total = document.querySelectorAll('.notification-item').length;
+        const unread = document.querySelectorAll('.notification-item.unread').length;
+        document.getElementById('totalCount').textContent = total;
+        document.getElementById('unreadCountBadge').textContent = unread;
+        localStorage.setItem('notificationCount', unread);
     }
 
-    function goBack() {
-        window.history.back();
-    }
+    function goBack() { window.history.back(); }
 
     function clearAllNotifications() {
-        const items = document.querySelectorAll('.notification-item');
-        if (items.length === 0) {
-            alert('No notifications to clear.');
-            return;
-        }
-
         if (!confirm('Are you sure you want to permanently clear all notifications?')) return;
-
-        // ✨ FIX: Use user-specific storage keys
         const storageKeys = getUserSpecificStorageKeys();
-        if (!storageKeys) {
-            alert("Could not clear notifications: user not logged in.");
-            return;
-        }
+        if (!storageKeys) return;
         const clearedIds = getStoredIds(storageKeys.CLEARED);
-        debugLog('Clearing all notifications, current cleared count:', clearedIds.size);
-
-        items.forEach(item => {
-            const id = item.dataset.id;
-            if (id) {
-                clearedIds.add(id);
-            }
-            item.style.animation = 'fadeOut 0.3s ease';
-            setTimeout(() => item.remove(), 300);
-        });
-
+        document.querySelectorAll('.notification-item').forEach(item => clearedIds.add(item.dataset.id));
         saveStoredIds(storageKeys.CLEARED, clearedIds);
-
-        setTimeout(() => {
-            showState('empty', 'All Cleared!', 'Your notification list is empty.');
-            updateCounts();
-        }, 350);
+        document.getElementById("notificationList").innerHTML = '';
+        showState('empty', 'All Cleared!', 'Your notification list is empty.');
+        updateCounts();
     }
 
     function markAsRead(notificationId) {
-        debugLog('Marking as read:', notificationId);
         const element = document.querySelector(`[data-id='${notificationId}']`);
-        if (!element || element.classList.contains('read')) {
-            return;
-        }
-
+        if (!element || !element.classList.contains('unread')) return;
         element.classList.remove('unread');
         element.classList.add('read');
-
-        const badge = element.querySelector('.notification-badge');
-        if (badge) badge.remove();
-
-        // ✨ FIX: Use user-specific storage keys
+        element.querySelector('.notification-badge')?.remove();
         const storageKeys = getUserSpecificStorageKeys();
-        if (!storageKeys) return; // Cannot save state if user is not identified
-
+        if (!storageKeys) return;
         const readIds = getStoredIds(storageKeys.READ);
         readIds.add(notificationId);
         saveStoredIds(storageKeys.READ, readIds);
-
         updateCounts();
-        debugLog('Successfully marked as read:', notificationId);
     }
 
     function softDeleteNotification(notificationId) {
-        debugLog('Soft deleting notification:', notificationId);
+        if (!confirm('Are you sure you want to clear this notification?')) return;
         const element = document.querySelector(`[data-id='${notificationId}']`);
         if (!element) return;
-
-        if (!confirm('Are you sure you want to permanently clear this notification?')) return;
-
-        element.style.animation = 'fadeOut 0.3s ease';
-
-        // ✨ FIX: Use user-specific storage keys
         const storageKeys = getUserSpecificStorageKeys();
         if (!storageKeys) return;
-
         const clearedIds = getStoredIds(storageKeys.CLEARED);
         clearedIds.add(notificationId);
         saveStoredIds(storageKeys.CLEARED, clearedIds);
-        debugLog('Added to cleared list:', notificationId);
-
-        setTimeout(() => {
-            element.remove();
-            updateCounts();
-            if (document.querySelectorAll('.notification-item').length === 0) {
-                showState('empty', 'All Caught Up!', 'You have no new notifications.');
-            }
-        }, 300);
+        element.remove();
+        if (document.querySelectorAll('.notification-item').length === 0) {
+            showState('empty', 'All Caught Up!', 'You have no new notifications.');
+        }
+        updateCounts();
     }
 
     function viewNotification(notificationId) {
         const msg = notificationStore.get(notificationId);
-        if (!msg) {
-            alert('Error: Notification content not found.');
-            return;
-        }
-
-        const modalTitle = document.getElementById('modalTitle');
-        const modalBody = document.getElementById('modalBody');
-        const modal = document.getElementById('notificationModal');
-
-        modalTitle.textContent = msg.subject || 'No Subject';
-        modalBody.textContent = msg.content || msg.message || msg.body || 'No content available';
-        modal.classList.add('active');
-
+        if (!msg) return;
+        document.getElementById('modalTitle').textContent = msg.subject || 'No Subject';
+        document.getElementById('modalBody').textContent = msg.content || msg.message || 'No content available';
+        document.getElementById('notificationModal').classList.add('active');
         markAsRead(notificationId);
     }
 
     function closeModal() {
-        const modal = document.getElementById('notificationModal');
-        modal.classList.remove('active');
+        document.getElementById('notificationModal').classList.remove('active');
     }
 
     function createNotificationElement(msg) {
         const id = getNotificationId(msg);
-
-        // ✨ FIX: Use user-specific storage keys
-        const storageKeys = getUserSpecificStorageKeys();
-        const readIds = storageKeys ? getStoredIds(storageKeys.READ) : new Set();
-        const isRead = readIds.has(id);
-
         notificationStore.set(id, msg);
-
-        const iconMap = {
-            task: 'fa-tasks', meeting: 'fa-calendar-alt', system: 'fa-cog',
-            alert: 'fa-exclamation-triangle', info: 'fa-info-circle',
-            message: 'fa-envelope', email: 'fa-envelope', sms: 'fa-comment-dots'
-        };
+        const storageKeys = getUserSpecificStorageKeys();
+        const isRead = storageKeys ? getStoredIds(storageKeys.READ).has(id) : false;
+        const iconMap = { task: 'fa-tasks', meeting: 'fa-calendar-alt', system: 'fa-cog', alert: 'fa-exclamation-triangle', info: 'fa-info-circle', message: 'fa-envelope', email: 'fa-envelope', sms: 'fa-comment-dots' };
         const type = msg.type?.toLowerCase() || 'message';
         const iconClass = iconMap[type] || iconMap.message;
+        const timeAgo = (dateStr) => {
+            const diff = (new Date() - new Date(dateStr)) / 1000;
+            if (diff < 60) return 'Just now'; if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+            if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`; return `${Math.floor(diff / 86400)}d ago`;
+        };
+        const contentStr = String(msg.content || msg.message || 'No content available');
+        const truncatedContent = contentStr.length > 120 ? contentStr.substring(0, 120) + '...' : contentStr;
 
         const item = document.createElement("div");
         item.className = `notification-item ${isRead ? 'read' : 'unread'}`;
         item.dataset.id = id;
-
-        const timeAgo = (dateStr) => {
-            const date = new Date(dateStr);
-            const diff = (new Date() - date) / 1000;
-            if (diff < 60) return 'Just now';
-            if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-            if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-            return `${Math.floor(diff / 86400)}d ago`;
-        };
-
-        const contentStr = String(msg.content || msg.message || msg.body || 'No content available');
-        const truncatedContent = contentStr.length > 120 ? contentStr.substring(0, 120) + '...' : contentStr;
-
         item.innerHTML = `
             <div class="notification-icon-wrapper">
                 <div class="notification-icon ${type}"><i class="fas ${iconClass}"></i></div>
                 ${!isRead ? '<div class="notification-badge"></div>' : ''}
             </div>
             <div class="notification-content" onclick="viewNotification('${id}')">
-                <div class="notification-subject">${String(msg.subject || msg.title || 'No Subject')}</div>
+                <div class="notification-subject">${String(msg.subject || 'No Subject')}</div>
                 <div class="notification-body">${truncatedContent}</div>
                 <div class="notification-time">${timeAgo(msg.createdAt)}</div>
                 <div class="notification-actions">
-                    <button class="action-btn view-btn" onclick="event.stopPropagation(); viewNotification('${id}')">
-                        <i class="fas fa-eye"></i> View
-                    </button>
-                    <button class="action-btn delete-btn" onclick="event.stopPropagation(); softDeleteNotification('${id}')">
-                        <i class="fas fa-times"></i> Clear
-                    </button>
+                    <button class="action-btn view-btn" onclick="event.stopPropagation(); viewNotification('${id}')"><i class="fas fa-eye"></i> View</button>
+                    <button class="action-btn delete-btn" onclick="event.stopPropagation(); softDeleteNotification('${id}')"><i class="fas fa-times"></i> Clear</button>
                 </div>
-            </div>
-        `;
+            </div>`;
         return item;
     }
 
     async function loadNotifications() {
         if (isLoading) return;
         isLoading = true;
-
         const listEl = document.getElementById("notificationList");
         const currentUserEmail = localStorage.getItem('userEmail');
-        debugLog('Loading notifications for user:', currentUserEmail);
-
         if (!currentUserEmail) {
             showState('empty','Not Logged In','Please log in to see notifications.');
-            isLoading = false;
-            return;
+            isLoading = false; return;
         }
-
         try {
             showState('loading');
-
-            if (typeof BROADCAST_API === 'undefined') {
-                throw new Error('BROADCAST_API is not defined. Please check config.js');
-            }
-
             const response = await fetch(`${BROADCAST_API}/for-user?email=${encodeURIComponent(currentUserEmail)}`);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
             const messages = await response.json();
-            if (!Array.isArray(messages)) throw new Error("Invalid API response format");
-
-            debugLog('Fetched', messages.length, 'messages from API');
-
-            // ✨ FIX: Use user-specific storage keys
             const storageKeys = getUserSpecificStorageKeys();
             const clearedIds = storageKeys ? getStoredIds(storageKeys.CLEARED) : new Set();
-            debugLog('Found', clearedIds.size, 'cleared notification IDs for user');
-
             const visibleMessages = messages.filter(msg => !clearedIds.has(getNotificationId(msg)));
-
-            listEl.innerHTML = `
-                <div class="loading-spinner" id="loadingState" style="display: none;"><div class="spinner"></div></div>
-                <div class="empty-state" id="emptyState"><i class="fas fa-bell-slash"></i><h3 id="emptyStateTitle"></h3><p id="emptyStateMessage"></p></div>
-            `;
-
+            listEl.innerHTML = '';
             if (visibleMessages.length > 0) {
                 visibleMessages.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                visibleMessages.forEach(msg => {
-                    const element = createNotificationElement(msg);
-                    listEl.appendChild(element);
-                });
+                visibleMessages.forEach(msg => listEl.appendChild(createNotificationElement(msg)));
                 showState('content');
             } else {
                 showState('empty','All Caught Up!','You have no new notifications.');
@@ -513,54 +438,6 @@
             updateCounts();
         }
     }
-
-    function initParticles(theme) {
-        if (typeof particlesJS !== 'undefined') {
-            const particleColor = "#ffffff";
-            // ✨ MODIFIED: Particle settings updated for bold, white, and opaque appearance
-            particlesJS('particles-js', {
-                "particles": {
-                    "number": { "value": 50 },
-                    "color": { "value": particleColor },
-                    "shape": { "type": "circle" },
-                    "opacity": {
-                        "value": 0.9, // Increased opacity
-                        "random": true
-                    },
-                    "size": {
-                        "value": 5, // Increased size for boldness
-                        "random": true
-                    },
-                    "line_linked": {
-                        "enable": true,
-                        "distance": 150,
-                        "color": particleColor,
-                        "opacity": 0.7, // Increased line opacity
-                        "width": 1
-                    },
-                    "move": {
-                        "enable": true,
-                        "speed": 2,
-                        "direction": "none",
-                        "random": true,
-                        "straight": false,
-                        "out_mode": "out"
-                    }
-                },
-                "interactivity": {
-                    "events": {
-                        "onhover": { "enable": true, "mode": "repulse" },
-                        "onclick": { "enable": true, "mode": "push" }
-                    }
-                },
-                "retina_detect": true
-            });
-        }
-    }
-
-    const style = document.createElement('style');
-    style.textContent = `@keyframes fadeOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-20px); } }`;
-    document.head.appendChild(style);
 </script>
 </body>
 </html>
