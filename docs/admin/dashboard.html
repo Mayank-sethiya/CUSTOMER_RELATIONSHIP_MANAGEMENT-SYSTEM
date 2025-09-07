@@ -1322,6 +1322,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // --- Initialize based on localStorage ---
+
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme) {
             document.body.setAttribute('data-theme', savedTheme);
@@ -1914,6 +1915,14 @@
     }
 
     async function updateDashboardData() {
+        // ✅ Always set welcome text first
+        const adminName = localStorage.getItem('adminName') || 'Admin';
+        const adminWelcome = document.getElementById('adminWelcome');
+        adminWelcome.classList.remove('animate');
+        adminWelcome.textContent = `Hi ${adminName}!`;
+        void adminWelcome.offsetWidth; // restart animation
+        adminWelcome.classList.add('animate');
+
         try {
             const [usersRes, leadsRes, signupsMonthlyRes, signupsRecentRes] = await Promise.all([
                 fetch(`${USER_API}`),
@@ -1921,31 +1930,35 @@
                 fetch(`${USER_API}/signups/monthly`),
                 fetch(`${USER_API}/count/recent`)
             ]);
+
             if (!usersRes.ok || !leadsRes.ok || !signupsMonthlyRes.ok || !signupsRecentRes.ok) {
                 throw new Error('One or more API requests failed');
             }
+
             const users = await usersRes.json();
             const leadsData = await leadsRes.json();
             const signupsMonthlyData = await signupsMonthlyRes.json();
             const recentSignupsData = await signupsRecentRes.json();
+
             const totalActiveUsers = users.filter(user => user.status === 'active').length;
+
             document.getElementById("userCount").textContent = users.length;
-            document.getElementById('activeUsersCount').textContent = totalActiveUsers;
+            document.getElementById("activeUsersCount").textContent = totalActiveUsers;
             document.getElementById("signupCount").textContent = recentSignupsData.count || 0;
-            document.getElementById("leadCount").textContent = leadsData.count !== undefined ? leadsData.count : leadsData;
-            initializeCharts(users, leadsData.count !== undefined ? leadsData.count : leadsData, signupsMonthlyData, totalActiveUsers);
-            const adminName = localStorage.getItem('adminName') || 'Admin';
-            const adminWelcome = document.getElementById('adminWelcome');
-            if (adminWelcome.textContent !== `Hi ${adminName}!`) {
-                adminWelcome.classList.remove('animate');
-                adminWelcome.textContent = `Hi ${adminName}!`;
-                void adminWelcome.offsetWidth;
-                adminWelcome.classList.add('animate');
-            }
+            document.getElementById("leadCount").textContent =
+                leadsData.count !== undefined ? leadsData.count : leadsData;
+
+            initializeCharts(
+                users,
+                leadsData.count !== undefined ? leadsData.count : leadsData,
+                signupsMonthlyData,
+                totalActiveUsers
+            );
         } catch (error) {
             console.error("Error updating dashboard data:", error);
         }
     }
+
 
     async function loadRecentUsers() {
         try {
