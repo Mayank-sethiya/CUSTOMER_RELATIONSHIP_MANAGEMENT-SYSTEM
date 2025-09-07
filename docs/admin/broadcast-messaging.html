@@ -71,7 +71,7 @@
 
             /* Responsive header */
             --header-height: 65px;
-            --header-height-mobile: 50px;
+            --header-height-mobile: 65px;
 
             /* Responsive typography */
             --text-xs: 0.75rem;
@@ -199,7 +199,7 @@
             line-height: 1.2;
         }
 
-        /* Sidebar Styles */
+        /* --- UPDATED SIDEBAR STYLES --- */
         .sidebar {
             width: var(--sidebar-width-expanded);
             background: var(--sidebar-bg);
@@ -208,7 +208,7 @@
             position: fixed;
             top: 0;
             left: 0;
-            padding-top: 80px;
+            padding-top: var(--header-height); /* Sits below the main header */
             box-shadow: 3px 0 25px var(--shadow);
             z-index: 900;
             transition: all 0.3s ease;
@@ -218,45 +218,6 @@
 
         .sidebar.collapsed {
             width: var(--sidebar-width-collapsed);
-        }
-
-        .sidebar.collapsed .sidebar-header {
-            padding: 20px 10px;
-        }
-        .sidebar.collapsed .sidebar-title,
-        .sidebar.collapsed .sidebar-subtitle,
-        .sidebar.collapsed .nav-section-title {
-            display: none;
-        }
-
-        .sidebar.collapsed .nav-item {
-            justify-content: center;
-            padding: 15px 0;
-        }
-        .sidebar.collapsed .nav-item span {
-            display: none;
-        }
-        .sidebar.collapsed .nav-item i {
-            margin: 0;
-        }
-
-        .sidebar-header {
-            padding: var(--sidebar-padding-expanded);
-            text-align: center;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: var(--spacing-medium);
-        }
-
-        .sidebar-title {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--sidebar-text);
-            margin-bottom: 6px;
-        }
-
-        .sidebar-subtitle {
-            font-size: 14px;
-            color: var(--sidebar-text-secondary);
         }
 
         .sidebar-overlay {
@@ -282,93 +243,11 @@
         }
 
         .nav-section {
-            margin-bottom: var(--spacing-medium);
-        }
-
-        .nav-section-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--sidebar-text-secondary);
-            padding: 0 var(--sidebar-padding-expanded);
-            margin-bottom: var(--spacing-small);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 14px var(--sidebar-padding-expanded);
-            color: var(--sidebar-text);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border-radius: 10px;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            width: 100%;
-            text-align: left;
-            font-size: 15px;
-            font-weight: 500;
-        }
-
-        .nav-item:hover,
-        .nav-item.active {
-            background: var(--hover-bg);
-            color: var(--primary);
-            transform: translateX(8px);
-        }
-
-        .nav-item i {
-            font-size: 20px;
-            width: 28px;
-        }
-
-        .sidebar.collapsed .sidebar-title,
-        .sidebar.collapsed .sidebar-subtitle,
-        .sidebar.collapsed .nav-section-title {
-            display: none;
-        }
-
-        .sidebar.collapsed .nav-item {
-            justify-content: center;
-            padding: var(--spacing-md) 0;
-        }
-
-        .sidebar.collapsed .nav-item span {
-            display: none;
-        }
-
-        .sidebar.collapsed .nav-item i {
-            margin: 0;
-        }
-
-        .sidebar-header {
-            height: var(--header-height);
-            padding: var(--spacing-md) var(--spacing-lg);
-            border-bottom: 1px solid var(--border);
             margin-bottom: var(--spacing-lg);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
         }
 
-        .sidebar-title {
-            font-size: var(--text-xl);
-            font-weight: 700;
-            color: var(--sidebar-text);
-            margin-bottom: var(--spacing-xs);
-            line-height: 1.2;
-        }
-
-        .sidebar-subtitle {
-            font-size: var(--text-xs);
-            color: var(--sidebar-text-secondary);
-        }
-
-        .nav-section {
-            margin-bottom: var(--spacing-lg);
+        .nav-section:first-child {
+            padding-top: var(--spacing-lg);
         }
 
         .nav-section + .nav-section {
@@ -384,6 +263,7 @@
             margin-bottom: var(--spacing-sm);
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            transition: opacity 0.3s ease;
         }
 
         .nav-item {
@@ -402,6 +282,7 @@
             text-align: left;
             font-size: var(--text-sm);
             font-weight: 500;
+            margin-bottom: calc(var(--spacing-sm) / 3);
         }
 
         .nav-item:hover,
@@ -415,7 +296,31 @@
             font-size: var(--text-lg);
             width: 20px;
             flex-shrink: 0;
+            transition: margin 0.3s ease;
         }
+
+        .sidebar.collapsed .nav-section-title {
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+            padding: 0 var(--spacing-lg);
+            margin: 0;
+        }
+
+        .sidebar.collapsed .nav-item {
+            justify-content: center;
+            padding: var(--spacing-md) 0;
+        }
+
+        .sidebar.collapsed .nav-item span {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-item i {
+            margin: 0;
+        }
+        /* --- END OF UPDATED SIDEBAR STYLES --- */
+
 
         /* Main Container Styles */
         .main-container {
@@ -876,7 +781,7 @@
                 transform: translateX(-100%);
                 transition: transform 0.3s ease;
                 z-index: 900;
-                padding-top: 20px;
+                padding-top: var(--header-height-mobile);
             }
 
             .sidebar.mobile-active {
@@ -892,20 +797,16 @@
                 transform: translateX(0);
             }
 
-            .sidebar.collapsed .sidebar-header {
-                padding: var(--sidebar-padding-expanded);
-                display: block;
-            }
-
-            .sidebar.collapsed .sidebar-title,
-            .sidebar.collapsed .sidebar-subtitle,
             .sidebar.collapsed .nav-section-title {
-                display: block;
+                display: block; /* Show titles on mobile */
+                opacity: 1;
+                height: auto;
+                margin-bottom: var(--spacing-sm);
             }
 
             .sidebar.collapsed .nav-item {
                 justify-content: flex-start;
-                padding: 14px var(--sidebar-padding-expanded);
+                padding: var(--spacing-md) var(--spacing-lg);
             }
 
             .sidebar.collapsed .nav-item span {
@@ -913,8 +814,7 @@
             }
 
             .sidebar.collapsed .nav-item i {
-                margin-right: 15px;
-                width: 28px;
+                margin-right: var(--spacing-md);
             }
 
             .main-container {
@@ -1011,10 +911,6 @@
                 width: 16px;
             }
 
-            .sidebar-title {
-                font-size: var(--text-lg);
-            }
-
             .preview-content {
                 padding: var(--spacing-sm);
             }
@@ -1047,7 +943,6 @@
 
 <div id="particles-js"></div>
 
-<!-- Sidebar Overlay for Mobile -->
 <div class="sidebar-overlay" onclick="closeMobileSidebar()"></div>
 
 <div class="header">
@@ -1074,10 +969,6 @@
 </div>
 
 <div class="sidebar collapsed">
-    <div class="sidebar-header">
-        <div class="sidebar-title">TrackForce CRM</div>
-        <div class="sidebar-subtitle">Admin Panel</div>
-    </div>
     <nav class="sidebar-nav">
         <div class="nav-section">
             <div class="nav-section-title">Main</div>
@@ -1118,6 +1009,7 @@
         </div>
     </nav>
 </div>
+
 
 <div class="main-container shifted">
     <h1 class="page-title">
@@ -1354,12 +1246,8 @@
 
         if (window.innerWidth <= 768) {
             // Mobile behavior
-            if (sidebar.classList.contains('mobile-active')) {
-                closeMobileSidebar();
-            } else {
-                sidebar.classList.add('mobile-active');
-                overlay.classList.add('active');
-            }
+            sidebar.classList.toggle('mobile-active');
+            overlay.classList.toggle('active');
         } else {
             // Desktop behavior
             sidebar.classList.toggle('collapsed');
@@ -1371,7 +1259,6 @@
     function closeMobileSidebar() {
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.querySelector('.sidebar-overlay');
-
         sidebar.classList.remove('mobile-active');
         overlay.classList.remove('active');
     }
@@ -1383,13 +1270,10 @@
         const overlay = document.querySelector('.sidebar-overlay');
 
         if (window.innerWidth > 768) {
-            // Desktop: reset mobile classes
-            sidebar.classList.remove('mobile-active');
             overlay.classList.remove('active');
-
-            // Restore desktop state
-            const savedSidebarState = localStorage.getItem('sidebarCollapsed');
-            if (savedSidebarState === 'true') {
+            sidebar.classList.remove('mobile-active');
+            const savedState = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (savedState) {
                 sidebar.classList.add('collapsed');
                 mainContainer.classList.add('shifted');
             } else {
@@ -1397,13 +1281,11 @@
                 mainContainer.classList.remove('shifted');
             }
         } else {
-            // Mobile: ensure proper state
+            sidebar.classList.remove('collapsed');
             sidebar.classList.remove('mobile-active');
-            overlay.classList.remove('active');
             mainContainer.classList.remove('shifted');
+            overlay.classList.remove('active');
         }
-
-        // Reinitialize particles for new screen size
         initParticles(document.body.getAttribute('data-theme') || 'dark');
     });
 
