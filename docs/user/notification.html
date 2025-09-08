@@ -26,8 +26,8 @@
         body[data-theme="light"] {
             --primary: #6a0dad;
             --primary-light: #8a2be2;
-            --text-primary: #f1f5f9;      /* ✅ Set to dark theme value */
-            --text-secondary: #cbd5e1;   /* ✅ Set to dark theme value */
+            --text-primary: #0f172a;      /* ✅ Set to dark theme value */
+            --text-secondary: #334155;   /* ✅ Set to dark theme value */
             --border: #e2e8f0;
             --shadow: rgba(0, 0, 0, 0.1);
             --card-bg: rgba(255, 255, 255, 0.98); /* Light card background */
@@ -47,11 +47,10 @@
         #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
         .page-wrapper { display: flex; justify-content: center; padding: 30px; height: 100vh; }
         .notification-container {
-            width: 100%; max-width: 800px; background: var(--card-bg); border-radius: 15px;
-            box-shadow: 0 6px 25px var(--shadow); border: 1px solid var(--border);
-            overflow: hidden; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
-            animation: slideUp 0.4s ease-out;
+            width: 100%; max-width: 800px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 15px;
+            box-shadow: 0 6px 25px var(--shadow); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
             display: flex; flex-direction: column; height: calc(100vh - 60px);
+            animation: slideUp 0.4s ease-out;
         }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -67,7 +66,7 @@
             font-weight: 500; font-size: 13px;
             position: relative; overflow: hidden;
         }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.25); }
         .clear-all-btn { background: var(--danger); color: white; }
         .back-btn { background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2); }
 
@@ -91,10 +90,10 @@
         .notification-list { flex-grow: 1; overflow-y: auto; }
         .notification-item {
             display: flex; align-items: flex-start; gap: 15px; padding: 15px 20px;
-            border-bottom: 1px solid var(--border); transition: all 0.3s ease; position: relative;
+            border-bottom: 1px solid var(--border); transition: all 0.25s ease;
         }
         .notification-item.unread { background: rgba(138, 43, 226, 0.08); }
-        body[data-theme="light"] .notification-item.unread { background: rgba(106, 13, 173, 0.05); }
+        body[data-theme="light"] .notification-item.unread { background: rgba(106, 13, 173, 0.06); }
         .notification-item.read { opacity: 0.7; }
         .notification-item:hover { background: var(--card-hover); }
         .notification-icon-wrapper { position: relative; flex-shrink: 0; }
@@ -121,8 +120,8 @@
             background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border);
             color: var(--text-secondary); padding: 5px 10px; border-radius: 6px;
             cursor: pointer; font-size: 12px; font-weight: 500;
-            display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;
-            position: relative; overflow: hidden;
+            display: flex; align-items: center; gap: 6px; position: relative; overflow: hidden;
+            transition: all 0.2s ease;
         }
         .action-btn:hover { background: rgba(255, 255, 255, 0.1); color: var(--text-primary); }
         .view-btn { border-color: var(--info); color: var(--info); }
@@ -134,7 +133,7 @@
         .spinner {
             width: 24px; height: 24px; border: 3px solid var(--border);
             border-radius: 50%; border-top-color: var(--primary);
-            animation: spin 1s ease-in-out infinite; display: inline-block;
+            animation: spin 1s linear infinite; display: inline-block;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         /* Modal Styles */
@@ -147,10 +146,9 @@
         .modal-overlay.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .modal-content {
-            background: var(--card-bg); border-radius: 15px; padding: 25px;
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 15px; padding: 25px;
             width: 90%; max-width: 550px; max-height: 80vh; overflow-y: auto;
-            border: 1px solid var(--border); box-shadow: 0 10px 30px var(--shadow);
-            animation: slideUpModal 0.3s ease;
+            box-shadow: 0 10px 30px var(--shadow); animation: slideUpModal 0.3s ease;
         }
         @keyframes slideUpModal { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
@@ -163,19 +161,42 @@
         .modal-body { font-size: 15px; line-height: 1.6; color: var(--text-secondary); white-space: pre-wrap; word-wrap: break-word; }
 
         /* --- Responsive Design --- */
+        @media (max-width: 1024px) {
+            .notification-container { max-width: 100%; }
+        }
         @media (max-width: 768px) {
-            .page-wrapper { padding: 0; }
-            .notification-container { border-radius: 0; height: 100vh; max-width: 100%; }
-            .notification-header { padding: 15px; }
+            body { overflow-y: auto; }
+            .page-wrapper { padding: 0; height: auto; }
+            .notification-container {
+                border-radius: 0;
+                height: auto;
+                min-height: 100vh;
+            }
+            .notification-header { padding: 14px 16px; }
             .notification-title { font-size: 18px; }
             .btn { padding: 8px 12px; font-size: 12px; }
-            .notification-item { padding: 12px 15px; gap: 12px; }
+            .notification-item { padding: 12px 16px; gap: 12px; }
+            .modal-content { max-width: 92%; }
+        }
+        @media (max-width: 600px) {
+            .notification-subject { font-size: 14px; }
+            .notification-body { font-size: 13px; }
+            .notification-actions { flex-wrap: wrap; }
+            .action-btn {
+                flex: 1 1 48%;
+                justify-content: center;
+            }
         }
         @media (max-width: 480px) {
-            .header-actions { gap: 8px; }
             .btn span { display: none; }
-            .btn { padding: 8px; width: 36px; height: 36px; justify-content: center; }
-            .btn i { margin-right: 0; }
+            .btn {
+                padding: 8px;
+                width: 38px;
+                height: 38px;
+                justify-content: center;
+            }
+            .header-actions { gap: 8px; }
+            .notification-actions { gap: 6px; }
         }
     </style>
 </head>
@@ -218,23 +239,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
 <script src="../config.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        document.body.setAttribute('data-theme', savedTheme);
-
-        initParticles(); // Theme parameter is no longer needed
-        loadNotifications();
-
-        setInterval(loadNotifications, 30000);
-
-        const modal = document.getElementById('notificationModal');
-        modal.addEventListener('click', (e) => {
-            if (e.target.id === 'notificationModal') closeModal();
-        });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeModal();
-        });
-    });
+    let broadcastMap = new Map();
+    let isLoading = false;
 
     function initParticles() {
         if (typeof particlesJS === 'undefined') return;
@@ -242,66 +248,33 @@
             window.pJSDom[0].pJS.fn.vendors.destroypJS();
             window.pJSDom = [];
         }
-
-        // ✅ FIX: Particles are now always white to be visible against the dark background.
-        const particleColor = "#ffffff";
         particlesJS('particles-js', {
             particles: {
                 number: { value: 60, density: { enable: true, value_area: 800 } },
-                color: { value: particleColor },
-                shape: { type: "circle" },
+                color: { value: '#ffffff' },
+                shape: { type: 'circle' },
                 opacity: { value: 0.5, random: true },
                 size: { value: 3, random: true },
-                line_linked: { enable: true, distance: 150, color: particleColor, opacity: 0.4, width: 1 },
-                move: { enable: true, speed: 2, direction: "none", out_mode: "out" }
+                line_linked: { enable: true, distance: 150, color: '#ffffff', opacity: 0.4, width: 1 },
+                move: { enable: true, speed: 2, direction: 'none', out_mode: 'out' }
             },
             interactivity: {
-                detect_on: "canvas",
-                events: { onhover: { enable: true, mode: "grab" } },
+                detect_on: 'canvas',
+                events: { onhover: { enable: true, mode: 'grab' } },
                 modes: { grab: { distance: 140, line_linked: { opacity: 0.5 } } }
             },
             retina_detect: true
         });
     }
 
-    // --- All other JavaScript functions remain unchanged ---
-
-    const notificationStore = new Map();
-    let isLoading = false;
-
-    function getUserSpecificStorageKeys() {
-        const currentUserEmail = localStorage.getItem('userEmail');
-        if (!currentUserEmail) return null;
-        return {
-            CLEARED: `clearedNotifications_v2_${currentUserEmail}`,
-            READ: `readNotifications_v2_${currentUserEmail}`
-        };
-    }
-
-    const getStoredIds = (key) => {
-        try {
-            if (!key) return new Set();
-            return new Set(JSON.parse(localStorage.getItem(key) || '[]'));
-        } catch (e) { return new Set(); }
-    };
-
-    const saveStoredIds = (key, idsSet) => {
-        if (!key) return;
-        localStorage.setItem(key, JSON.stringify([...idsSet]));
-    };
-
-    const getNotificationId = (msg) => msg.id ? String(msg.id) : String(msg._id);
-
     function showState(state, title, message) {
         document.getElementById('loadingState').style.display = state === 'loading' ? 'flex' : 'none';
-        const emptyEl = document.getElementById('emptyState');
+        const empty = document.getElementById('emptyState');
         if (state === 'empty') {
-            emptyEl.querySelector('#emptyStateTitle').textContent = title || '';
-            emptyEl.querySelector('#emptyStateMessage').textContent = message || '';
-            emptyEl.classList.add('visible');
-        } else {
-            emptyEl.classList.remove('visible');
-        }
+            empty.classList.add('visible');
+            empty.querySelector('#emptyStateTitle').textContent = title || '';
+            empty.querySelector('#emptyStateMessage').textContent = message || '';
+        } else empty.classList.remove('visible');
     }
 
     function updateCounts() {
@@ -316,90 +289,106 @@
 
     function clearAllNotifications() {
         if (!confirm('Are you sure you want to permanently clear all notifications?')) return;
-        const storageKeys = getUserSpecificStorageKeys();
-        if (!storageKeys) return;
-        const clearedIds = getStoredIds(storageKeys.CLEARED);
-        document.querySelectorAll('.notification-item').forEach(item => clearedIds.add(item.dataset.id));
-        saveStoredIds(storageKeys.CLEARED, clearedIds);
-        document.getElementById("notificationList").innerHTML = '';
+        document.getElementById('notificationList').innerHTML = '';
         showState('empty', 'All Cleared!', 'Your notification list is empty.');
         updateCounts();
     }
 
-    function markAsRead(notificationId) {
-        const element = document.querySelector(`[data-id='${notificationId}']`);
-        if (!element || !element.classList.contains('unread')) return;
-        element.classList.remove('unread');
-        element.classList.add('read');
-        element.querySelector('.notification-badge')?.remove();
-        const storageKeys = getUserSpecificStorageKeys();
-        if (!storageKeys) return;
-        const readIds = getStoredIds(storageKeys.READ);
-        readIds.add(notificationId);
-        saveStoredIds(storageKeys.READ, readIds);
-        updateCounts();
-    }
+    async function markAsRead(broadcastId) {
+        const email = localStorage.getItem('userEmail');
+        if (!email) return;
 
-    function softDeleteNotification(notificationId) {
-        if (!confirm('Are you sure you want to clear this notification?')) return;
-        const element = document.querySelector(`[data-id='${notificationId}']`);
-        if (!element) return;
-        const storageKeys = getUserSpecificStorageKeys();
-        if (!storageKeys) return;
-        const clearedIds = getStoredIds(storageKeys.CLEARED);
-        clearedIds.add(notificationId);
-        saveStoredIds(storageKeys.CLEARED, clearedIds);
-        element.remove();
-        if (document.querySelectorAll('.notification-item').length === 0) {
-            showState('empty', 'All Caught Up!', 'You have no new notifications.');
+        try {
+            await fetch(`${NOTIFICATION_API}/mark-read?email=${encodeURIComponent(email)}&broadcastId=${broadcastId}`, {
+                method: "POST"
+            });
+
+            const el = document.querySelector(`.notification-item[data-id='${broadcastId}']`);
+            if (el) {
+                el.classList.remove("unread");
+                el.classList.add("read");
+                el.querySelector(".notification-badge")?.remove();
+            }
+
+            updateCounts();
+        } catch (e) {
+            console.error("mark read failed", e);
         }
-        updateCounts();
     }
 
-    function viewNotification(notificationId) {
-        const msg = notificationStore.get(notificationId);
-        if (!msg) return;
-        document.getElementById('modalTitle').textContent = msg.subject || 'No Subject';
-        document.getElementById('modalBody').textContent = msg.content || msg.message || 'No content available';
-        document.getElementById('notificationModal').classList.add('active');
-        markAsRead(notificationId);
+    async function softDeleteNotification(broadcastId) {
+        const email = localStorage.getItem("userEmail");
+        if (!email) return;
+
+        if (!confirm("Are you sure you want to clear this notification?")) return;
+
+        try {
+            await fetch(`${NOTIFICATION_API}/clear?email=${encodeURIComponent(email)}&broadcastId=${broadcastId}`, {
+                method: "POST"
+            });
+
+            document.querySelector(`.notification-item[data-id='${broadcastId}']`)?.remove();
+
+            if (document.querySelectorAll(".notification-item").length === 0) {
+                showState("empty", "All Caught Up!", "You have no new notifications.");
+            }
+
+            updateCounts();
+        } catch (e) {
+            console.error("clear failed", e);
+        }
     }
 
     function closeModal() {
         document.getElementById('notificationModal').classList.remove('active');
     }
 
-    function createNotificationElement(msg) {
-        const id = getNotificationId(msg);
-        notificationStore.set(id, msg);
-        const storageKeys = getUserSpecificStorageKeys();
-        const isRead = storageKeys ? getStoredIds(storageKeys.READ).has(id) : false;
-        const iconMap = { task: 'fa-tasks', meeting: 'fa-calendar-alt', system: 'fa-cog', alert: 'fa-exclamation-triangle', info: 'fa-info-circle', message: 'fa-envelope', email: 'fa-envelope', sms: 'fa-comment-dots' };
-        const type = msg.type?.toLowerCase() || 'message';
-        const iconClass = iconMap[type] || iconMap.message;
-        const timeAgo = (dateStr) => {
-            const diff = (new Date() - new Date(dateStr)) / 1000;
-            if (diff < 60) return 'Just now'; if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-            if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`; return `${Math.floor(diff / 86400)}d ago`;
-        };
-        const contentStr = String(msg.content || msg.message || 'No content available');
-        const truncatedContent = contentStr.length > 120 ? contentStr.substring(0, 120) + '...' : contentStr;
+    function viewNotification(broadcastId) {
+        const b = broadcastMap.get(Number(broadcastId));
+        if (!b) return;
 
+        document.getElementById('modalTitle').textContent = b.subject || 'No Subject';
+        document.getElementById('modalBody').textContent = b.content || 'No content available';
+
+        document.getElementById('notificationModal').classList.add('active');
+        markAsRead(broadcastId);
+    }
+
+    function timeAgo(dateStr) {
+        if (!dateStr) return 'Just now';
+        const d = new Date(dateStr);
+        if (isNaN(d)) return 'Just now';
+        const diff = (Date.now() - d.getTime()) / 1000;
+        if (diff < 60) return 'Just now';
+        if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+        if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+        return Math.floor(diff / 86400) + 'd ago';
+    }
+
+    function createNotificationElement(notif) {
+        const b = broadcastMap.get(Number(notif.broadcastId));
+        const subject = b?.subject || 'No Subject';
+        const content = b?.content || 'No content available';
+        const type = (b?.type || 'message').toLowerCase();
+        const read = notif.read === true;
+        const iconMap = { task: 'fa-tasks', meeting: 'fa-calendar-alt', system: 'fa-cog', alert: 'fa-exclamation-triangle', info: 'fa-info-circle', message: 'fa-envelope', email: 'fa-envelope', sms: 'fa-comment-dots' };
+        const iconClass = iconMap[type] || iconMap.message;
+        const truncated = content.length > 120 ? content.slice(0, 120) + '...' : content;
         const item = document.createElement("div");
-        item.className = `notification-item ${isRead ? 'read' : 'unread'}`;
-        item.dataset.id = id;
+        item.className = `notification-item ${read ? 'read' : 'unread'}`;
+        item.dataset.id = notif.broadcastId;
         item.innerHTML = `
             <div class="notification-icon-wrapper">
                 <div class="notification-icon ${type}"><i class="fas ${iconClass}"></i></div>
-                ${!isRead ? '<div class="notification-badge"></div>' : ''}
+                ${!read ? '<div class="notification-badge"></div>' : ''}
             </div>
-            <div class="notification-content" onclick="viewNotification('${id}')">
-                <div class="notification-subject">${String(msg.subject || 'No Subject')}</div>
-                <div class="notification-body">${truncatedContent}</div>
-                <div class="notification-time">${timeAgo(msg.createdAt)}</div>
+            <div class="notification-content" onclick="viewNotification('${notif.broadcastId}')">
+                <div class="notification-subject">${subject}</div>
+                <div class="notification-body">${truncated}</div>
+                <div class="notification-time">${timeAgo(b?.createdAt)}</div>
                 <div class="notification-actions">
-                    <button class="action-btn view-btn" onclick="event.stopPropagation(); viewNotification('${id}')"><i class="fas fa-eye"></i> View</button>
-                    <button class="action-btn delete-btn" onclick="event.stopPropagation(); softDeleteNotification('${id}')"><i class="fas fa-times"></i> Clear</button>
+                    <button class="action-btn view-btn" onclick="event.stopPropagation();viewNotification('${notif.broadcastId}')"><i class="fas fa-eye"></i> View</button>
+                    <button class="action-btn delete-btn" onclick="event.stopPropagation();softDeleteNotification('${notif.broadcastId}')"><i class="fas fa-times"></i> Clear</button>
                 </div>
             </div>`;
         return item;
@@ -408,36 +397,63 @@
     async function loadNotifications() {
         if (isLoading) return;
         isLoading = true;
-        const listEl = document.getElementById("notificationList");
-        const currentUserEmail = localStorage.getItem('userEmail');
-        if (!currentUserEmail) {
-            showState('empty','Not Logged In','Please log in to see notifications.');
-            isLoading = false; return;
+
+        const email = localStorage.getItem('userEmail');
+        if (!email) {
+            showState('empty', 'Not Logged In', 'Please log in to see notifications.');
+            isLoading = false;
+            return;
         }
+
+        const list = document.getElementById("notificationList");
         try {
             showState('loading');
-            const response = await fetch(`${BROADCAST_API}/for-user?email=${encodeURIComponent(currentUserEmail)}`);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            const messages = await response.json();
-            const storageKeys = getUserSpecificStorageKeys();
-            const clearedIds = storageKeys ? getStoredIds(storageKeys.CLEARED) : new Set();
-            const visibleMessages = messages.filter(msg => !clearedIds.has(getNotificationId(msg)));
-            listEl.innerHTML = '';
-            if (visibleMessages.length > 0) {
-                visibleMessages.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                visibleMessages.forEach(msg => listEl.appendChild(createNotificationElement(msg)));
+
+            const [notifRes, broadcastRes] = await Promise.all([
+                fetch(`${NOTIFICATION_API}/for-user?email=${encodeURIComponent(email)}`),
+                fetch(`${BROADCAST_API}/all`)
+            ]);
+            if (!notifRes.ok) throw new Error('notif ' + notifRes.status);
+            if (!broadcastRes.ok) throw new Error('broadcast ' + broadcastRes.status);
+            const notifs = await notifRes.json();
+            const broadcasts = await broadcastRes.json();
+            broadcastMap = new Map(broadcasts.map(b => [Number(b.id), b]));
+
+            list.innerHTML = `
+                <div class="loading-spinner" id="loadingState" style="display:none"><div class="spinner"></div></div>
+                <div class="empty-state" id="emptyState">
+                    <i class='fas fa-bell-slash'></i>
+                    <h3 id='emptyStateTitle'></h3>
+                    <p id='emptyStateMessage'></p>
+                </div>`;
+
+            const visible = notifs.filter(n => !n.cleared);
+            if (visible.length) {
+                visible.sort((a, b) => {
+                    const ba = broadcastMap.get(Number(a.broadcastId));
+                    const bb = broadcastMap.get(Number(b.broadcastId));
+                    return new Date(bb?.createdAt || 0) - new Date(ba?.createdAt || 0);
+                });
+                visible.forEach(n => list.appendChild(createNotificationElement(n)));
                 showState('content');
             } else {
-                showState('empty','All Caught Up!','You have no new notifications.');
+                showState('empty', 'All Caught Up!', 'You have no new notifications.');
             }
-        } catch(err) {
-            console.error("Failed to fetch broadcast messages:", err);
-            showState('empty','Connection Error','Could not load notifications.');
+        } catch (e) {
+            console.error('fetch failed', e);
+            showState('empty', 'Connection Error', 'Could not load notifications.');
         } finally {
             isLoading = false;
             updateCounts();
         }
     }
+    document.addEventListener('DOMContentLoaded', () => {
+        initParticles();
+        loadNotifications();
+        setInterval(() => { if (!document.hidden) loadNotifications(); }, 30000);
+        document.getElementById('notificationModal').addEventListener('click', e => { if (e.target.id === 'notificationModal') closeModal(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+    });
 </script>
 </body>
 </html>
