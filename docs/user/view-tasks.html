@@ -793,7 +793,7 @@
             if (task.status === 'in-progress') {
                 actions = `
                     <button class="action-btn complete" onclick="initiateCompletionProcess(${task.id})"><i class="fas fa-check"></i> Complete</button>
-                    <button class="action-btn report" onclick="openReportModal(${task.id})"><i class="fas fa-paper-plane"></i> Report</button>
+
                 `;
             } else if (task.status !== 'completed') {
                 actions = `<button class="action-btn" onclick="markTaskInProgress(${task.id})"><i class="fas fa-play"></i> Start Progress</button>`;
@@ -878,21 +878,38 @@
         e.preventDefault();
         const taskId = this.dataset.taskId;
         const isFinal = this.dataset.isFinal === 'true';
-        const formData = new FormData(this);
+
+        // Create FormData with explicit field names that match backend expectations
+        const formData = new FormData();
         formData.append('taskId', taskId);
+        formData.append('title', document.getElementById('reportTitle').value);
+        formData.append('description', document.getElementById('reportDescription').value);
         formData.append('userEmail', localStorage.getItem('userEmail'));
         formData.append('userName', localStorage.getItem('userName'));
 
+        // Add file if selected
+        const fileInput = document.getElementById('reportFile');
+        if (fileInput.files[0]) {
+            formData.append('file', fileInput.files[0]);
+        }
+
         try {
-            const reportResponse = await fetch(`${REPORT_API}`, { method: 'POST', body: formData });
+            const reportResponse = await fetch(`${REPORT_API}`, {
+                method: 'POST',
+                body: formData
+            });
+
             if (!reportResponse.ok) throw new Error('Failed to send report');
+
             if (isFinal) {
                 await updateTaskStatus(taskId, 'complete');
                 alert('Report sent and task marked as complete!');
             } else {
                 alert('Progress report sent successfully!');
             }
+
             closeModal('reportModal');
+            this.reset();
         } catch (error) {
             console.error('Error submitting report:', error);
             alert('An error occurred. Please try again.');
