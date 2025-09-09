@@ -27,12 +27,26 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
 
                 // 3. Set authorization rules
+                // Inside your SecurityConfig.java, replace the authorizeHttpRequests section with this:
                 .authorizeHttpRequests(authz -> authz
-                        // Allow all requests to your API endpoints
+                        // 1. IMPORTANT: Allow public access to your landing page and all static assets
+                        .requestMatchers(
+                                "/",
+                                "/index.html",
+                                "/config.js",
+                                "/admin/**",
+                                "/images/**",
+                                "/user/**",
+                                "/video/**"
+                        ).permitAll()
+
+                        // 2. Allow public access to all of your backend API endpoints
                         .requestMatchers("/api/**").permitAll()
-                        // Require authentication for any other request
+
+                        // 3. For any other request, require the user to be authenticated
                         .anyRequest().authenticated()
                 );
+
 
         return http.build();
     }
@@ -44,7 +58,9 @@ public class SecurityConfig {
         // 4. IMPORTANT: Add all addresses your frontend uses
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:53929",
-                "http://localhost:63342"
+                "http://localhost:63342",
+                "https://trackforce-crm-01.azurewebsites.net", // Replace with your Azure URL
+                "https://www.trackforcecrm.com" // Your future custom domain
                 // Add any other ports if necessary
         ));
 

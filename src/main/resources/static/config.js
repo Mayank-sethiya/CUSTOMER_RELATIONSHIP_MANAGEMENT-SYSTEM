@@ -1,7 +1,7 @@
 // config.js
 
 // 👇 Change this one line when switching from local to your EC2 server (or Elastic IP)
-const BASE_BACKEND_URL = "http://localhost:8080"; // e.g., "http://13.234.56.78:8080"
+const BASE_BACKEND_URL = ""; // e.g., "http://13.234.56.78:8080"
 
 // Core API Groups
 const USER_API        = `${BASE_BACKEND_URL}/api/users`;        // UserController
