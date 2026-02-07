@@ -1,4 +1,4 @@
-package com.CustomerRelationshipManagement.config; // Make sure this package name is correct
+package com.CustomerRelationshipManagement.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,33 +20,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // 1. Enable CORS using the configuration below
-                .cors(withDefaults())
-
-                // 2. Disable CSRF for APIs
-                .csrf(csrf -> csrf.disable())
-
-                // 3. Set authorization rules
-                // Inside your SecurityConfig.java, replace the authorizeHttpRequests section with this:
+                .cors(withDefaults()) // Enable CORS using the bean below
+                .csrf(csrf -> csrf.disable()) // Disable CSRF for API ease-of-use
                 .authorizeHttpRequests(authz -> authz
-                        // 1. IMPORTANT: Allow public access to your landing page and all static assets
-                        .requestMatchers(
-                                "/",
-                                "/index.html",
-                                "/config.js",
-                                "/admin/**",
-                                "/images/**",
-                                "/user/**",
-                                "/video/**"
-                        ).permitAll()
-
-                        // 2. Allow public access to all of your backend API endpoints
+                        // Permit all static frontend assets and login/index
+                        .requestMatchers("/", "/index.html", "/config.js", "/admin/**", "/images/**", "/user/**", "/video/**").permitAll()
+                        // Permit all backend API calls
                         .requestMatchers("/api/**").permitAll()
-
-                        // 3. For any other request, require the user to be authenticated
                         .anyRequest().authenticated()
                 );
-
 
         return http.build();
     }
@@ -55,23 +37,19 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // 4. IMPORTANT: Add all addresses your frontend uses
+        // Updated origins to include your new Render live URL
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:53929",
                 "http://localhost:63342",
-                "https://trackforce-crm-01.azurewebsites.net", // Replace with your Azure URL
-                "https://www.trackforcecrm.com" // Your future custom domain
-                // Add any other ports if necessary
+                "https://customer-relationship-management-system-qrpu.onrender.com" // 👈 Added your Render link
         ));
 
-        // 5. Allow all necessary methods and headers
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-
         return source;
     }
 }
