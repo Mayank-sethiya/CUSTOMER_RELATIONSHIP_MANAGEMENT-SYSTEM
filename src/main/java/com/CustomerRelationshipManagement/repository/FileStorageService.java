@@ -1,60 +1,49 @@
 package com.CustomerRelationshipManagement.repository;
 
-import com.azure.storage.blob.BlobClient;
-import com.azure.storage.blob.BlobContainerClient;
-import com.azure.storage.blob.BlobServiceClient;
-import org.springframework.beans.factory.annotation.Value;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.Map;
 
 @Service
 public class FileStorageService {
 
-    private final BlobServiceClient blobServiceClient;
+    @Autowired
+    private Cloudinary cloudinary;
 
-    @Value("${azure.blob.container-name}")
-    private String containerName;
-
-    // The BlobServiceClient bean is automatically injected here
-    public FileStorageService(BlobServiceClient blobServiceClient) {
-        this.blobServiceClient = blobServiceClient;
-    }
-
+    /**
+     * Uploads multiple files to Cloudinary and returns their secure URLs.
+     * This replaces the Azure Blob logic.
+     */
     public List<String> saveFiles(MultipartFile[] files) throws IOException {
-        List<String> fileNames = new ArrayList<>();
-
-        // Get a reference to the container and create it if it doesn't exist
-        BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(containerName);
-        if (!containerClient.exists()) {
-            containerClient.create();
-        }
+        List<String> fileUrls = new ArrayList<>();
 
         for (MultipartFile file : files) {
-            String originalName = Objects.requireNonNull(file.getOriginalFilename());
-            String uniqueFileName = UUID.randomUUID() + "_" + originalName;
-
-            // Get a reference to the blob
-            BlobClient blobClient = containerClient.getBlobClient(uniqueFileName);
-
-            // Upload the file data
-            blobClient.upload(file.getInputStream(), file.getSize(), true); // true overwrites if exists
-
-            fileNames.add(uniqueFileName);
+            if (!file.isEmpty()) {
+                // Upload to Cloudinary with 'auto' resource type (handles images, PDFs, etc.)
+                Map uploadResult = cloudinary.uploader().upload(file.getBytes(), 
+                        ObjectUtils.asMap("resource_type", "auto"));
+                
+                // Get the permanent secure URL (HTTPS)
+                String publicUrl = uploadResult.get("secure_url").toString();
+                fileUrls.add(publicUrl);
+            }
         }
 
-        return fileNames;
+        return fileUrls;
     }
 
-    // You will need a method to get the URL of a stored file
+    /**
+     * Since Cloudinary returns the full URL immediately after upload,
+     * this method simply returns the fileName if it's already a URL.
+     */
     public String getFileUrl(String fileName) {
-        BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(containerName);
-        BlobClient blobClient = containerClient.getBlobClient(fileName);
-        return blobClient.getBlobUrl();
+        return fileName;
     }
 }
