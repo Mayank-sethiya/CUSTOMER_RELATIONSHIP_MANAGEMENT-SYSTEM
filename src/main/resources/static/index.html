@@ -211,6 +211,7 @@
             }
         }
 
+        /* --- Navigation --- */
         .navbar {
             position: fixed;
             top: 18px;
@@ -541,15 +542,15 @@
             margin-top: 1rem;
         }
 
+        /* --- Updated SaaS Hero Section --- */
         .hero {
             min-height: 100vh;
-            padding-top: 150px;
-            padding-bottom: 90px;
+            padding-top: clamp(120px, 15vh, 150px);
+            padding-bottom: 80px;
             background: var(--primary-gradient);
             color: white;
             display: flex;
-            align-items: center;
-            text-align: center;
+            align-items: center; /* Vertically center content */
             overflow: hidden;
         }
 
@@ -560,6 +561,15 @@
         .hero-content {
             position: relative;
             z-index: 5;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 0.9fr 1.1fr; /* 45% Text / 55% Video Split */
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-text-col {
+            text-align: left; /* Left-aligned text */
         }
 
         .hero-badge {
@@ -573,14 +583,13 @@
             backdrop-filter: blur(16px);
             font-weight: 900;
             font-size: 0.9rem;
-            margin-bottom: 1.4rem;
+            margin-bottom: 1.5rem;
             box-shadow: 0 16px 36px rgba(0, 0, 0, 0.14);
         }
 
         .hero h1 {
-            max-width: 980px;
-            margin: 0 auto 1.6rem;
-            font-size: clamp(2.4rem, 5.8vw, 4.55rem);
+            margin: 0 0 1.5rem 0;
+            font-size: clamp(2.4rem, 4vw, 4.2rem);
             line-height: 1.08;
             letter-spacing: -0.055em;
             font-weight: 900;
@@ -591,16 +600,31 @@
         }
 
         .hero p {
-            max-width: 820px;
-            margin: 0 auto;
-            font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+            max-width: 90%;
+            margin: 0 0 2.5rem 0;
+            font-size: clamp(1.05rem, 1.8vw, 1.25rem);
             color: rgba(255, 255, 255, 0.9);
         }
 
+        .cta-buttons {
+            display: flex;
+            justify-content: flex-start; /* Left-aligned buttons */
+            gap: 1rem;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Isometric floating animation wrapper */
+        @keyframes floatIsometric {
+            0%, 100% { transform: translateY(0px) rotateY(-12deg) rotateX(5deg) rotateZ(2deg); }
+            50% { transform: translateY(-20px) rotateY(-12deg) rotateX(5deg) rotateZ(2deg); }
+        }
+
         .hero-video-wrap {
-            max-width: 920px;
-            margin: 3.2rem auto 0;
-            perspective: 1300px;
+            width: 100%;
+            perspective: 1200px;
+            animation: floatIsometric 8s ease-in-out infinite;
         }
 
         .hero-video {
@@ -609,11 +633,12 @@
             background-color: #020617;
             background-size: cover;
             background-position: center;
-            border-radius: 28px;
+            border-radius: 24px;
             position: relative;
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.22);
-            box-shadow: 0 42px 90px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+            /* Deep drop shadow for the 3D pop */
+            box-shadow: -20px 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.18);
             transform-style: preserve-3d;
             will-change: transform;
         }
@@ -639,7 +664,7 @@
             height: 100%;
             object-fit: cover;
             display: block;
-            border-radius: 28px;
+            border-radius: 24px;
         }
 
         .play-button {
@@ -668,14 +693,7 @@
             box-shadow: 0 26px 58px rgba(0, 0, 0, 0.38);
         }
 
-        .cta-buttons {
-            margin-top: 3rem;
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
+        /* --- Sections & Cards --- */
         .section-header {
             max-width: 760px;
             margin: 0 auto 4.5rem;
@@ -913,7 +931,7 @@
             width: 62px;
             height: 62px;
             border-radius: 20px;
-            background: rgb(var(--card-color)); /* Matching icon background to card color */
+            background: rgb(var(--card-color));
             color: white;
             display: flex;
             align-items: center;
@@ -1262,6 +1280,36 @@
                 display: inline-flex;
             }
 
+            /* Snap SaaS Hero to stacked layout on mobile */
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 3rem;
+            }
+
+            .hero-text-col {
+                text-align: center;
+            }
+
+            .hero p {
+                margin: 0 auto 2.5rem auto;
+            }
+
+            .cta-buttons {
+                justify-content: center;
+            }
+
+            /* Reset isometric float animation on mobile to lay flat */
+            @keyframes floatHero {
+                0% { transform: translateY(0px); }
+                50% { transform: translateY(-15px); }
+                100% { transform: translateY(0px); }
+            }
+
+            .hero-video-wrap {
+                animation: floatHero 6s ease-in-out infinite;
+            }
+
             .stats-content-wrapper,
             .contact-grid,
             .about-content {
@@ -1452,21 +1500,38 @@
         </div>
     </div>
 
+    <!-- NEW SAAS LAYOUT: 2-Column Split -->
     <div class="hero-content container">
-        <div class="hero-badge" data-aos="fade-down">
-            <i class="fa-solid fa-bolt"></i>
-            Task Management • CRM • Analytics
+
+        <!-- Column 1: Text -->
+        <div class="hero-text-col" data-aos="fade-right">
+            <div class="hero-badge">
+                <i class="fa-solid fa-bolt"></i>
+                Task Management • CRM • Analytics
+            </div>
+
+            <h1>
+                Streamline Your Workflow with TrackForce CRM
+            </h1>
+
+            <p>
+                Manage tasks, teams, broadcasts, schedules, support requests, and analytics from one sleek CRM platform built for productive teams.
+            </p>
+
+            <div class="cta-buttons">
+                <button class="btn btn-cta" onclick="scrollToFeatures()">
+                    <i class="fa-solid fa-rocket"></i>
+                    Explore Features
+                </button>
+
+                <button class="btn btn-secondary" onclick="window.location.href='user/register.html'">
+                    <i class="fa-solid fa-arrow-right"></i> Start Free Trial
+                </button>
+            </div>
         </div>
 
-        <h1 data-aos="fade-down" data-aos-delay="100">
-            Streamline Your Workflow with TrackForce CRM
-        </h1>
-
-        <p data-aos="fade-down" data-aos-delay="200">
-            Manage tasks, teams, broadcasts, schedules, support requests, and analytics from one sleek CRM platform built for productive teams.
-        </p>
-
-        <div class="hero-video-wrap" data-aos="zoom-in-up" data-aos-delay="350">
+        <!-- Column 2: Isometric Video -->
+        <div class="hero-video-wrap" data-aos="fade-left" data-aos-delay="200">
             <div
                     class="hero-video js-video-tilt"
                     id="heroVideoCard"
@@ -1482,16 +1547,6 @@
             </div>
         </div>
 
-        <div class="cta-buttons" data-aos="fade-up" data-aos-delay="500">
-            <button class="btn btn-cta" onclick="scrollToFeatures()">
-                <i class="fa-solid fa-rocket"></i>
-                Explore Features
-            </button>
-
-            <button class="btn btn-secondary" onclick="window.location.href='user/register.html'">
-                <i class="fa-solid fa-arrow-right"></i> Start Free Trial
-            </button>
-        </div>
     </div>
 </section>
 
@@ -1803,17 +1858,8 @@
 <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 
 <script>
-    // --- API Configuration ---
     const BASE_BACKEND_URL = "";
-    const USER_API        = `${BASE_BACKEND_URL}/api/users`;
-    const ADMIN_API       = `${BASE_BACKEND_URL}/api/admin`;
-    const BROADCAST_API   = `${BASE_BACKEND_URL}/api/broadcast`;
-    const CONTACT_API     = `${BASE_BACKEND_URL}/api/support`;
-    const TASK_API        = `${BASE_BACKEND_URL}/api/tasks`;
-    const REPORT_API      = `${BASE_BACKEND_URL}/api/reports`;
-    const AI_REPORT_API   = `${BASE_BACKEND_URL}/api/reports/generate`;
-    const NOTIFICATION_API = `${BASE_BACKEND_URL}/api/notifications`;
-    const FILE_UPLOAD_API = `${TASK_API}/upload`;
+    const CONTACT_API = `${BASE_BACKEND_URL}/api/support`;
 
     document.addEventListener("DOMContentLoaded", function () {
         initParticles();
@@ -1833,11 +1879,15 @@
 
         particlesJS("particles-js", {
             particles: {
-                number: { value: 90, density: { enable: true, value_area: 850 } },
+                number: {
+                    value: 90,
+                    density: { enable: true, value_area: 850 }
+                },
                 color: { value: "#ffffff" },
                 shape: { type: "circle" },
                 opacity: {
-                    value: 0.5, random: true,
+                    value: 0.5,
+                    random: true,
                     anim: { enable: true, speed: 1, opacity_min: 0.1, sync: false }
                 },
                 size: { value: 3, random: true },
@@ -1845,7 +1895,6 @@
                 move: { enable: true, speed: 2, direction: "none", random: true, straight: false, out_mode: "out", bounce: false }
             },
             interactivity: {
-                // FIXED: Changed from "canvas" to "window" so it tracks your mouse over the text and video
                 detect_on: "window",
                 events: {
                     onhover: { enable: true, mode: "grab" },
@@ -1934,7 +1983,6 @@
                 let moveX = percentX * -7;
                 let moveY = percentY * -7;
 
-                // --- SMOOTH EDGE DAMPING CALCULATION ---
                 const edgeSafeZone = 0.85;
                 let damping = 1;
                 const maxPercent = Math.max(Math.abs(percentX), Math.abs(percentY));
@@ -1950,6 +1998,7 @@
 
                 const spotX = (x / rect.width) * 100;
                 const spotY = (y / rect.height) * 100;
+
                 card.style.setProperty("--spot-x", `${spotX}%`);
                 card.style.setProperty("--spot-y", `${spotY}%`);
 
@@ -1992,7 +2041,6 @@
             let rotateX = percentY * -5;
             let rotateY = percentX * 5;
 
-            // --- SMOOTH EDGE DAMPING CALCULATION ---
             const edgeSafeZone = 0.85;
             let damping = 1;
             const maxPercent = Math.max(Math.abs(percentX), Math.abs(percentY));
@@ -2050,7 +2098,6 @@
         submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Sending...</span>';
 
         try {
-            // FIXED: Firing correctly to the CONTACT_API variable set at the top
             const response = await fetch(CONTACT_API, {
                 method: "POST",
                 headers: {
