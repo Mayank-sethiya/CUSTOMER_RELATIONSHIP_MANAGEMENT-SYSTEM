@@ -1,0 +1,2238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TrackForce CRM - Task Management & Analytics Platform</title>
+
+    <meta
+            name="description"
+            content="TrackForce CRM - Streamline your workflow with task management, broadcast messaging, user management, support, scheduling, and analytics."
+    />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" />
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --dark-gradient: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            --accent-color: #667eea;
+            --success-color: #16a34a;
+            --danger-color: #dc2626;
+
+            --background: #f8fafc;
+            --surface: rgba(255, 255, 255, 0.86);
+            --surface-strong: rgba(255, 255, 255, 0.97);
+            --text-primary: #374151;
+            --text-secondary: #64748b;
+            --border: rgba(203, 213, 225, 0.7);
+
+            --navbar-bg: rgba(255, 255, 255, 0.78);
+            --navbar-border: rgba(255, 255, 255, 0.38);
+
+            --shadow: 0 30px 60px rgba(15, 23, 42, 0.12);
+            --shadow-strong: 0 40px 90px rgba(15, 23, 42, 0.22);
+
+            --section-spacing: clamp(5rem, 10vw, 7.5rem);
+            --side-padding: clamp(1rem, 4vw, 2.5rem);
+        }
+
+        [data-theme="dark"] {
+            --background: #0f172a;
+            --surface: rgba(15, 23, 42, 0.84);
+            --surface-strong: rgba(15, 23, 42, 0.97);
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border: rgba(255, 255, 255, 0.13);
+            --navbar-bg: rgba(15, 23, 42, 0.82);
+            --navbar-border: rgba(255, 255, 255, 0.12);
+            --shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
+            --shadow-strong: 0 40px 95px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: #764ba2 transparent;
+        }
+
+        html,
+        body {
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        button,
+        input,
+        textarea {
+            font-family: inherit;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #764ba2;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            background-clip: content-box;
+        }
+
+        section {
+            padding: var(--section-spacing) var(--side-padding);
+            position: relative;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 5;
+        }
+
+        #particles-js {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .tech-bg {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .grid-lines {
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 120%;
+            height: 120%;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveGrid 30s linear infinite;
+        }
+
+        @keyframes moveGrid {
+            from {
+                transform: translate(0, 0);
+            }
+            to {
+                transform: translate(50px, 50px);
+            }
+        }
+
+        .floating-nodes,
+        .connection-lines {
+            position: absolute;
+            inset: 0;
+        }
+
+        .node {
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            background: rgba(255, 255, 255, 0.75);
+            border-radius: 999px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.55);
+            animation: floatNode 8s ease-in-out infinite;
+        }
+
+        .node:nth-child(1) { top: 18%; left: 9%; animation-delay: 0s; }
+        .node:nth-child(2) { top: 58%; right: 13%; animation-delay: 2s; }
+        .node:nth-child(3) { bottom: 26%; left: 58%; animation-delay: 4s; }
+        .node:nth-child(4) { top: 36%; left: 82%; animation-delay: 1s; }
+        .node:nth-child(5) { bottom: 58%; right: 32%; animation-delay: 3s; }
+        .node:nth-child(6) { top: 72%; left: 28%; animation-delay: 5s; }
+        .node:nth-child(7) { top: 14%; left: 52%; animation-delay: 2.5s; }
+        .node:nth-child(8) { bottom: 14%; right: 42%; animation-delay: 1.5s; }
+
+        @keyframes floatNode {
+            0%, 100% {
+                transform: translateY(0) scale(0.8);
+                opacity: 0.45;
+            }
+            50% {
+                transform: translateY(-32px) scale(1.25);
+                opacity: 1;
+            }
+        }
+
+        .line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+            border-radius: 999px;
+            animation: linePulse 6s ease-in-out infinite;
+        }
+
+        .line:nth-child(1) { top: 25%; left: 10%; width: 220px; animation-delay: 0s; }
+        .line:nth-child(2) { top: 70%; right: 18%; width: 170px; animation-delay: 2s; }
+        .line:nth-child(3) { top: 45%; left: 48%; width: 200px; animation-delay: 4s; }
+        .line:nth-child(4) { top: 16%; right: 24%; width: 140px; animation-delay: 1s; }
+
+        @keyframes linePulse {
+            0%, 100% {
+                opacity: 0.18;
+                transform: scaleX(0.8);
+            }
+            50% {
+                opacity: 0.85;
+                transform: scaleX(1.12);
+            }
+        }
+
+        .navbar {
+            position: fixed;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(1180px, calc(100% - 32px));
+            background: var(--navbar-bg);
+            backdrop-filter: blur(26px) saturate(1.7);
+            -webkit-backdrop-filter: blur(26px) saturate(1.7);
+            border: 1px solid var(--navbar-border);
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.14);
+            border-radius: 22px;
+            padding: 0.75rem 0.9rem;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 1rem;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            top: 10px;
+            padding: 0.55rem 0.75rem;
+            box-shadow: 0 22px 55px rgba(15, 23, 42, 0.18);
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 900;
+            font-size: 1.25rem;
+            white-space: nowrap;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 15px;
+            background: var(--primary-gradient);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.32);
+            transition: all 0.35s ease;
+        }
+
+        .logo:hover .logo-icon {
+            transform: translateY(-2px) rotate(8deg) scale(1.05);
+        }
+
+        .nav-center {
+            display: flex;
+            justify-content: center;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.35rem;
+            border-radius: 999px;
+            background: rgba(102, 126, 234, 0.08);
+            border: 1px solid rgba(102, 126, 234, 0.12);
+        }
+
+        .nav-menu a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 800;
+            padding: 0.65rem 0.95rem;
+            border-radius: 999px;
+            transition: all 0.25s ease;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            color: white;
+            background: var(--primary-gradient);
+            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .nav-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.65rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            padding: 0.85rem 1.25rem;
+            border: none;
+            border-radius: 14px;
+            font-weight: 900;
+            font-size: 0.9rem;
+            line-height: 1;
+            text-decoration: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            transition:
+                transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.25s ease,
+                background 0.25s ease,
+                color 0.25s ease;
+            will-change: transform;
+            white-space: nowrap;
+        }
+
+        .btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -125%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.38), transparent);
+            transform: skewX(-18deg);
+            transition: left 0.65s ease;
+        }
+
+        .btn:hover::before {
+            left: 130%;
+        }
+
+        .btn:hover {
+            transform: perspective(700px) translateY(-5px) translateZ(28px) scale(1.045);
+        }
+
+        .btn:active {
+            transform: perspective(700px) translateY(1px) translateZ(4px) scale(0.975);
+        }
+
+        .btn:disabled {
+            opacity: 0.72;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-primary,
+        .btn-cta {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 15px 32px rgba(102, 126, 234, 0.32);
+        }
+
+        .btn-primary:hover,
+        .btn-cta:hover {
+            box-shadow: 0 24px 48px rgba(102, 126, 234, 0.42);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.72);
+            color: var(--accent-color);
+            border: 1px solid rgba(102, 126, 234, 0.24);
+            box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+        }
+
+        [data-theme="dark"] .btn-outline {
+            background: rgba(15, 23, 42, 0.72);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 22px 44px rgba(102, 126, 234, 0.32);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.14);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(18px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.22);
+            box-shadow: 0 22px 44px rgba(0, 0, 0, 0.18);
+        }
+
+        .theme-toggle,
+        .mobile-menu-btn {
+            width: 46px;
+            height: 46px;
+            border: none;
+            border-radius: 15px;
+            background: rgba(102, 126, 234, 0.12);
+            color: var(--accent-color);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover,
+        .mobile-menu-btn:hover {
+            background: var(--primary-gradient);
+            color: white;
+            transform: translateY(-3px) rotate(8deg);
+            box-shadow: 0 18px 36px rgba(102, 126, 234, 0.32);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+        }
+
+        .mobile-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 998;
+            background: rgba(15, 23, 42, 0.36);
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: 0.25s ease;
+        }
+
+        .mobile-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 92px;
+            left: 16px;
+            right: 16px;
+            z-index: 999;
+            background: var(--surface-strong);
+            backdrop-filter: blur(28px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            box-shadow: var(--shadow-strong);
+            padding: 1.1rem;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(-18px) scale(0.96);
+            transition: all 0.25s ease;
+        }
+
+        .mobile-menu.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateY(0) scale(1);
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 0.85rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 0.85rem;
+        }
+
+        .mobile-menu-title {
+            font-weight: 900;
+            color: var(--text-primary);
+        }
+
+        .mobile-close-btn {
+            width: 38px;
+            height: 38px;
+            border: none;
+            border-radius: 999px;
+            background: rgba(220, 38, 38, 0.12);
+            color: var(--danger-color);
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .mobile-close-btn:hover {
+            background: var(--danger-color);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .mobile-nav-menu {
+            display: grid;
+            gap: 0.7rem;
+        }
+
+        .mobile-nav-menu a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            background: rgba(102, 126, 234, 0.08);
+            border: 1px solid rgba(102, 126, 234, 0.12);
+            padding: 0.95rem 1rem;
+            border-radius: 16px;
+            font-weight: 900;
+            transition: 0.25s ease;
+        }
+
+        .mobile-nav-menu a:hover,
+        .mobile-nav-menu a.active {
+            background: var(--primary-gradient);
+            color: white;
+            transform: translateX(5px);
+            box-shadow: 0 16px 32px rgba(102, 126, 234, 0.28);
+        }
+
+        .mobile-action-grid {
+            display: grid;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .hero {
+            min-height: 100vh;
+            padding-top: 150px;
+            padding-bottom: 90px;
+            background: var(--primary-gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        [data-theme="dark"] .hero {
+            background: var(--dark-gradient);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 5;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            padding: 0.55rem 0.95rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            backdrop-filter: blur(16px);
+            font-weight: 900;
+            font-size: 0.9rem;
+            margin-bottom: 1.4rem;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.14);
+        }
+
+        .hero h1 {
+            max-width: 980px;
+            margin: 0 auto 1.6rem;
+            font-size: clamp(2.4rem, 5.8vw, 4.55rem);
+            line-height: 1.08;
+            letter-spacing: -0.055em;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            max-width: 820px;
+            margin: 0 auto;
+            font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .hero-video-wrap {
+            max-width: 920px;
+            margin: 3.2rem auto 0;
+            perspective: 1300px;
+        }
+
+        .hero-video {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background-color: #020617;
+            background-size: cover;
+            background-position: center;
+            border-radius: 28px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            box-shadow: 0 42px 90px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+
+        .hero-video::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at var(--shine-x, 50%) var(--shine-y, 50%), rgba(255, 255, 255, 0.18), transparent 34%),
+                linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 38%);
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .hero-video:hover::after {
+            opacity: 1;
+        }
+
+        .hero-video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 28px;
+        }
+
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: clamp(4.6rem, 8vw, 5.8rem);
+            height: clamp(4.6rem, 8vw, 5.8rem);
+            transform: translate(-50%, -50%);
+            border: none;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            cursor: pointer;
+            z-index: 3;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .play-button:hover {
+            transform: translate(-50%, -50%) scale(1.14);
+            box-shadow: 0 26px 58px rgba(0, 0, 0, 0.38);
+        }
+
+        .cta-buttons {
+            margin-top: 3rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .section-header {
+            max-width: 760px;
+            margin: 0 auto 4.5rem;
+            text-align: center;
+        }
+
+        .section-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            color: var(--accent-color);
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.16);
+            padding: 0.45rem 0.8rem;
+            border-radius: 999px;
+            font-weight: 900;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-header h2 {
+            font-size: clamp(2rem, 4.8vw, 3.25rem);
+            line-height: 1.15;
+            letter-spacing: -0.04em;
+            margin-bottom: 1rem;
+            font-weight: 900;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: clamp(1rem, 2vw, 1.16rem);
+        }
+
+        .stats {
+            background:
+                radial-gradient(circle at 20% 10%, rgba(102, 126, 234, 0.13), transparent 32%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.12), transparent 30%),
+                var(--background);
+        }
+
+        .stats-content-wrapper {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 2rem;
+            align-items: stretch;
+            perspective: 1300px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.35rem;
+            perspective: 1300px;
+        }
+
+        .stat-card,
+        .feature-card,
+        .contact-panel,
+        .about-image-card {
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+
+        /* --- Individual Card Color Variables --- */
+        .stat-card:nth-child(1) { --card-color: 79, 70, 229; /* Indigo */ }
+        .stat-card:nth-child(2) { --card-color: 6, 182, 212; /* Cyan */ }
+        .stat-card:nth-child(3) { --card-color: 245, 158, 11; /* Amber */ }
+        .stat-card:nth-child(4) { --card-color: 16, 185, 129; /* Emerald */ }
+
+        .feature-card:nth-child(1) { --card-color: 79, 70, 229; }
+        .feature-card:nth-child(2) { --card-color: 6, 182, 212; }
+        .feature-card:nth-child(3) { --card-color: 245, 158, 11; }
+        .feature-card:nth-child(4) { --card-color: 16, 185, 129; }
+        .feature-card:nth-child(5) { --card-color: 168, 85, 247; /* Purple */ }
+        .feature-card:nth-child(6) { --card-color: 239, 68, 68; /* Red */ }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(24px);
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow 0.25s ease;
+        }
+
+        /* Border Left for Stats */
+        .stat-card::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            background: rgb(var(--card-color));
+            transition: width 0.3s ease;
+            transform: translateZ(10px);
+        }
+
+        .stat-card:hover::after {
+            width: 8px;
+        }
+
+        /* Colored Spotlight Hover Effect */
+        .stat-card::before,
+        .feature-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--spot-x, 50%) var(--spot-y, 50%), rgba(var(--card-color), 0.18), transparent 45%);
+            opacity: 0;
+            transition: opacity 0.25s ease;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .stat-card:hover::before,
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-card:hover,
+        .feature-card:hover {
+            box-shadow: var(--shadow-strong);
+        }
+
+        .stat-number {
+            position: relative;
+            display: block;
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            font-weight: 900;
+            color: var(--accent-color);
+            transform: translateZ(42px);
+            z-index: 1;
+        }
+
+        .stat-label {
+            position: relative;
+            color: var(--text-secondary);
+            font-weight: 800;
+            transform: translateZ(26px);
+            z-index: 1;
+        }
+
+        .stats-animation {
+            min-height: 360px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(24px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .stats-animation lottie-player {
+            width: 100%;
+            height: 100%;
+            max-height: 420px;
+        }
+
+        .features {
+            background:
+                linear-gradient(180deg, rgba(102, 126, 234, 0.045), transparent 28%),
+                var(--background);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(285px, 1fr));
+            gap: 1.6rem;
+            perspective: 1400px;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(24px);
+            padding: 1.25rem;
+            overflow: hidden;
+            position: relative;
+            transition: box-shadow 0.25s ease;
+        }
+
+        /* Border Top for Features */
+        .feature-card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: rgb(var(--card-color));
+            transition: height 0.3s ease;
+            transform: translateZ(10px);
+        }
+
+        .feature-card:hover::after {
+            height: 8px;
+        }
+
+        .feature-image {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            background-size: cover;
+            background-position: center;
+            border-radius: 22px;
+            margin-bottom: 1.3rem;
+            border: 1px solid var(--border);
+            transform: translateZ(30px);
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .feature-image::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.06));
+        }
+
+        .feature-icon {
+            position: relative;
+            width: 62px;
+            height: 62px;
+            border-radius: 20px;
+            background: rgb(var(--card-color)); /* Matching icon background to card color */
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.55rem;
+            margin-bottom: 1.1rem;
+            box-shadow: 0 16px 34px rgba(var(--card-color), 0.35);
+            transform: translateZ(48px);
+            z-index: 1;
+        }
+
+        .feature-card h3 {
+            position: relative;
+            font-size: 1.25rem;
+            font-weight: 900;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+            transform: translateZ(36px);
+            z-index: 1;
+        }
+
+        .feature-card p {
+            position: relative;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transform: translateZ(24px);
+            z-index: 1;
+        }
+
+        .about {
+            background:
+                radial-gradient(circle at 15% 30%, rgba(102, 126, 234, 0.1), transparent 30%),
+                radial-gradient(circle at 85% 70%, rgba(118, 75, 162, 0.1), transparent 28%),
+                var(--background);
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3.5rem;
+            align-items: center;
+            perspective: 1300px;
+        }
+
+        .about-text h3 {
+            font-size: clamp(1.7rem, 3vw, 2.35rem);
+            line-height: 1.15;
+            margin-bottom: 1rem;
+            letter-spacing: -0.035em;
+        }
+
+        .about-text p {
+            color: var(--text-secondary);
+            font-size: 1.08rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .about-list {
+            display: grid;
+            gap: 0.9rem;
+            margin: 1.6rem 0 2rem;
+        }
+
+        .about-list-item {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+            color: var(--text-secondary);
+            font-weight: 800;
+        }
+
+        .about-list-item i {
+            color: var(--success-color);
+            margin-top: 0.24rem;
+        }
+
+        .about-image-card {
+            border-radius: 30px;
+            overflow: hidden;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            padding: 0.65rem;
+            transition: box-shadow 0.25s ease;
+        }
+
+        .about-image-card:hover {
+            box-shadow: var(--shadow-strong);
+        }
+
+        .about-image-card img {
+            width: 100%;
+            display: block;
+            border-radius: 24px;
+            transform: translateZ(32px);
+        }
+
+        .contact {
+            background: var(--primary-gradient);
+            color: white;
+            overflow: hidden;
+        }
+
+        [data-theme="dark"] .contact {
+            background: var(--dark-gradient);
+        }
+
+        .contact .section-header h2 {
+            background: linear-gradient(135deg, #ffffff, #e2e8f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .contact .section-header p {
+            color: rgba(255, 255, 255, 0.82);
+        }
+
+        .contact .section-kicker {
+            color: white;
+            background: rgba(255, 255, 255, 0.14);
+            border-color: rgba(255, 255, 255, 0.22);
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 0.9fr 1.1fr;
+            gap: 1.6rem;
+            align-items: stretch;
+            perspective: 1300px;
+        }
+
+        .contact-info,
+        .contact-panel {
+            background: rgba(255, 255, 255, 0.13);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            border-radius: 30px;
+            backdrop-filter: blur(24px);
+            box-shadow: 0 35px 80px rgba(0, 0, 0, 0.18);
+        }
+
+        .contact-info {
+            padding: 2rem;
+            display: grid;
+            gap: 1rem;
+        }
+
+        .contact-info-card {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            padding: 1rem;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .contact-info-card i {
+            width: 44px;
+            height: 44px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.18);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .contact-info-card h4 {
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .contact-info-card p {
+            color: rgba(255, 255, 255, 0.78);
+            font-size: 0.95rem;
+        }
+
+        .contact-panel {
+            padding: 2rem;
+            transition: box-shadow 0.25s ease;
+        }
+
+        .contact-panel:hover {
+            box-shadow: 0 45px 100px rgba(0, 0, 0, 0.25);
+        }
+
+        .contact-panel h3 {
+            font-size: 1.65rem;
+            margin-bottom: 0.55rem;
+            transform: translateZ(34px);
+        }
+
+        .contact-panel > p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1.4rem;
+            transform: translateZ(24px);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: 900;
+            margin-bottom: 0.45rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.13);
+            color: white;
+            font-size: 0.98rem;
+            padding: 0.95rem 1rem;
+            outline: none;
+            transition: all 0.25s ease;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.58);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.52);
+            box-shadow: 0 16px 34px rgba(0, 0, 0, 0.16);
+            transform: translateY(-2px);
+        }
+
+        .form-group textarea {
+            min-height: 132px;
+            resize: vertical;
+        }
+
+        .form-message {
+            display: none;
+            margin-bottom: 1rem;
+            padding: 0.9rem 1rem;
+            border-radius: 16px;
+            font-weight: 900;
+            font-size: 0.92rem;
+        }
+
+        .form-message.success {
+            display: block;
+            background: rgba(34, 197, 94, 0.16);
+            border: 1px solid rgba(34, 197, 94, 0.32);
+            color: #dcfce7;
+        }
+
+        .form-message.error {
+            display: block;
+            background: rgba(239, 68, 68, 0.16);
+            border: 1px solid rgba(239, 68, 68, 0.32);
+            color: #fee2e2;
+        }
+
+        .footer {
+            background: #0f172a;
+            color: rgba(255, 255, 255, 0.78);
+            padding: 5rem var(--side-padding) 2.5rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 1.3fr repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .footer h3 {
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .footer p,
+        .footer a {
+            color: rgba(255, 255, 255, 0.72);
+            text-decoration: none;
+            font-size: 0.96rem;
+        }
+
+        .footer-links {
+            list-style: none;
+            display: grid;
+            gap: 0.65rem;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            padding-top: 1.5rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .back-to-top {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            width: 52px;
+            height: 52px;
+            border: none;
+            border-radius: 18px;
+            background: var(--primary-gradient);
+            color: white;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            box-shadow: 0 20px 42px rgba(102, 126, 234, 0.35);
+            z-index: 900;
+            transition: all 0.3s ease;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px) scale(1.04);
+            box-shadow: 0 26px 54px rgba(102, 126, 234, 0.44);
+        }
+
+        @media (max-width: 980px) {
+            .navbar {
+                grid-template-columns: auto auto;
+                justify-content: space-between;
+            }
+
+            .nav-center,
+            .nav-actions .btn {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: inline-flex;
+            }
+
+            .stats-content-wrapper,
+            .contact-grid,
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .about-image-card {
+                order: -1;
+            }
+
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .navbar {
+                top: 10px;
+                width: calc(100% - 20px);
+                border-radius: 18px;
+            }
+
+            .logo {
+                font-size: 1.05rem;
+            }
+
+            .logo-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 13px;
+            }
+
+            .theme-toggle,
+            .mobile-menu-btn {
+                width: 42px;
+                height: 42px;
+            }
+
+            .hero {
+                padding-top: 130px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .cta-buttons .btn {
+                width: 100%;
+            }
+
+            .stats-grid,
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-info,
+            .contact-panel {
+                padding: 1.3rem;
+                border-radius: 24px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .back-to-top {
+                width: 46px;
+                height: 46px;
+                right: 16px;
+                bottom: 16px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div id="mobileBackdrop" class="mobile-backdrop" onclick="closeMobileMenu()"></div>
+
+<nav class="navbar" id="navbar">
+    <a href="#home" class="logo">
+            <span class="logo-icon">
+                <i class="fa-solid fa-layer-group"></i>
+            </span>
+        TrackForce CRM
+    </a>
+
+    <div class="nav-center">
+        <ul class="nav-menu">
+            <li><a href="#home" class="nav-link active"><i class="fa-solid fa-house"></i> Home</a></li>
+            <li><a href="#features" class="nav-link"><i class="fa-solid fa-table-cells-large"></i> Features</a></li>
+            <li><a href="#about" class="nav-link"><i class="fa-solid fa-circle-info"></i> About</a></li>
+            <li><a href="#contact" class="nav-link"><i class="fa-solid fa-envelope"></i> Contact</a></li>
+        </ul>
+    </div>
+
+    <div class="nav-actions">
+        <button class="btn btn-primary" onclick="redirectToRoleBasedLogin()">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            Login
+        </button>
+
+        <button class="btn btn-outline" onclick="window.location.href='user/register.html'">
+            <i class="fa-solid fa-user-plus"></i> Sign Up
+        </button>
+
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Theme">
+            <i class="fa-solid fa-moon" id="themeIcon"></i>
+        </button>
+
+        <button
+                class="mobile-menu-btn"
+                id="mobileMenuBtn"
+                onclick="toggleMobileMenu()"
+                aria-label="Open Menu"
+                aria-expanded="false"
+        >
+            <i class="fa-solid fa-bars" id="mobileMenuIcon"></i>
+        </button>
+    </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+        <div class="mobile-menu-title">
+            <i class="fa-solid fa-compass"></i>
+            Navigation
+        </div>
+
+        <button class="mobile-close-btn" onclick="closeMobileMenu()" aria-label="Close Menu">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+
+    <div class="mobile-nav-menu">
+        <a href="#home" class="nav-link"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="#features" class="nav-link"><i class="fa-solid fa-table-cells-large"></i> Features</a>
+        <a href="#about" class="nav-link"><i class="fa-solid fa-circle-info"></i> About</a>
+        <a href="#contact" class="nav-link"><i class="fa-solid fa-envelope"></i> Contact</a>
+    </div>
+
+    <div class="mobile-action-grid">
+        <button class="btn btn-primary" onclick="redirectToRoleBasedLogin()">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            Login
+        </button>
+
+        <button class="btn btn-outline" onclick="window.location.href='user/register.html'">
+            <i class="fa-solid fa-user-plus"></i> Sign Up
+        </button>
+    </div>
+</div>
+
+<section id="home" class="hero">
+    <div id="particles-js"></div>
+
+    <div class="tech-bg">
+        <div class="grid-lines"></div>
+
+        <div class="floating-nodes">
+            <div class="node"></div>
+            <div class="node"></div>
+            <div class="node"></div>
+            <div class="node"></div>
+            <div class="node"></div>
+            <div class="node"></div>
+            <div class="node"></div>
+            <div class="node"></div>
+        </div>
+
+        <div class="connection-lines">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+    </div>
+
+    <div class="hero-content container">
+        <div class="hero-badge" data-aos="fade-down">
+            <i class="fa-solid fa-bolt"></i>
+            Task Management • CRM • Analytics
+        </div>
+
+        <h1 data-aos="fade-down" data-aos-delay="100">
+            Streamline Your Workflow with TrackForce CRM
+        </h1>
+
+        <p data-aos="fade-down" data-aos-delay="200">
+            Manage tasks, teams, broadcasts, schedules, support requests, and analytics from one sleek CRM platform built for productive teams.
+        </p>
+
+        <div class="hero-video-wrap" data-aos="zoom-in-up" data-aos-delay="350">
+            <div
+                    class="hero-video js-video-tilt"
+                    id="heroVideoCard"
+                    style="background-image: url('video/INTRO-poster.jpg');"
+            >
+                <video id="heroVideoPlayer" preload="metadata" style="display:none;">
+                    <source src="video/INTRO.mp4" type="video/mp4" />
+                </video>
+
+                <button class="play-button" id="heroPlayButton" aria-label="Play Introduction Video">
+                    <i class="fa-solid fa-play"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="cta-buttons" data-aos="fade-up" data-aos-delay="500">
+            <button class="btn btn-cta" onclick="scrollToFeatures()">
+                <i class="fa-solid fa-rocket"></i>
+                Explore Features
+            </button>
+
+            <button class="btn btn-secondary" onclick="window.location.href='user/register.html'">
+                <i class="fa-solid fa-arrow-right"></i> Start Free Trial
+            </button>
+        </div>
+    </div>
+</section>
+
+<section class="stats">
+    <div class="container">
+        <div class="section-header" data-aos="fade-up">
+            <div class="section-kicker">
+                <i class="fa-solid fa-chart-line"></i>
+                Platform Performance
+            </div>
+
+            <h2>Trusted by Productive Teams</h2>
+
+            <p>
+                TrackForce helps teams stay organized, reduce manual follow-ups, and improve visibility across daily operations.
+            </p>
+        </div>
+
+        <div class="stats-content-wrapper">
+            <div class="stats-grid">
+                <div class="stat-card js-tilt-card" data-aos="fade-up" data-aos-delay="100">
+                    <span class="stat-number">50M+</span>
+                    <span class="stat-label">Tasks Completed</span>
+                </div>
+
+                <div class="stat-card js-tilt-card" data-aos="fade-up" data-aos-delay="180">
+                    <span class="stat-number">99.9%</span>
+                    <span class="stat-label">System Uptime</span>
+                </div>
+
+                <div class="stat-card js-tilt-card" data-aos="fade-up" data-aos-delay="260">
+                    <span class="stat-number">1.2M+</span>
+                    <span class="stat-label">Reports Generated</span>
+                </div>
+
+                <div class="stat-card js-tilt-card" data-aos="fade-up" data-aos-delay="340">
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">Support Visibility</span>
+                </div>
+            </div>
+
+            <div class="stats-animation" data-aos="fade-left" data-aos-delay="220">
+                <lottie-player
+                        src="admin/animations/vrBuisnessman.json"
+                        background="transparent"
+                        speed="1"
+                        loop
+                        autoplay
+                ></lottie-player>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="features" class="features">
+    <div class="container">
+        <div class="section-header" data-aos="fade-up">
+            <div class="section-kicker">
+                <i class="fa-solid fa-star"></i>
+                Core Modules
+            </div>
+
+            <h2>Everything Your Team Needs to Stay Aligned</h2>
+
+            <p>
+                A complete CRM-style workspace for task ownership, user control, reporting, support, and smarter coordination.
+            </p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card js-tilt-card" data-aos="zoom-in-up" data-aos-delay="100">
+                <div class="feature-image" style="background-image: url('images/Taskmanagement.jpg.avif');"></div>
+                <div class="feature-icon"><i class="fa-solid fa-list-check"></i></div>
+                <h3>Advanced Task Management</h3>
+                <p>Create, assign, prioritize, and track tasks with clear ownership, deadlines, and status visibility.</p>
+            </div>
+
+            <div class="feature-card js-tilt-card" data-aos="zoom-in-up" data-aos-delay="180">
+                <div class="feature-image" style="background-image: url('images/broadcast-messaging.jpg.avif');"></div>
+                <div class="feature-icon"><i class="fa-solid fa-bullhorn"></i></div>
+                <h3>Broadcast Messaging</h3>
+                <p>Send important updates, announcements, and operational messages to users with faster communication flow.</p>
+            </div>
+
+            <div class="feature-card js-tilt-card" data-aos="zoom-in-up" data-aos-delay="260">
+                <div class="feature-image" style="background-image: url('images/user-management.jpg.avif');"></div>
+                <div class="feature-icon"><i class="fa-solid fa-users-gear"></i></div>
+                <h3>Role-Based User Management</h3>
+                <p>Manage users securely with role-based access, organized teams, and cleaner permission control.</p>
+            </div>
+
+            <div class="feature-card js-tilt-card" data-aos="zoom-in-up" data-aos-delay="340">
+                <div class="feature-image" style="background-image: url('images/analytics.jpg.avif');"></div>
+                <div class="feature-icon"><i class="fa-solid fa-chart-pie"></i></div>
+                <h3>Analytics Dashboard</h3>
+                <p>Track productivity, performance, reports, and operational trends using clear dashboard insights.</p>
+            </div>
+
+            <div class="feature-card js-tilt-card" data-aos="zoom-in-up" data-aos-delay="420">
+                <div class="feature-image" style="background-image: url('images/shedulers.jpg.avif');"></div>
+                <div class="feature-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                <h3>Intelligent Scheduling</h3>
+                <p>Organize meetings, reminders, deadlines, and resource planning to keep your team moving on time.</p>
+            </div>
+
+            <div class="feature-card js-tilt-card" data-aos="zoom-in-up" data-aos-delay="500">
+                <div class="feature-image" style="background-image: url('images/user-management.jpg.avif');"></div>
+                <div class="feature-icon"><i class="fa-solid fa-headset"></i></div>
+                <h3>Support & Ticketing</h3>
+                <p>Capture issues, customer queries, and team support requests through a clean support workflow.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="about" class="about">
+    <div class="container">
+        <div class="section-header" data-aos="fade-up">
+            <div class="section-kicker">
+                <i class="fa-solid fa-lightbulb"></i>
+                About TrackForce
+            </div>
+
+            <h2>Built for Teams That Need Control and Clarity</h2>
+
+            <p>
+                TrackForce CRM brings productivity tools into one organized interface so your team can focus on execution.
+            </p>
+        </div>
+
+        <div class="about-content">
+            <div class="about-text" data-aos="fade-right">
+                <h3>Manage work with confidence.</h3>
+
+                <p>
+                    TrackForce is designed to simplify task handling, team communication, support tracking, and operational reporting.
+                </p>
+
+                <p>
+                    Instead of switching across multiple tools, your users can manage daily work from a single CRM-style platform.
+                </p>
+
+                <div class="about-list">
+                    <div class="about-list-item">
+                        <i class="fa-solid fa-check-circle"></i>
+                        <span>Centralized task and user management</span>
+                    </div>
+
+                    <div class="about-list-item">
+                        <i class="fa-solid fa-check-circle"></i>
+                        <span>Clean role-based access experience</span>
+                    </div>
+
+                    <div class="about-list-item">
+                        <i class="fa-solid fa-check-circle"></i>
+                        <span>Reports, support, and team visibility in one place</span>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="window.location.href='user/register.html'">
+                    <i class="fa-solid fa-rocket"></i> Start Your Journey
+                </button>
+            </div>
+
+            <div class="about-image-card js-tilt-card" data-aos="fade-left" data-aos-delay="180">
+                <img src="images/next.jpg.avif" alt="Team collaboration with TrackForce CRM" />
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="contact" class="contact">
+    <div class="container">
+        <div class="section-header" data-aos="fade-up">
+            <div class="section-kicker">
+                <i class="fa-solid fa-paper-plane"></i>
+                Contact Support
+            </div>
+
+            <h2>Need Help or Have Questions?</h2>
+
+            <p>
+                Send your request to the TrackForce support team. We will review it and get back to you as soon as possible.
+            </p>
+        </div>
+
+        <div class="contact-grid">
+            <div class="contact-info" data-aos="fade-right">
+                <div class="contact-info-card">
+                    <i class="fa-solid fa-headset"></i>
+                    <div>
+                        <h4>Support Requests</h4>
+                        <p>Create support queries directly from this page.</p>
+                    </div>
+                </div>
+
+                <div class="contact-info-card">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <div>
+                        <h4>Role-Based Access</h4>
+                        <p>Login is managed through your unified role-based login page.</p>
+                    </div>
+                </div>
+
+                <div class="contact-info-card">
+                    <i class="fa-solid fa-chart-simple"></i>
+                    <div>
+                        <h4>Operational Clarity</h4>
+                        <p>Track tasks, reports, users, and support from one platform.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-panel js-tilt-card" data-aos="fade-left" data-aos-delay="160">
+                <h3>Send a Message</h3>
+                <p>Fill out the form below and our team will review your request.</p>
+
+                <div id="formMessage" class="form-message"></div>
+
+                <form id="contactForm" onsubmit="handleContactForm(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Full Name *</label>
+                            <input type="text" id="name" name="name" autocomplete="name" required placeholder="Enter your full name" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" name="email" autocomplete="email" required placeholder="Enter your email" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" autocomplete="tel" placeholder="Enter your phone number" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="company">Company</label>
+                            <input type="text" id="company" name="company" autocomplete="organization" placeholder="Enter your company name" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="problemDescription">Problem Description *</label>
+                        <textarea id="problemDescription" name="problemDescription" required placeholder="Please describe your issue..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-secondary" id="contactSubmitBtn">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Send Message</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container footer-content">
+        <div>
+            <h3>TrackForce CRM</h3>
+            <p>A clean productivity platform for task management, users, support requests, scheduling, and reporting.</p>
+        </div>
+
+        <div>
+            <h3>Platform</h3>
+            <ul class="footer-links">
+                <li><a>Task Management</a></li>
+                <li><a>Broadcast Messaging</a></li>
+                <li><a>User Management</a></li>
+                <li><a>Analytics</a></li>
+            </ul>
+        </div>
+
+        <div>
+            <h3>Solutions</h3>
+            <ul class="footer-links">
+                <li><a>Team Collaboration</a></li>
+                <li><a>Support Tracking</a></li>
+                <li><a>Workflow Control</a></li>
+                <li><a>CRM Operations</a></li>
+            </ul>
+        </div>
+
+        <div>
+            <h3>Resources</h3>
+            <ul class="footer-links">
+                <li><a>Help Center</a></li>
+                <li><a>Training Resources</a></li>
+                <li><a>System Status</a></li>
+                <li><a>Contact Support</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer-bottom container">
+        © 2025 TrackForce CRM | Advanced Task Management & Team Collaboration Platform. All rights reserved.
+    </div>
+</footer>
+
+<button class="back-to-top" id="backToTop" onclick="scrollToTop()" aria-label="Back to Top">
+    <i class="fa-solid fa-arrow-up"></i>
+</button>
+
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+<script>
+    // --- API Configuration ---
+    const BASE_BACKEND_URL = "";
+    const USER_API        = `${BASE_BACKEND_URL}/api/users`;
+    const ADMIN_API       = `${BASE_BACKEND_URL}/api/admin`;
+    const BROADCAST_API   = `${BASE_BACKEND_URL}/api/broadcast`;
+    const CONTACT_API     = `${BASE_BACKEND_URL}/api/support`;
+    const TASK_API        = `${BASE_BACKEND_URL}/api/tasks`;
+    const REPORT_API      = `${BASE_BACKEND_URL}/api/reports`;
+    const AI_REPORT_API   = `${BASE_BACKEND_URL}/api/reports/generate`;
+    const NOTIFICATION_API = `${BASE_BACKEND_URL}/api/notifications`;
+    const FILE_UPLOAD_API = `${TASK_API}/upload`;
+
+    document.addEventListener("DOMContentLoaded", function () {
+        initParticles();
+        initAOS();
+        initTheme();
+        initHeroVideo();
+        init3DCards();
+        initVideo3D();
+        bindNavLinks();
+        updateNavbar();
+        updateBackToTop();
+        updateActiveNavLink();
+    });
+
+    function initParticles() {
+        if (typeof particlesJS === "undefined") return;
+
+        particlesJS("particles-js", {
+            particles: {
+                number: { value: 90, density: { enable: true, value_area: 850 } },
+                color: { value: "#ffffff" },
+                shape: { type: "circle" },
+                opacity: {
+                    value: 0.5, random: true,
+                    anim: { enable: true, speed: 1, opacity_min: 0.1, sync: false }
+                },
+                size: { value: 3, random: true },
+                line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.38, width: 1 },
+                move: { enable: true, speed: 2, direction: "none", random: true, straight: false, out_mode: "out", bounce: false }
+            },
+            interactivity: {
+                // FIXED: Changed from "canvas" to "window" so it tracks your mouse over the text and video
+                detect_on: "window",
+                events: {
+                    onhover: { enable: true, mode: "grab" },
+                    onclick: { enable: true, mode: "push" },
+                    resize: true
+                },
+                modes: {
+                    grab: { distance: 200, line_linked: { opacity: 0.8 } },
+                    push: { particles_nb: 4 }
+                }
+            },
+            retina_detect: true
+        });
+    }
+
+    function initAOS() {
+        if (typeof AOS !== "undefined") {
+            AOS.init({ duration: 650, easing: "ease-in-out-quad", once: true });
+        }
+    }
+
+    function initTheme() {
+        const savedTheme = localStorage.getItem("theme") || "light";
+        document.body.setAttribute("data-theme", savedTheme);
+        updateThemeIcon(savedTheme);
+    }
+
+    function updateThemeIcon(theme) {
+        const themeIcon = document.getElementById("themeIcon");
+        if (!themeIcon) return;
+        themeIcon.className = theme === "dark" ? "fa-solid fa-sun" : "fa-solid fa-moon";
+    }
+
+    function toggleTheme() {
+        const currentTheme = document.body.getAttribute("data-theme") || "light";
+        const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+        document.body.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+        updateThemeIcon(newTheme);
+    }
+
+    function initHeroVideo() {
+        const playButton = document.getElementById("heroPlayButton");
+        const videoPlayer = document.getElementById("heroVideoPlayer");
+        const heroVideoContainer = document.getElementById("heroVideoCard");
+
+        if (!playButton || !videoPlayer || !heroVideoContainer) return;
+
+        playButton.addEventListener("click", function () {
+            playButton.style.display = "none";
+            heroVideoContainer.style.backgroundImage = "none";
+            videoPlayer.style.display = "block";
+
+            videoPlayer.play().then(function () {
+                videoPlayer.setAttribute("controls", "true");
+            }).catch(function (error) {
+                console.error("Video play failed:", error);
+                playButton.style.display = "flex";
+                videoPlayer.style.display = "none";
+            });
+        });
+    }
+
+    function init3DCards() {
+        const cards = document.querySelectorAll(".js-tilt-card");
+
+        cards.forEach(function (card) {
+            card.addEventListener("mouseenter", function () {
+                card.style.transition = "transform 0.1s ease-out, box-shadow 0.3s ease";
+            });
+
+            card.addEventListener("mousemove", function (event) {
+                const rect = card.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const percentX = (x - centerX) / centerX;
+                const percentY = (y - centerY) / centerY;
+
+                let rotateX = percentY * -8;
+                let rotateY = percentX * 8;
+                let moveX = percentX * -7;
+                let moveY = percentY * -7;
+
+                // --- SMOOTH EDGE DAMPING CALCULATION ---
+                const edgeSafeZone = 0.85;
+                let damping = 1;
+                const maxPercent = Math.max(Math.abs(percentX), Math.abs(percentY));
+
+                if (maxPercent > edgeSafeZone) {
+                    damping = (1 - maxPercent) / (1 - edgeSafeZone);
+                }
+
+                rotateX *= damping;
+                rotateY *= damping;
+                moveX *= damping;
+                moveY *= damping;
+
+                const spotX = (x / rect.width) * 100;
+                const spotY = (y / rect.height) * 100;
+                card.style.setProperty("--spot-x", `${spotX}%`);
+                card.style.setProperty("--spot-y", `${spotY}%`);
+
+                card.style.transform = `
+                    perspective(1100px)
+                    translate3d(${moveX}px, ${moveY}px, ${38 * damping}px)
+                    rotateX(${rotateX}deg)
+                    rotateY(${rotateY}deg)
+                    scale(${1 + 0.025 * damping})
+                `;
+            });
+
+            card.addEventListener("mouseleave", function () {
+                card.style.transition = "transform 0.5s ease-out, box-shadow 0.3s ease";
+                card.style.transform = "perspective(1100px) translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) scale(1)";
+            });
+        });
+    }
+
+    function initVideo3D() {
+        const videoCard = document.querySelector(".js-video-tilt");
+
+        if (!videoCard) return;
+
+        videoCard.addEventListener("mouseenter", function () {
+            videoCard.style.transition = "transform 0.1s ease-out, box-shadow 0.25s ease";
+        });
+
+        videoCard.addEventListener("mousemove", function (event) {
+            const rect = videoCard.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+
+            const percentX = (x - centerX) / centerX;
+            const percentY = (y - centerY) / centerY;
+
+            let rotateX = percentY * -5;
+            let rotateY = percentX * 5;
+
+            // --- SMOOTH EDGE DAMPING CALCULATION ---
+            const edgeSafeZone = 0.85;
+            let damping = 1;
+            const maxPercent = Math.max(Math.abs(percentX), Math.abs(percentY));
+
+            if (maxPercent > edgeSafeZone) {
+                damping = (1 - maxPercent) / (1 - edgeSafeZone);
+            }
+
+            rotateX *= damping;
+            rotateY *= damping;
+
+            const shineX = (x / rect.width) * 100;
+            const shineY = (y / rect.height) * 100;
+
+            videoCard.style.setProperty("--shine-x", `${shineX}%`);
+            videoCard.style.setProperty("--shine-y", `${shineY}%`);
+
+            videoCard.style.transform = `
+                perspective(1300px)
+                translateY(-8px)
+                translateZ(${32 * damping}px)
+                rotateX(${rotateX}deg)
+                rotateY(${rotateY}deg)
+                scale(${1 + 0.018 * damping})
+            `;
+        });
+
+        videoCard.addEventListener("mouseleave", function () {
+            videoCard.style.transition = "transform 0.5s ease-out, box-shadow 0.25s ease";
+            videoCard.style.transform = "perspective(1300px) translateY(0) translateZ(0) rotateX(0deg) rotateY(0deg) scale(1)";
+        });
+    }
+
+    async function handleContactForm(event) {
+        event.preventDefault();
+
+        const form = event.target;
+        const submitBtn = document.getElementById("contactSubmitBtn");
+        const formMessage = document.getElementById("formMessage");
+        const originalContent = submitBtn.innerHTML;
+
+        const formData = {
+            name: document.getElementById("name").value.trim(),
+            email: document.getElementById("email").value.trim(),
+            phone: document.getElementById("phone").value.trim(),
+            company: document.getElementById("company").value.trim(),
+            problemDescription: document.getElementById("problemDescription").value.trim(),
+            status: "New"
+        };
+
+        formMessage.className = "form-message";
+        formMessage.textContent = "";
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Sending...</span>';
+
+        try {
+            // FIXED: Firing correctly to the CONTACT_API variable set at the top
+            const response = await fetch(CONTACT_API, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            });
+
+            let result = null;
+
+            try {
+                result = await response.json();
+            } catch (error) {
+                result = null;
+            }
+
+            if (response.ok) {
+                formMessage.className = "form-message success";
+                formMessage.textContent = "✅ Message sent successfully. Our team will get back to you shortly.";
+                form.reset();
+            } else {
+                formMessage.className = "form-message error";
+                formMessage.textContent = `❌ ${(result && result.message) || "Something went wrong. Please try again."}`;
+            }
+        } catch (error) {
+            console.error("Contact form error:", error);
+            formMessage.className = "form-message error";
+            formMessage.textContent = "🌐 Network error. Please check your connection and try again.";
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalContent;
+        }
+    }
+
+    function redirectToRoleBasedLogin() {
+        window.location.href = "user/user-login.html";
+    }
+
+    function toggleMobileMenu() {
+        const mobileMenu = document.getElementById("mobileMenu");
+        const mobileBackdrop = document.getElementById("mobileBackdrop");
+        const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+        const mobileMenuIcon = document.getElementById("mobileMenuIcon");
+
+        if (!mobileMenu || !mobileBackdrop || !mobileMenuBtn || !mobileMenuIcon) return;
+
+        const isActive = mobileMenu.classList.toggle("active");
+
+        mobileBackdrop.classList.toggle("active", isActive);
+        mobileMenuBtn.setAttribute("aria-expanded", isActive ? "true" : "false");
+        mobileMenuIcon.className = isActive ? "fa-solid fa-xmark" : "fa-solid fa-bars";
+        document.body.style.overflow = isActive ? "hidden" : "auto";
+    }
+
+    function closeMobileMenu() {
+        const mobileMenu = document.getElementById("mobileMenu");
+        const mobileBackdrop = document.getElementById("mobileBackdrop");
+        const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+        const mobileMenuIcon = document.getElementById("mobileMenuIcon");
+
+        if (mobileMenu) mobileMenu.classList.remove("active");
+        if (mobileBackdrop) mobileBackdrop.classList.remove("active");
+        if (mobileMenuBtn) mobileMenuBtn.setAttribute("aria-expanded", "false");
+        if (mobileMenuIcon) mobileMenuIcon.className = "fa-solid fa-bars";
+
+        document.body.style.overflow = "auto";
+    }
+
+    function scrollToFeatures() {
+        const features = document.getElementById("features");
+
+        if (features) {
+            features.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+    }
+
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    }
+
+    function updateNavbar() {
+        const navbar = document.getElementById("navbar");
+
+        if (!navbar) return;
+
+        if (window.scrollY > 40) {
+            navbar.classList.add("scrolled");
+        } else {
+            navbar.classList.remove("scrolled");
+        }
+    }
+
+    function updateBackToTop() {
+        const backToTop = document.getElementById("backToTop");
+
+        if (!backToTop) return;
+
+        backToTop.style.display = window.scrollY > 350 ? "flex" : "none";
+    }
+
+    function updateActiveNavLink() {
+        let currentSection = "";
+        const sections = document.querySelectorAll("section[id]");
+
+        sections.forEach(function (section) {
+            const sectionTop = section.offsetTop;
+
+            if (window.scrollY >= sectionTop - 180) {
+                currentSection = section.getAttribute("id");
+            }
+        });
+
+        document.querySelectorAll(".nav-link").forEach(function (link) {
+            link.classList.remove("active");
+
+            if (link.getAttribute("href") === `#${currentSection}`) {
+                link.classList.add("active");
+            }
+        });
+    }
+
+    function bindNavLinks() {
+        document.querySelectorAll(".nav-link").forEach(function (link) {
+            link.addEventListener("click", function (event) {
+                const targetId = this.getAttribute("href");
+
+                if (!targetId || !targetId.startsWith("#")) return;
+
+                event.preventDefault();
+
+                const targetSection = document.querySelector(targetId);
+
+                if (targetSection) {
+                    targetSection.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                    });
+
+                    closeMobileMenu();
+                }
+            });
+        });
+    }
+
+    window.addEventListener("scroll", function () {
+        updateNavbar();
+        updateBackToTop();
+        updateActiveNavLink();
+    });
+
+    window.addEventListener("resize", function () {
+        if (window.innerWidth > 980) {
+            closeMobileMenu();
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            closeMobileMenu();
+        }
+    });
+
+    document.addEventListener("click", function (event) {
+        const mobileMenu = document.getElementById("mobileMenu");
+        const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+
+        if (!mobileMenu || !mobileMenuBtn) return;
+
+        const isMenuOpen = mobileMenu.classList.contains("active");
+        const clickedInsideMenu = mobileMenu.contains(event.target);
+        const clickedMenuButton = mobileMenuBtn.contains(event.target);
+
+        if (isMenuOpen && !clickedInsideMenu && !clickedMenuButton) {
+            closeMobileMenu();
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Tasks - TrackForce CRM</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #764ba2 0%, #4a0361 100%);
+            color: #f1f5f9;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Live Background Container */
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, rgba(74, 3, 97, 0.9) 0%, rgba(12, 13, 163, 0.62) 100%);
+        }
+
+        /* CSS Variables for responsive design */
+        :root {
+            --primary: #8a2be2;
+            --primary-light: #9932cc;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border: rgba(99, 102, 241, 0.3);
+            --shadow: rgba(0, 0, 0, 0.4);
+            --sidebar-bg: rgba(28, 36, 55, 0.95);
+            --card-bg: rgba(28, 36, 55, 0.9);
+            --sidebar-text: #e2e8f0;
+            --sidebar-text-secondary: #a0aec0;
+            --hover-bg: rgba(138, 43, 226, 0.15);
+            --button-hover-shadow: rgba(138, 43, 226, 0.5);
+            --header-bg-start: rgba(28, 36, 55, 0.95);
+            --header-bg-end: rgba(15, 20, 30, 0.95);
+            --spacing-large: 30px;
+            --spacing-medium: 20px;
+            --spacing-small: 10px;
+            --sidebar-width-expanded: 260px;
+            --sidebar-width-collapsed: 80px;
+            --sidebar-padding-expanded: 25px;
+
+            /* Responsive spacing */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 12px;
+            --spacing-lg: 16px;
+            --spacing-xl: 20px;
+            --spacing-2xl: 24px;
+            --spacing-3xl: 32px;
+
+            /* Responsive header */
+            --header-height: 65px;
+            --header-height-mobile: 65px;
+
+            /* Responsive typography */
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 1.875rem;
+        }
+
+        body[data-theme="light"] {
+            --primary: #6a0dad;
+            --primary-light: #8a2be2;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --border: rgba(160, 174, 192, 0.5);
+            --shadow: rgba(0, 0, 0, 0.15);
+            --sidebar-bg: rgba(255, 255, 255, 0.98);
+            --card-bg: rgba(247, 250, 252, 0.95);
+            --sidebar-text: #2d3748;
+            --sidebar-text-secondary: #718096;
+            --hover-bg: rgba(106, 13, 173, 0.1);
+            --button-hover-shadow: rgba(106, 13, 173, 0.3);
+            --header-bg-start: rgba(255, 255, 255, 0.95);
+            --header-bg-end: rgba(240, 244, 247, 0.95);
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--sidebar-bg);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(90deg, var(--header-bg-start), var(--header-bg-end));
+            backdrop-filter: blur(8px);
+            padding: var(--spacing-small) var(--spacing-large);
+            min-height: var(--header-height);
+            box-shadow: 0 4px 25px var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .back-button, .theme-toggle, .sidebar-toggle {
+            background: rgba(138, 43, 226, 0.2);
+            color: var(--primary);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .header-subtitle {
+            font-size: var(--text-xs);
+            color: var(--text-secondary);
+            display: block;
+            line-height: 1.2;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width-expanded);
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(8px);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: var(--header-height);
+            box-shadow: 3px 0 25px var(--shadow);
+            z-index: 900;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+            border-right: 1px solid var(--border);
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-width-collapsed);
+        }
+
+        .sidebar.collapsed .nav-section-title {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-item {
+            justify-content: center;
+            padding: 15px 0;
+        }
+        .sidebar.collapsed .nav-item span {
+            display: none;
+        }
+        .sidebar.collapsed .nav-item i {
+            margin: 0;
+        }
+
+        /* Remove sidebar header styles since header is being removed */
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 850;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar-nav {
+            padding: 0;
+        }
+
+        .nav-section {
+            margin-bottom: var(--spacing-medium);
+        }
+
+        .nav-section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--sidebar-text-secondary);
+            padding: 0 var(--sidebar-padding-expanded);
+            margin-bottom: var(--spacing-small);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 14px var(--sidebar-padding-expanded);
+            color: var(--sidebar-text);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 10px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: var(--hover-bg);
+            color: var(--primary);
+            transform: translateX(8px);
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            width: 28px;
+        }
+
+        .sidebar.collapsed .nav-section-title {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-item {
+            justify-content: center;
+            padding: var(--spacing-md) 0;
+        }
+
+        .sidebar.collapsed .nav-item span {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-item i {
+            margin: 0;
+        }
+
+        /* Sidebar header styles removed - content starts directly under main navbar */
+
+        .nav-section {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .nav-section:first-child {
+            padding-top: var(--spacing-lg);
+        }
+
+        .nav-section + .nav-section {
+            border-top: 1px solid var(--border);
+            padding-top: var(--spacing-lg);
+        }
+
+        .nav-section-title {
+            font-size: var(--text-xs);
+            font-weight: 600;
+            color: var(--sidebar-text-secondary);
+            padding: 0 var(--spacing-lg);
+            margin-bottom: var(--spacing-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md) var(--spacing-lg);
+            color: var(--sidebar-text);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            font-size: var(--text-sm);
+            font-weight: 500;
+            margin-bottom: calc(var(--spacing-sm) / 3);
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: var(--hover-bg);
+            color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .nav-item i {
+            font-size: var(--text-lg);
+            width: 20px;
+            flex-shrink: 0;
+        }
+
+        /* Main Container Styles */
+        .main-container {
+            margin-left: var(--sidebar-width-expanded);
+            padding: calc(var(--header-height) + var(--spacing-large)) var(--spacing-large) var(--spacing-large);
+            transition: margin-left 0.3s ease;
+            overflow-y: auto;
+            height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-container.shifted {
+            margin-left: var(--sidebar-width-collapsed);
+        }
+
+        .page-title {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: white;
+            margin-bottom: var(--spacing-xl);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .page-title i {
+            color: var(--primary);
+            font-size: var(--text-xl);
+        }
+
+        /* Shining Button Effect */
+        .back-button::before, .theme-toggle::before, .sidebar-toggle::before,
+        .logout-btn::before, .btn-primary::before, .btn-secondary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: none;
+        }
+
+        .back-button:hover::before, .theme-toggle:hover::before, .sidebar-toggle:hover::before,
+        .logout-btn:hover::before, .btn-primary:hover::before, .btn-secondary:hover::before {
+            animation: shine 0.8s forwards;
+        }
+
+        @keyframes shine {
+            to { left: 100%; }
+        }
+
+        .back-button:hover, .theme-toggle:hover, .sidebar-toggle:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px var(--button-hover-shadow);
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: var(--spacing-xl);
+            box-shadow: 0 4px 20px var(--shadow);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(5px);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .card-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .card-title i {
+            color: var(--primary);
+            font-size: var(--text-base);
+        }
+
+        .content-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--spacing-xl);
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: var(--text-sm);
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: var(--spacing-md);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-primary);
+            font-size: var(--text-sm);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        body[data-theme="light"] .form-input,
+        body[data-theme="light"] .form-select {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.1);
+        }
+
+        .form-select option {
+            background-color: var(--card-bg);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .search-select-row {
+            display: flex;
+            gap: var(--spacing-md);
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .search-select-row input[type="text"] {
+            flex: 1;
+        }
+
+        .select-all-wrapper {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            white-space: nowrap;
+            color: var(--text-primary);
+            font-size: var(--text-sm);
+        }
+
+        .user-count-badge {
+            background: var(--primary);
+            color: white;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: 10px;
+            font-size: var(--text-xs);
+            font-weight: 500;
+            margin-left: var(--spacing-sm);
+        }
+
+        /* User List Styles */
+        .user-list-container {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: var(--spacing-sm);
+            max-height: 240px;
+            overflow-y: auto;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-item:hover {
+            background: var(--hover-bg);
+        }
+
+        .user-item.selected {
+            background: var(--hover-bg);
+            box-shadow: inset 0 0 0 2px var(--primary);
+        }
+
+        .user-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: var(--text-xs);
+            flex-shrink: 0;
+        }
+
+        .user-info {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: var(--text-sm);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-email {
+            color: var(--text-secondary);
+            font-size: var(--text-xs);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-checkbox {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        /* File Upload Styles */
+        .file-upload-section {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: var(--spacing-lg);
+            text-align: center;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .file-upload-section:hover,
+        .file-upload-section.dragover {
+            border-color: var(--primary);
+            background: var(--hover-bg);
+        }
+
+        .file-upload-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-upload-icon {
+            font-size: 32px;
+            color: var(--primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .uploaded-file {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm);
+            background: rgba(0,0,0,0.2);
+            border-radius: 6px;
+            margin-top: var(--spacing-sm);
+            font-size: var(--text-sm);
+        }
+
+        .remove-file {
+            color: #ef4444;
+            cursor: pointer;
+            font-size: var(--text-sm);
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: var(--spacing-md) var(--spacing-lg);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: var(--text-sm);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            position: relative;
+            overflow: hidden;
+            min-height: 44px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--button-hover-shadow);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        /* Preview and Stats */
+        .preview-content {
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            padding: var(--spacing-lg);
+            border-left: 3px solid var(--primary);
+            min-height: 80px;
+        }
+
+        .preview-task-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-sm);
+            font-size: var(--text-sm);
+        }
+
+        .preview-task-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: var(--text-sm);
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: var(--text-sm);
+        }
+
+        .stat-value {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: var(--text-sm);
+        }
+
+        /* History Styles */
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-lg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: var(--spacing-md);
+            transition: all 0.3s ease;
+        }
+
+        .history-item:hover {
+            background: var(--hover-bg);
+        }
+
+        .history-task-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xs);
+            font-size: var(--text-sm);
+        }
+
+        .history-assignees, .history-date {
+            font-size: var(--text-xs);
+            color: var(--text-secondary);
+        }
+
+        .history-item-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            flex-shrink: 0;
+        }
+
+        .status-badge {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: 10px;
+            font-size: var(--text-xs);
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .status-assigned, .status-pending {
+            background-color: #f97316;
+        }
+
+        .status-in-progress {
+            background-color: #3b82f6;
+        }
+
+        .status-completed {
+            background-color: #22c55e;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: var(--spacing-3xl);
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: all 0.3s;
+            border: 1px solid var(--border);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-lg);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #ef4444;
+        }
+
+        .modal-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+
+        .modal-detail-item {
+            font-size: var(--text-sm);
+        }
+
+        .modal-detail-item strong {
+            color: var(--text-primary);
+        }
+
+        .modal-attachments a {
+            display: block;
+            color: var(--primary);
+            text-decoration: none;
+            margin-top: var(--spacing-xs);
+        }
+
+        /* Mobile-first Responsive Design */
+        @media (max-width: 1024px) {
+            .content-layout {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-lg);
+            }
+
+            .card {
+                padding: var(--spacing-lg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                overflow-x: hidden;
+            }
+
+            .header {
+                padding: var(--spacing-small) 15px;
+            }
+
+            .header-left {
+                gap: 15px;
+            }
+
+            .sidebar {
+                width: 280px;
+                height: 100vh;
+                position: fixed;
+                top: 0;
+                left: 0;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 900;
+                padding-top: var(--header-height-mobile);
+            }
+
+            .sidebar.mobile-active {
+                transform: translateX(0);
+            }
+
+            .sidebar.collapsed {
+                width: 280px;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.collapsed.mobile-active {
+                transform: translateX(0);
+            }
+
+            .sidebar.collapsed .nav-section-title {
+                display: block;
+            }
+
+            .sidebar.collapsed .nav-item {
+                justify-content: flex-start;
+                padding: 14px var(--sidebar-padding-expanded);
+            }
+
+            .sidebar.collapsed .nav-item span {
+                display: inline;
+            }
+
+            .sidebar.collapsed .nav-item i {
+                margin-right: 15px;
+                width: 28px;
+            }
+
+            .main-container {
+                margin-left: 0;
+                padding: calc(var(--header-height) + 15px) 15px 15px;
+            }
+
+            .main-container.shifted {
+                margin-left: 0;
+            }
+
+            .search-select-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        @media (max-width: 480px) {
+            :root {
+                --spacing-md: var(--spacing-sm);
+                --spacing-lg: var(--spacing-md);
+            }
+
+            .header-title {
+                font-size: var(--text-base);
+            }
+
+            .header-subtitle {
+                font-size: 10px;
+            }
+
+            .logout-btn span {
+                display: none;
+            }
+
+            .logout-btn {
+                padding: 0;
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                min-height: 36px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .back-button, .theme-toggle, .sidebar-toggle {
+                width: 32px;
+                height: 32px;
+                font-size: var(--text-base);
+            }
+
+            .page-title {
+                font-size: var(--text-lg);
+            }
+
+            .card {
+                padding: var(--spacing-sm);
+                border-radius: 8px;
+            }
+
+            .card-title {
+                font-size: var(--text-sm);
+                gap: var(--spacing-xs);
+            }
+
+            .btn {
+                font-size: var(--text-xs);
+                padding: var(--spacing-xs) var(--spacing-sm);
+                min-height: 36px;
+            }
+
+            .user-avatar {
+                width: 24px;
+                height: 24px;
+                font-size: 10px;
+            }
+
+            .user-name, .stat-label, .stat-value {
+                font-size: var(--text-xs);
+            }
+
+            .user-email, .history-assignees, .history-date {
+                font-size: 10px;
+            }
+
+            .user-checkbox {
+                width: 14px;
+                height: 14px;
+            }
+
+            .nav-item {
+                padding: var(--spacing-sm) var(--spacing-md);
+                font-size: var(--text-xs);
+            }
+
+            .nav-item i {
+                font-size: var(--text-sm);
+                width: 16px;
+            }
+
+            .sidebar-title {
+                font-size: var(--text-lg);
+            }
+
+            .preview-content {
+                padding: var(--spacing-sm);
+            }
+
+            .preview-task-title, .preview-task-description {
+                font-size: var(--text-xs);
+            }
+
+            .modal-content {
+                padding: var(--spacing-lg);
+            }
+
+            .modal-detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .main-container {
+                padding: calc(var(--header-height) + var(--spacing-sm)) var(--spacing-sm) var(--spacing-sm);
+            }
+
+            .header {
+                padding: var(--spacing-xs) var(--spacing-sm);
+            }
+
+            .card {
+                padding: var(--spacing-xs);
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+<div id="particles-js"></div>
+
+<!-- Sidebar Overlay for Mobile -->
+<div class="sidebar-overlay" onclick="closeMobileSidebar()"></div>
+
+<div class="header">
+    <div class="header-left">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+        <button class="back-button" onclick="navigateToPage('dashboard.html')">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <div>
+            <div class="header-title">TrackForce CRM</div>
+            <span class="header-subtitle">Admin Panel</span>
+        </div>
+    </div>
+    <div class="header-right">
+        <button class="theme-toggle" onclick="toggleTheme()">
+            <i class="fas fa-adjust"></i>
+        </button>
+        <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+        </button>
+    </div>
+</div>
+
+<div class="sidebar collapsed">
+    <nav class="sidebar-nav">
+        <div class="nav-section">
+            <div class="nav-section-title">Main</div>
+            <button class="nav-item" onclick="navigateToPage('dashboard.html')">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </button>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">Management</div>
+            <button class="nav-item" onclick="navigateToPage('user-management.html')">
+                <i class="fas fa-users"></i>
+                <span>User Management</span>
+            </button>
+            <button class="nav-item" onclick="navigateToPage('contact-management.html')">
+                <i class="fas fa-address-book"></i>
+                <span>Contact Management</span>
+            </button>
+            <button class="nav-item" onclick="navigateToPage('broadcast-messaging.html')">
+                <i class="fas fa-bullhorn"></i>
+                <span>Broadcast Messaging</span>
+            </button>
+            <button class="nav-item active" onclick="navigateToPage('Task-Assign.html')">
+                <i class="fas fa-tasks"></i>
+                <span>Task Assignment</span>
+            </button>
+            <button class="nav-item" onclick="navigateToPage('View-Reports.html')">
+                <i class="fas fa-file-alt"></i>
+                <span>View Reports</span>
+            </button>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">Support</div>
+            <button class="nav-item" onclick="navigateToPage('Leads.html')">
+                <i class="fas fa-envelope"></i>
+                <span>Leads</span>
+            </button>
+        </div>
+    </nav>
+</div>
+
+<div class="main-container shifted">
+    <h1 class="page-title">
+        <i class="fas fa-tasks"></i>
+        Task Assignment
+    </h1>
+
+    <div class="card user-selection">
+        <h2 class="card-title">
+            <i class="fas fa-user-check"></i>
+            1. Select Assignees
+        </h2>
+        <div class="search-select-row">
+            <input type="text" id="userSearch" class="form-input user-search" placeholder="🔍 Search users..." oninput="filterUsers()">
+            <div class="select-all-wrapper">
+                <input type="checkbox" id="selectAllUsers" onchange="toggleSelectAll(this)">
+                <label for="selectAllUsers">Select All Visible</label>
+            </div>
+        </div>
+        <div class="form-label" style="display: flex; align-items: center;">
+            <span>Available Users</span>
+            <span id="selectedCount" class="user-count-badge" style="display: none;">0 selected</span>
+        </div>
+        <div id="userCheckboxList" class="user-list-container"></div>
+    </div>
+
+    <div class="content-layout">
+        <div class="left-column">
+            <div class="card task-assignment">
+                <h2 class="card-title">
+                    <i class="fas fa-plus-circle"></i>
+                    2. Create New Task
+                </h2>
+                <form id="taskForm">
+                    <div class="form-group">
+                        <label class="form-label" for="taskTitle">Task Title</label>
+                        <input type="text" id="taskTitle" class="form-input" placeholder="e.g., Follow up with new leads" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="taskDescription">Description</label>
+                        <textarea id="taskDescription" class="form-input form-textarea" placeholder="Provide a detailed description of the task..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="taskPriority">Priority</label>
+                        <select id="taskPriority" class="form-select" required>
+                            <option value="Low">Low</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="taskDueDate">Due Date</label>
+                        <input type="date" id="taskDueDate" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Attachments</label>
+                        <div class="file-upload-section" id="fileUploadArea">
+                            <input type="file" id="fileInput" class="file-upload-input" multiple>
+                            <div class="file-upload-content">
+                                <i class="fas fa-cloud-upload-alt file-upload-icon"></i>
+                                <div class="file-upload-text">Click to upload or drag & drop</div>
+                            </div>
+                        </div>
+                        <div id="uploadedFiles" class="uploaded-files"></div>
+                    </div>
+                    <div class="form-group" style="display: flex; gap: 15px;">
+                        <button type="button" class="btn btn-secondary" onclick="previewTask()">
+                            <i class="fas fa-eye"></i> Preview
+                        </button>
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">
+                            <i class="fas fa-check"></i> Assign Task
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="right-column">
+            <div class="card task-preview">
+                <h3 class="card-title"><i class="fas fa-clipboard-list"></i> Task Preview</h3>
+                <div class="preview-content">
+                    <div id="previewTitle" class="preview-task-title">...</div>
+                    <div id="previewDescription" class="preview-task-description" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);">...</div>
+                    <div class="stat-item">
+                        <span class="stat-label">Priority:</span>
+                        <span id="previewPriority" class="stat-value">-</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Due Date:</span>
+                        <span id="previewDueDate" class="stat-value">-</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Files:</span>
+                        <span id="previewFiles" class="stat-value">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card task-stats">
+                <h3 class="card-title"><i class="fas fa-chart-line"></i> Statistics</h3>
+                <div style="position: relative; height:140px; margin-bottom: var(--spacing-lg);">
+                    <canvas id="taskChart"></canvas>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Selected Assignees</span>
+                    <span class="stat-value" id="totalAssignees">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Tasks Assigned Today</span>
+                    <span class="stat-value" id="todayTaskCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Pending Tasks</span>
+                    <span class="stat-value" id="pendingTaskCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Completed Tasks</span>
+                    <span class="stat-value" id="completedTaskCount">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card task-history">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-sm);">
+            <h2 class="card-title" style="margin: 0;">
+                <i class="fas fa-history"></i> Recent Tasks
+            </h2>
+            <button onclick="deleteAllTasks()" class="btn btn-danger" style="padding: var(--spacing-sm) var(--spacing-md); font-size: var(--text-sm);">
+                <i class="fas fa-trash-alt"></i> Delete All
+            </button>
+        </div>
+        <div id="taskHistoryList" style="margin-top: var(--spacing-lg);"></div>
+    </div>
+</div>
+
+<div id="taskDetailModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title card-title" style="margin:0;">Task Details</h3>
+            <button class="modal-close" onclick="closeTaskDetail()">&times;</button>
+        </div>
+        <div id="taskDetailContent"></div>
+    </div>
+</div>
+
+<script src="js/particles.min.js"></script>
+<script src="../config.js"></script>
+<script>
+    let taskChartInstance = null;
+
+    // --- Standard Functions ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.body.setAttribute('data-theme', savedTheme);
+        initParticles(savedTheme);
+
+        const savedSidebarState = localStorage.getItem('sidebarCollapsed');
+        const sidebar = document.querySelector('.sidebar');
+        const mainContainer = document.querySelector('.main-container');
+
+        // Always start collapsed on desktop, mobile behavior handled separately
+        if (window.innerWidth <= 768) {
+            sidebar.classList.remove('collapsed', 'mobile-active');
+            mainContainer.classList.remove('shifted');
+        } else {
+            if (savedSidebarState === 'true') {
+                sidebar.classList.add('collapsed');
+                mainContainer.classList.add('shifted');
+            } else {
+                sidebar.classList.add('collapsed');
+                mainContainer.classList.add('shifted');
+                localStorage.setItem('sidebarCollapsed', 'true');
+            }
+        }
+
+        initializePage();
+    });
+
+    function initializePage() {
+        initializeTaskChart();
+        initializeFormHandlers();
+        initializeFileUpload();
+        loadUsers();
+        loadTaskHistory();
+        loadTaskStatistics();
+        document.getElementById('taskDueDate').min = new Date().toISOString().split('T')[0];
+    }
+
+    function initParticles(theme) {
+        if (typeof particlesJS === 'undefined') return;
+        if (window.pJSDom && window.pJSDom[0]) {
+            window.pJSDom[0].pJS.fn.vendors.destroypJS();
+            window.pJSDom = [];
+        }
+        const particleColor = "#ffffff";
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: window.innerWidth <= 768 ? 40 : 80 },
+                color: { value: particleColor },
+                shape: { type: "circle" },
+                opacity: { value: 0.3, random: true },
+                size: { value: window.innerWidth <= 768 ? 2 : 3, random: true },
+                line_linked: {
+                    enable: true,
+                    distance: window.innerWidth <= 768 ? 100 : 150,
+                    color: particleColor,
+                    opacity: 0.2,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: window.innerWidth <= 768 ? 2 : 3,
+                    direction: "none",
+                    out_mode: "out"
+                }
+            },
+            interactivity: {
+                events: {
+                    onhover: { enable: !window.innerWidth <= 768, mode: "grab" },
+                    onclick: { enable: true, mode: "push" }
+                }
+            }
+        });
+    }
+
+    function toggleTheme() {
+        const body = document.body;
+        const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        body.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        initParticles(newTheme);
+
+        if (taskChartInstance) {
+            setTimeout(() => {
+                const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim();
+                taskChartInstance.options.plugins.legend.labels.color = textColor;
+                taskChartInstance.update();
+            }, 100);
+        }
+    }
+
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        const mainContainer = document.querySelector('.main-container');
+        const overlay = document.querySelector('.sidebar-overlay');
+
+        if (window.innerWidth <= 768) {
+            // Mobile behavior
+            sidebar.classList.toggle('mobile-active');
+            overlay.classList.toggle('active');
+        } else {
+            // Desktop behavior
+            sidebar.classList.toggle('collapsed');
+            mainContainer.classList.toggle('shifted');
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        }
+    }
+
+    function closeMobileSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        sidebar.classList.remove('mobile-active');
+        overlay.classList.remove('active');
+    }
+
+    function logout() { localStorage.clear(); window.location.href = '../index.html'; }
+    function navigateToPage(pageName) { window.location.href = pageName; }
+
+    // --- Task Assignment Specific Logic ---
+    let allUsers = [], selectedUsers = new Set(), uploadedFiles = [];
+
+    function initializeTaskChart() {
+        const ctx = document.getElementById('taskChart').getContext('2d');
+        const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim();
+        taskChartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pending', 'Completed'],
+                datasets: [{
+                    label: 'Tasks',
+                    data: [0, 0],
+                    backgroundColor: ['rgba(249, 115, 22, 0.8)', 'rgba(34, 197, 94, 0.8)'],
+                    borderColor: ['rgba(249, 115, 22, 1)', 'rgba(34, 197, 94, 1)'],
+                    borderWidth: 1,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '60%',
+                plugins: {
+                    legend: { position: 'top', labels: { color: textColor, padding: 20 } }
+                }
+            }
+        });
+    }
+
+    function initializeFileUpload() {
+        const area = document.getElementById('fileUploadArea');
+        const input = document.getElementById('fileInput');
+        area.addEventListener('dragover', e => { e.preventDefault(); area.classList.add('dragover'); });
+        area.addEventListener('dragleave', () => area.classList.remove('dragover'));
+        area.addEventListener('drop', e => {
+            e.preventDefault();
+            area.classList.remove('dragover');
+            addFiles(Array.from(e.dataTransfer.files));
+        });
+        input.addEventListener('change', e => addFiles(Array.from(e.target.files)));
+    }
+
+    function addFiles(files) {
+        files.forEach(file => uploadedFiles.push({ id: Date.now() + Math.random(), file, name: file.name, size: (file.size / 1024).toFixed(1) + ' KB' }));
+        displayUploadedFiles();
+        updatePreview();
+    }
+
+    function displayUploadedFiles() {
+        document.getElementById('uploadedFiles').innerHTML = uploadedFiles.map(f => `<div class="uploaded-file"><span>📄</span><span style="flex:1;">${f.name} (${f.size})</span><span class="remove-file" onclick="removeFile(${f.id})">✖</span></div>`).join('');
+    }
+
+    function removeFile(fileId) {
+        uploadedFiles = uploadedFiles.filter(f => f.id !== fileId);
+        displayUploadedFiles();
+        updatePreview();
+    }
+
+    function initializeFormHandlers() {
+        ['taskTitle', 'taskDescription', 'taskPriority', 'taskDueDate'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updatePreview);
+        });
+        document.getElementById('taskForm').addEventListener('submit', assignTask);
+    }
+
+    async function loadUsers() {
+        try {
+            const response = await fetch(`${USER_API}`);
+            allUsers = await response.json();
+            displayUsers(allUsers);
+        } catch (error) { console.error("Failed to load users", error); }
+    }
+
+    function displayUsers(users) {
+        const container = document.getElementById("userCheckboxList");
+        container.innerHTML = users.map(user => {
+            const isSelected = selectedUsers.has(user.email);
+            return `<div class="user-item ${isSelected ? 'selected' : ''}" data-email="${user.email}" onclick="toggleUserSelection(this, event)">
+                        <div class="user-avatar">${user.username.charAt(0).toUpperCase()}</div>
+                        <div class="user-info"><div class="user-name">${user.username}</div><div class="user-email">${user.email}</div></div>
+                        <input type="checkbox" class="user-checkbox" value="${user.email}" ${isSelected ? 'checked' : ''}>
+                    </div>`;
+        }).join('');
+    }
+
+    function toggleUserSelection(item, event) {
+        const checkbox = item.querySelector('.user-checkbox');
+        if (event.target.type !== 'checkbox') checkbox.checked = !checkbox.checked;
+        item.classList.toggle('selected', checkbox.checked);
+        checkbox.checked ? selectedUsers.add(item.dataset.email) : selectedUsers.delete(item.dataset.email);
+        updateSelectedCount();
+        updateSelectAllCheckbox();
+    }
+
+    function toggleSelectAll(checkbox) {
+        const shouldBeChecked = checkbox.checked;
+        document.querySelectorAll('.user-item:not([style*="display: none"])').forEach(item => {
+            const cb = item.querySelector('.user-checkbox');
+            if (cb.checked !== shouldBeChecked) {
+                cb.checked = shouldBeChecked;
+                item.classList.toggle('selected', shouldBeChecked);
+                shouldBeChecked ? selectedUsers.add(item.dataset.email) : selectedUsers.delete(item.dataset.email);
+            }
+        });
+        updateSelectedCount();
+        updateSelectAllCheckbox();
+    }
+
+    function updateSelectedCount() {
+        const count = selectedUsers.size;
+        const badge = document.getElementById('selectedCount');
+        badge.style.display = count > 0 ? 'inline-block' : 'none';
+        badge.textContent = `${count} selected`;
+        document.getElementById('totalAssignees').textContent = count;
+    }
+
+    function updateSelectAllCheckbox() {
+        const selectAll = document.getElementById('selectAllUsers');
+        const visibleCheckboxes = [...document.querySelectorAll('.user-item:not([style*="display: none"]) .user-checkbox')];
+        if (visibleCheckboxes.length === 0) {
+            selectAll.checked = false;
+            selectAll.indeterminate = false;
+            return;
+        }
+        const checkedCount = visibleCheckboxes.filter(cb => cb.checked).length;
+        if (checkedCount === visibleCheckboxes.length) {
+            selectAll.checked = true;
+            selectAll.indeterminate = false;
+        } else if (checkedCount > 0) {
+            selectAll.checked = false;
+            selectAll.indeterminate = true;
+        } else {
+            selectAll.checked = false;
+            selectAll.indeterminate = false;
+        }
+    }
+
+    function filterUsers() {
+        const query = document.getElementById("userSearch").value.toLowerCase();
+        document.querySelectorAll(".user-item").forEach(item => {
+            const name = item.querySelector('.user-name').textContent.toLowerCase();
+            const email = item.querySelector('.user-email').textContent.toLowerCase();
+            item.style.display = (name.includes(query) || email.includes(query)) ? 'flex' : 'none';
+        });
+        updateSelectAllCheckbox();
+    }
+
+    function updatePreview() {
+        document.getElementById('previewTitle').textContent = document.getElementById('taskTitle').value || '...';
+        document.getElementById('previewDescription').textContent = document.getElementById('taskDescription').value || '...';
+        document.getElementById('previewPriority').textContent = document.getElementById('taskPriority').value;
+        document.getElementById('previewDueDate').textContent = document.getElementById('taskDueDate').value || '-';
+        document.getElementById('previewFiles').textContent = uploadedFiles.length;
+    }
+
+    function previewTask() { updatePreview(); }
+
+    async function assignTask(event) {
+        event.preventDefault();
+        if (selectedUsers.size === 0) return alert('Please select at least one user to assign the task.');
+
+        const taskData = {
+            title: document.getElementById('taskTitle').value,
+            description: document.getElementById('taskDescription').value,
+            priority: document.getElementById('taskPriority').value,
+            dueDate: document.getElementById('taskDueDate').value,
+            assignedTo: Array.from(selectedUsers)
+        };
+
+        if (!taskData.title || !taskData.description || !taskData.dueDate) {
+            return alert('Title, Description, and Due Date are required fields.');
+        }
+
+        const formData = new FormData();
+        formData.append('taskData', JSON.stringify(taskData));
+        uploadedFiles.forEach(fileObj => formData.append('file_0', fileObj.file));
+
+        try {
+            const response = await fetch(`${TASK_API}/assign`, { method: "POST", body: formData });
+            if (response.ok) {
+                alert(`Task successfully assigned to ${selectedUsers.size} user(s)!`);
+                resetForm();
+                loadTaskHistory();
+                loadTaskStatistics();
+            } else {
+                const errorText = await response.text();
+                alert(`Failed to assign task: ${errorText}`);
+            }
+        } catch (error) {
+            console.error("Error assigning task:", error);
+            alert("An error occurred while assigning the task.");
+        }
+    }
+
+    function resetForm() {
+        document.getElementById('taskForm').reset();
+        selectedUsers.clear();
+        uploadedFiles = [];
+        displayUploadedFiles();
+        document.querySelectorAll('.user-item.selected').forEach(el => el.classList.remove('selected'));
+        document.querySelectorAll('.user-checkbox').forEach(cb => cb.checked = false);
+        updateSelectedCount();
+        updateSelectAllCheckbox();
+        updatePreview();
+    }
+
+    async function loadTaskStatistics() {
+        try {
+            const response = await fetch(`${TASK_API}/statistics`);
+            const stats = await response.json();
+            const todayCount = stats.todayTaskCount || 0;
+            const pendingCount = stats.pendingTaskCount || 0;
+            const completedCount = stats.completedTaskCount || 0;
+
+            document.getElementById('todayTaskCount').textContent = todayCount;
+            document.getElementById('pendingTaskCount').textContent = pendingCount;
+            document.getElementById('completedTaskCount').textContent = completedCount;
+
+            if (taskChartInstance) {
+                taskChartInstance.data.datasets[0].data[0] = pendingCount;
+                taskChartInstance.data.datasets[0].data[1] = completedCount;
+                taskChartInstance.update('none');
+            }
+        } catch(e){ console.error("Failed to load statistics"); }
+    }
+
+    async function loadTaskHistory() {
+        try {
+            const response = await fetch(`${TASK_API}/recent`);
+            const data = await response.json();
+            const container = document.getElementById("taskHistoryList");
+            container.innerHTML = data.length ? data.map(task => {
+                const assignees = Array.isArray(task.assignedTo) ? task.assignedTo.join(', ') : String(task.assignedTo || '');
+                const status = task.status || 'pending';
+                return `<div class="history-item" onclick="showTaskDetail(${task.id})">
+                            <div style="flex-grow: 1;">
+                                <div class="history-task-title">${task.title}</div>
+                                <div class="history-assignees">To: ${assignees}</div>
+                                <div class="history-date">${new Date(task.createdAt).toLocaleString()}</div>
+                            </div>
+                            <div class="status-badge status-${status.toLowerCase().replace(' ', '-')}">${status}</div>
+                        </div>`;
+            }).join('') : '<div style="text-align:center; color: var(--text-secondary); padding: 20px;">No recent tasks</div>';
+        } catch (error) {
+            console.error("Failed to load task history", error);
+            document.getElementById("taskHistoryList").innerHTML = '<div style="text-align:center; color: red; padding: 20px;">Failed to load task history.</div>';
+        }
+    }
+
+    async function showTaskDetail(taskId) {
+        try {
+            const response = await fetch(`${TASK_API}/${taskId}`);
+            if (!response.ok) throw new Error('Task not found');
+            const task = await response.json();
+
+            const assigneesHtml = Array.isArray(task.assignedTo) ? task.assignedTo.join(', ') : (task.assignedTo || 'N/A');
+            const attachmentsHtml = task.attachments && task.attachments.length > 0
+                ? task.attachments.map(file => `<div><a href="${file.url}" target="_blank" rel="noopener noreferrer"><i class="fas fa-link"></i> ${file.name}</a></div>`).join('')
+                : 'None';
+
+            document.getElementById('taskDetailContent').innerHTML = `
+                <p style="color: var(--text-secondary); white-space: pre-wrap;">${task.description}</p>
+                <div class="modal-detail-grid">
+                    <div class="modal-detail-item"><strong>Status:</strong> ${task.status}</div>
+                    <div class="modal-detail-item"><strong>Priority:</strong> ${task.priority}</div>
+                    <div class="modal-detail-item"><strong>Due Date:</strong> ${new Date(task.dueDate).toLocaleDateString()}</div>
+                    <div class="modal-detail-item"><strong>Created:</strong> ${new Date(task.createdAt).toLocaleString()}</div>
+                </div>
+                <div style="margin-top: 15px;"><strong>Assignees:</strong> <p>${assigneesHtml}</p></div>
+                <div style="margin-top: 15px;" class="modal-attachments"><strong>Attachments:</strong> ${attachmentsHtml}</div>
+            `;
+            document.getElementById('taskDetailModal').classList.add('active');
+        } catch (error) {
+            console.error("Failed to load task details:", error);
+            alert("Failed to load task details.");
+        }
+    }
+
+    function closeTaskDetail() {
+        document.getElementById('taskDetailModal').classList.remove('active');
+    }
+
+    async function deleteAllTasks() {
+        if (!confirm("Are you sure you want to delete all tasks? This action cannot be undone.")) return;
+        try {
+            const response = await fetch(`${TASK_API}/deleteAll`, { method: "DELETE" });
+            if (response.ok) {
+                alert("All tasks have been deleted.");
+                loadTaskHistory();
+                loadTaskStatistics();
+            } else {
+                alert("Failed to delete all tasks.");
+            }
+        } catch (error) {
+            console.error("Error deleting tasks:", error);
+            alert("An error occurred while deleting tasks.");
+        }
+    }
+
+    // Handle window resize for responsive behavior
+    window.addEventListener('resize', () => {
+        const sidebar = document.querySelector('.sidebar');
+        const mainContainer = document.querySelector('.main-container');
+        const overlay = document.querySelector('.sidebar-overlay');
+
+        if (window.innerWidth > 768) {
+            // Desktop - restore saved state
+            overlay.classList.remove('active');
+            sidebar.classList.remove('mobile-active');
+            const savedState = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (savedState) {
+                sidebar.classList.add('collapsed');
+                mainContainer.classList.add('shifted');
+            } else {
+                sidebar.classList.remove('collapsed');
+                mainContainer.classList.remove('shifted');
+            }
+        } else {
+            // Mobile - reset to default
+            sidebar.classList.remove('collapsed');
+            sidebar.classList.remove('mobile-active');
+            mainContainer.classList.remove('shifted');
+            overlay.classList.remove('active');
+        }
+    });
+</script>
+
+</body>
+</html>
